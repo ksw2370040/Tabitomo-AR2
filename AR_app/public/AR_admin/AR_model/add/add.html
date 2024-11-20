@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3Dモデル登録</title>
+    <link rel="stylesheet" href="../static/model.css">
+</head>
+
+<body>
+
+    <header>
+        <h1><a href="menu.html">管理者システム</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li><a href="AR_login/logout.html">ログアウト</a></li>
+        </ul>
+    </header>
+
+    <div class="sideber">
+        <div class="sideber-container">
+            <a href="../../menu.html"><button>システムメニュー</button></a>
+            <a href="../../AR_user/user.html"><button>ユーザー情報</button></a>
+            <button onclick="goToUserInfo()">マーカー</button>
+            <a href="../../AR_model/model.html"><button>3Dモデル</button></a>
+            <a href="../../AR_napisy/napisy.html"><button>字幕管理</button></a>
+            <a href="../../AR_sound/sound.html"><button>音声管理</button></a>
+            <a href="../../AR_map/map.html"><button>マップ管理</button></a>
+            <a href="../../AR_language/language.html"><button>言語管理</button></a>
+        </div>
+    </div>
+
+    <main class="container">
+        <h2>:3Dモデル登録</h2>
+        <form class="model-registration-form">
+            <label for="model-name">3Dモデル名</label>
+            <input type="text" id="model-name" name="model-name" required>
+
+            <label for="model-file">3Dモデルファイル</label>
+            <input type="file" id="model-file" name="model-file" accept=".obj,.fbx,.glb" required>
+
+            <label for="marker">マーカー選択</label>
+            <select id="marker" name="marker">
+                <option value="">選択してください</option>
+                <!-- 必要に応じてオプションを追加 -->
+            </select>
+
+            <label for="language">言語</label>
+            <select id="language" name="language">
+                <option value="">選択してください</option>
+                <!-- 必要に応じて言語オプションを追加 -->
+            </select>
+
+            <label for="audio-file">音声ファイル</label>
+            <select id="audio-file" name="audio-file">
+                <option value="">選択してください</option>
+                <!-- 必要に応じて音声オプションを追加 -->
+            </select>
+
+            <label for="subtitle-file">字幕ファイル</label>
+            <select id="subtitle-file" name="subtitle-file">
+                <option value="">選択してください</option>
+                <!-- 必要に応じて字幕オプションを追加 -->
+            </select>
+
+            <button type="submit">確認する</button>
+        </form>
+
+        <h2><a href="success.html">登録した前提で登録完了画面に遷移する</a></h2>
+        <h2><a href="../model.html">3Dモデル管理に戻る</a></h2>
+
+    </main>
+
+    <footer>
+        <p>© 2024 TIC 大原学園 C-2</p>
+    </footer>
+
+</body>
+
+</html>

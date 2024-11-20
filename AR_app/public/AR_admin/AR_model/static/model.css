@@ -1,0 +1,259 @@
+/* 基本設定 */
+* {
+    box-sizing: border-box;
+}
+
+*:focus {
+    outline: none;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+main{
+    padding-bottom: 50px;
+}
+
+/* ヘッダー */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+    background-color: #ededed;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+header a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1em;
+}
+
+li{
+    list-style: none;
+}
+
+ul{
+    padding-left: 0;
+}
+
+/* メイン */
+
+main {
+    flex-grow: 1;
+  }
+
+/* サイドバー */
+.sideber {
+    position: fixed;
+    top: 115px; /* ヘッダーの高さを考慮 */
+    left: 0;
+    width: 200px;
+    height: calc(100vh - 60px - 40px); /* ヘッダー分を引いた高さ */
+    background-color: #ffffff;
+    padding: 20px 0;
+    padding-bottom: 50px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y:scroll /*スクロールばあ*/
+    
+}
+
+.sideber-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.sideber-container a {
+    width: 80%;
+    text-align: center;
+    border:1px solid;
+    border-color: #333;
+}
+
+.sideber-container button {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #ffffff;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sideber-container button:hover {
+    background-color: #ededed;
+}
+
+/* メインコンテンツ */
+.container {
+    margin-top: 150px;
+    margin-left: 220px;
+    padding: 20px;
+    max-width: 1200px; /* 必要に応じて横幅の最大値を設定 */
+}
+.container a{
+    border:1px solid;
+    border-color: #333;
+}
+
+/* フッター */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 0 -100px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #333;
+    border-top: 1px solid #ccc;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ボタン */
+.container button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1em;
+    color: #333;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.container button:hover {
+    background-color: #ededed;
+}
+
+
+/* CSS adjustments for the main content and table styling */
+
+.container {
+    margin-top: 150px;
+    margin-left: 220px;
+    padding: 20px;
+    max-width: 1200px; /* 必要に応じて横幅の最大値を設定 */
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.add-button {
+    margin-left: 900px;
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    color: #333;
+    background-color: #ededed;
+    text-decoration: none;
+    border: 1px solid #333;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.add-button:hover {
+    background-color: #dcdcdc;
+}
+
+.model-table {
+    width: 100%; /* 必要に応じて調整、100%にしてコンテナ幅に収まるように */
+    margin-top: 20px; /* ボタンとテーブル間のスペース */
+    border-collapse: collapse;
+}
+
+.model-table th, .model-table td {
+    border: 1px solid #333;
+    padding: 10px;
+    text-align: center;
+}
+
+.model-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.delete-button {
+    color: red;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.delete-button:hover {
+    text-decoration: underline;
+}
+
+/* フォーム全体のスタイル */
+.model-registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* ラベルのスタイル */
+.model-registration-form label {
+    font-size: 1em;
+    color: #333;
+}
+
+/* テキスト入力、ファイル選択、セレクトボックスのスタイル */
+.model-registration-form input[type="text"],
+.model-registration-form input[type="file"],
+.model-registration-form select {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* ボタンのスタイル */
+.model-registration-form button {
+    padding: 10px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* ボタンホバー時のスタイル */
+.model-registration-form button:hover {
+    background-color: #555;
+}
+

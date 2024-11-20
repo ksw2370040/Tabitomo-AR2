@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- login.html -->
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="../static/admin.css"> <!-- CSSファイルのパスを適切に設定 -->
+    <script src="js/login.js" defer></script> <!-- login.jsのパスを適切に設定 -->
+</head>
+
+<body>
+    <div class="login">
+        <div class="login-screen">
+            <div class="app-title">
+                <h1>ログイン</h1>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="control-group">
+                    <input type="text" class="login-field" placeholder="ユーザー名" id="login-name" name="adminname" required>
+                    <label class="login-field-icon fui-user" for="login-name"></label>
+                </div>
+
+                <div class="control-group">
+                    <input type="password" class="login-field" placeholder="パスワード" id="login-pass" name="password" required>
+                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large btn-block">ログイン</button>
+            </form>
+
+            <a href="new.html">
+                <button>新規登録</button>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

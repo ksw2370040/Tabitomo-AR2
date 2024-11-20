@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- login.html -->
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="static/login.css">
+    <script src="js/login.js" defer></script>
+</head>
+
+<body>
+
+    <header>
+        <h1><a href="menu.html">管理者システム</a></h1>
+    </header>
+
+<main>
+    <div class="login">
+        <div class="login-screen">
+            <div class="app-title">
+                <h1>ログイン</h1>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="control-group">
+                    <label for="login-name">:ID</label>
+                    <input type="text" class="login-field" placeholder="ユーザー名" id="login-name" name="adminname" required>
+                </div>
+            
+                <div class="control-group">
+                    <label for="login-pass">:pass</label>
+                    <input type="password" class="login-field" placeholder="パスワード" id="login-pass" name="password" required>
+                </div>
+            
+                <div id="show-password">
+                    <input type="checkbox" onclick="togglePassword()"> パスワード表示
+                </div>
+           
+                <button type="submit" class="btn btn-primary btn-large btn-block">ログイン</button>
+        
+            </form>
+            
+            <div class="new">
+            <a href="new.html">
+                <button>新規登録</button>
+            </a>
+            </div>
+
+            <!-- エラーメッセージを表示するための要素 -->
+            <p id="error-message" style="color:red;"></p>
+        </div>
+    </div>
+
+<h3><a href="../menu.html">ログイン後メニュー画面</a></h3>
+
+</main>
+    <footer>
+        <p>© 2024 TIC 大原学園 C-2</p>
+    </footer>
+
+</body>
+</html>

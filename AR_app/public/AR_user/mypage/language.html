@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/mypage.css">
+    <title>マイページ</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 仮の言語リスト（データベースから取得予定のもの）
+            const languages = ["日本語", "英語", "中国語", "フランス語", "韓国語"];
+            
+            // ボタンを挿入するコンテナを取得
+            const container = document.querySelector(".button-container");
+            container.innerHTML = ""; // 初期内容をクリア
+            
+            // 各言語のボタンを生成して追加
+            languages.forEach(language => {
+                const button = document.createElement("button");
+                button.textContent = language;
+                const link = document.createElement("a");
+                link.href = "#";  // 必要に応じてリンク先を設定
+                link.appendChild(button);
+                container.appendChild(link);
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <h1>マイページ</h1>
+        <ul>
+            <li>ID:</li>
+            <li><a href="logout.html">ログアウト</a></li>
+        </ul>
+    </header>
+
+    <div class="content">
+        <div class="button-container">
+            <!-- JavaScriptで言語リストが挿入される -->
+        </div>
+
+        <a href="../home.html" class="back-button">戻る</a>
+
+        <a href="language_success.html">言語変更完了画面</a>
+
+    </div>
+
+    <footer>
+        <p>© 2024 たびとも</p>
+    </footer>
+
+</body>
+
+</html>

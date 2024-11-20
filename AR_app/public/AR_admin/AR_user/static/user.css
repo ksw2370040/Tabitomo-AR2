@@ -1,0 +1,228 @@
+/* 基本設定 */
+* {
+    box-sizing: border-box;
+}
+
+*:focus {
+    outline: none;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+main{
+    padding-bottom: 50px;
+}
+
+/* ヘッダー */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+    background-color: #ededed;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+header a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1em;
+}
+
+li{
+    list-style: none;
+}
+
+ul{
+    padding-left: 0;
+}
+
+/* メイン */
+
+main {
+    flex-grow: 1;
+  }
+
+
+.subtitle{
+    padding-left: 220px;
+    padding-top: 130px;
+   
+}
+
+.userinfo{
+    padding-top: 25px;
+    padding-left: 270px;
+   
+}
+
+/* cheakscreenのスタイル */
+.cheakscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding-left: 100px;
+    padding-top: 50px;
+}
+
+/* 確認ボックスのスタイル */
+.confirmation-box {
+    background-color: #ffe4c4; /* 背景色を淡いオレンジ色に設定 */
+    border: 2px solid #f4a460; /* 薄い茶色の枠線 */
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 250px;
+}
+
+.confirmation-box h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.confirmation-box p {
+    margin: 10px 0;
+    font-size: 1em;
+}
+
+/* ボタンのスタイル */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* ボタンリンクのスタイル */
+.button-group a {
+    display: inline-block;
+    padding: 5px 15px;
+    font-size: 0.9em;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    background-color: #87ceeb; /* 青色 */
+    text-align: center;
+    cursor: pointer;
+}
+
+.button-group a:hover {
+    background-color: #6bb8d6; /* ホバーカラー */
+}
+
+
+/* サイドバー */
+.sideber {
+    position: fixed;
+    top: 115px; /* ヘッダーの高さを考慮 */
+    left: 0;
+    width: 200px;
+    height: calc(100vh - 60px - 40px); /* ヘッダー分を引いた高さ */
+    background-color: #ffffff;
+    padding: 20px 0;
+    padding-bottom: 50px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y:scroll /*スクロールばあ*/
+    
+}
+
+.sideber-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.sideber-container a {
+    width: 80%;
+    text-align: center;
+    border:1px solid;
+    border-color: #333;
+}
+
+.sideber-container button {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #ffffff;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sideber-container button:hover {
+    background-color: #ededed;
+}
+
+/* メインコンテンツ */
+.container {
+    margin-top: 30px; /* ヘッダーの高さを考慮 */
+    margin-left: 220px; /* サイドバーの幅を考慮 */
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2列 */
+    gap: 15px;
+}
+
+.container a{
+    border:1px solid;
+    border-color: #333;
+}
+
+/* フッター */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 0 -100px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #333;
+    border-top: 1px solid #ccc;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ボタン */
+.container button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1em;
+    color: #333;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.container button:hover {
+    background-color: #ededed;
+}
+
+.deletecomplete{
+        padding-top: 200px;
+        padding-left: 150px;
+}

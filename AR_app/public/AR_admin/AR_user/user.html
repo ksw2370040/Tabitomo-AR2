@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- menu.html -->
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホーム</title>
+    <link rel="stylesheet" href="static/user.css">
+</head>
+
+<body>
+
+    <header>
+        <h1><a href="menu.html">管理者システム</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li><a href="">ログアウト</a>
+            <li>
+        </ul>
+
+    </header>
+
+    <main>
+
+        <div class="sideber">
+            <div class="sideber-container">
+                <a href="../menu.html"><button>システムメニュー</button></a>
+                <a href="AR_user/user.html"><button>ユーザー情報</button></a>
+                <a href="AR_marker/marker.html"><button>マーカー</button></a>
+                <a href="AR_model/model.html"><button>3Dモデル</button></a>
+                <a href="AR_napisy/napisy.html"><button>字幕管理</button></a>
+                <a href="AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="AR_map/map.html"><button>マップ管理</button></a>
+                <a href="AR_language/language.html"><button>言語管理</button></a>
+            </div>
+        </div>
+
+        <div class="subtitle">
+            <h2>:ユーザー情報機能</h2>
+        </div>
+        <div class="userinfo">
+
+            <ul>
+                <li>ID:</li>
+                <li>名前:</li>
+                <li>一覧で表示</li>
+            </ul>
+
+        </div>
+        <div class="container">
+            <a href="update.html"><button class="update-button">登録情報の更新</button></a>
+            <a href="delete.html"><button class="delete-button">ユーザー情報の削除</button></a>
+        </div>
+    </main>
+
+
+    <footer>
+        <p>© 2024 TIC 大原学園 C-2</p>
+    </footer>
+
+    <!-- スクリプトをボディの最後に移動 -->
+    <script>
+        // URLパラメータからadminnameを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminname = urlParams.get('adminname');
+
+        // adminnameがある場合にページに表示
+        if (adminname) {
+            document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+        }
+    </script>
+
+</body>
+
+</html>

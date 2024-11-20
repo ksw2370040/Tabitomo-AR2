@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- menu.html -->
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホーム</title>
+    <link rel="stylesheet" href="static/login.css">
+</head>
+
+<body>
+
+    <header>
+        <h1><a href="menu.html">管理者システム</a></h1>
+    </header>
+
+    <main>
+        
+        <div class="logout-info">
+            <h2>ログアウトしました。</h2>
+            <h3><a href="login.html">ログイン画面</a></h3>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>© 2024 TIC 大原学園 C-2</p>
+    </footer>
+
+    <!-- スクリプトをボディの最後に移動 -->
+    <script>
+        // URLパラメータからadminnameを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminname = urlParams.get('adminname');
+
+        // adminnameがある場合にページに表示
+        if (adminname) {
+            document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+        }
+    </script>
+
+</body>
+</html>
