@@ -28,7 +28,7 @@ app.use('/sound', soundRoutes);
 app.use('/napisylist', napisylistRoutes);
 
 // サーバーの起動
-const PORT = 8080;
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`サーバーが http://localhost:${PORT} で起動しました`);
 });
