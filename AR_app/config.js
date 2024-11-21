@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const connection = new Client({
     user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'tabitomo.crgucea6c04o.us-east-1.rds.amazonaws.com',
+    host: process.env.DB_HOST || 'tabitomodb.crgucea6c04o.us-east-1.rds.amazonaws.com',
     database: process.env.DB_NAME || 'tabitomo',
     password: process.env.DB_PASSWORD || 'kashi0001',
     port: process.env.DB_PORT || 5432,
