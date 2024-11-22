@@ -38,4 +38,6 @@ const credentials = { key: privateKey, cert: certificate };
 const PORT = 3000;
 https.createServer(credentials, app).listen(PORT, '0.0.0.0', () => {
   console.log(`サーバーが https://44.200.130.41:${PORT} で起動しました`);
+}).on('error', (err) => {
+  console.error('サーバー起動エラー:', err);
 });
