@@ -4,6 +4,11 @@ const fs = require('fs');
 const https = require('https'); // httpsモジュールをインポート
 const app = express();
 
+// SSL証明書の読み込み
+const privateKey = fs.readFileSync(path.join(__dirname, 'certs', 'private-key.pem'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'certs', 'certificate.pem'), 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
 // ルートをインポート
 const markerRoutes2 = require('./routes/markerRoutes2');
 const adminlogin = require('./routes/admin');
@@ -29,15 +34,8 @@ app.use('/napisy', napisyRoutes);
 app.use('/sound', soundRoutes);
 app.use('/napisylist', napisylistRoutes);
 
-// HTTPS 証明書の読み込み
-const privateKey = fs.readFileSync(path.join(__dirname, 'certs', 'private-key.pem'), 'utf8');
-const certificate = fs.readFileSync(path.join(__dirname, 'certs', 'certificate.pem'), 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-
 // HTTPSサーバーの起動
 const PORT = 3000;
 https.createServer(credentials, app).listen(PORT, '0.0.0.0', () => {
   console.log(`サーバーが https://3.238.65.121:${PORT} で起動しました`);
-}).on('error', (err) => {
-  console.error('サーバー起動エラー:', err);
 });
