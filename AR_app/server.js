@@ -38,5 +38,5 @@ const options = {
 // HTTPSサーバーの起動
 const PORT = 3000;
 https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
-  console.log(`サーバーが http://44.200.130.41:${PORT} で起動しました`);
+  console.log(`サーバーが https://44.200.130.41:${PORT} で起動しました`);
 });
