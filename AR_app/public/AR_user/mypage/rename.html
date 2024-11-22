@@ -19,18 +19,17 @@
     </header>
 
     <div class="content">
-        <div class="button-container">
-            <a href="language.html"><button>言語変更</button></a>
-            <a href="rename.html"><button>名前変更</button></a>
-            <a href="changepassword.html"><button>パスワード変更</button></a>
-            <a href=""><button>あしあと</button></a>
-            <a href="collection.html"><button>コレクション</button></a>
+        <div class="name-change-section">
+            <h2>名前の変更</h2>
+            <p>現在の名前: <span id="current-name">山田太郎</span></p>
+
+            <label for="new-name">新しい名前:</label>
+            <input type="text" id="new-name" placeholder="新しい名前を入力" required>
+
+            <a href="javascript:void(0);" id="change-name-link" class="change-name-button">名前を変更</a>
         </div>
 
-        
-        <a href="../home.html" class="back-button">戻る</a>
-
-        
+        <a href="mypage.html" class="back-button">戻る</a>
     </div>
 
     <footer>

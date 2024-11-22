@@ -4,58 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>字幕詳細情報</title>
+    <title>音声詳細情報</title>
 </head>
 
 <body>
-    <h1>字幕詳細情報</h1>
-    <div id="napisy-details"></div>
+    <h1>音声詳細情報</h1>
+    <div id="sound-details"></div>
 
     <script>
         // URLのパラメータからmdltextを取得
         const urlParams = new URLSearchParams(window.location.search);
-        const mdltext = urlParams.get('mdltext');
+        const mdlsound = urlParams.get('mdlsound');
 
         // mdltextが取得できたら、その字幕テキストに関連する情報を表示
-        if (mdltext) {
+        if (mdlsound) {
             // サーバーからその字幕テキストに関連するデータを取得
-            fetch(`/napisylist?mdltext=${mdltext}`)
+            fetch(`/soundlist?mdlsound=${mdlsound}`)
                 .then(response => response.json())
                 .then(data => {
-                    const napisyDetails = document.getElementById('napisy-details');
-                    let detailsHtml = `<h2>字幕テキスト: ${mdltext}</h2>`;
+                    const soundDetails = document.getElementById('sound-details');
+                    let detailsHtml = `<h2>音声テキスト: ${mdlsound}</h2>`;
 
                     // 各言語の情報を表示
                     data.forEach(model => {
                         detailsHtml += `
                             <p><strong>言語名:</strong> ${model.languagename} <br>
-                            <strong>字幕ファイル:</strong> ${model.napisyfile}</p>
-                            <button class="edit-btn" data-mdltext="${model.mdltext}" data-languagename="${model.languagename}">編集</button>
-                            <button class="delete-btn" data-mdltext="${model.mdltext}" data-languagename="${model.languagename}">削除</button>
-                            
+                            <strong>音声ファイル:</strong> ${model.soundfile}</p>
+                            <button class="edit-btn" data-mdlsound="${model.mdlsound}" data-languagename="${model.languagename}">編集</button>
+                            <button class="delete-btn" data-mdlsound="${model.mdlsound}" data-languagename="${model.languagename}">削除</button>
                         `;
-
                     });
 
-                    napisyDetails.innerHTML = detailsHtml;
-
+                    soundDetails.innerHTML = detailsHtml;
                 })
                 .catch(error => {
-                    console.error('字幕情報の取得中にエラーが発生しました:', error);
-                    alert('字幕情報の取得に失敗しました。');
+                    console.error('音声情報の取得中にエラーが発生しました:', error);
+                    alert('音声情報の取得に失敗しました。');
                 });
         } else {
-            alert('字幕テキストが指定されていません。');
+            alert('音声テキストが指定されていません。');
         }
 
-        //削除ボタンを押した場合
         document.addEventListener('click', function (event) {
             if (event.target.classList.contains('delete-btn')) {
-                const mdltext = event.target.dataset.mdltext;
+                const mdlsound = event.target.dataset.mdlsound;
                 const languagename = event.target.dataset.languagename;
 
-                if (confirm(` '${mdltext}' : '${languagename}' の字幕情報を削除してよろしいですか？`)) {
-                    fetch(`/napisy/${mdltext}/${languagename}`, {
+                if (confirm(` '${mdlsound}' : '${languagename}' の音声情報を削除してよろしいですか？`)) {
+                    fetch(`/sound/${mdlsound}/${languagename}`, {
                         method: 'DELETE',
                     })
                         .then(response => response.json())
@@ -76,8 +72,8 @@
         });
 
     </script>
-    <br>
-    <button class="add-btn" data-mdltext="${model.mdltext}">新規字幕追加</button>
+    </br>
+    <button class="add-btn" data-mdlsound="${model.mdlsound}">新規音声追加</button>
 </body>
 
 </html>

@@ -1,5 +1,3 @@
-// C:\Tabitomo-AR\AR_app\public\AR_admin\AR_model\js\modellist.js
-
 document.addEventListener('DOMContentLoaded', function () {
     // モデル情報を取得するためのAPI呼び出し
     fetch('/sound')  // モデル情報を取得するエンドポイント
@@ -10,12 +8,18 @@ document.addEventListener('DOMContentLoaded', function () {
             // 取得したモデル情報をリストに表示
             data.forEach(model => {
                 const listItem = document.createElement('li');
+
+                // モデルテキストにリンクを追加
                 listItem.innerHTML = `
-                    <p>モデルID: ${model.mdlid}</p>
-                   
+                    モデルID: ${model.mdlid}<br>
+                    音声テキスト: <a href="soundlist.html?mdlsound=${model.mdlsound}" class="soundtext">
+                        ${model.mdlsound}
+                    </a>
                 `;
-                sound.appendChild(listItem);  // リストに追加
+
+                sound.appendChild(listItem); // リストに追加
             });
+
         })
         .catch(error => {
             console.error('モデル情報の取得中にエラーが発生しました:', error);

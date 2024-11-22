@@ -112,3 +112,152 @@ footer {
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+/* 名前変更セクション: 基本スタイル */
+.name-change-section {
+    width: 90%; /* 幅を柔軟に調整 */
+    max-width: 400px;
+    /* 上下の余白と中央配置 */
+    margin: auto;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+.name-change-section h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.name-change-section p {
+    margin: 10px 0;
+    font-size: 1em;
+}
+
+.name-change-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.name-change-section input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+/* 名前変更ボタン */
+.change-name-button {
+    display: block;
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #4a6999;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.change-name-button:hover {
+    background-color: #3a5577;
+}
+
+.password-change-section {
+    width: 90%; /* 幅を柔軟に調整 */
+    max-width: 400px;
+    /* 上下の余白と中央配置 */
+    margin: auto;
+    margin-top: 100px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.password-change-section h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+    text-align: center;
+}
+
+.password-group {
+    margin-top: 15px;
+}
+
+.password-group label {
+    display: block;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.password-group input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.password-group input:focus {
+    outline: none;
+    border-color: #4a6999;
+    box-shadow: 0 0 5px rgba(74, 105, 153, 0.3);
+}
+
+.change-password-button {
+    width: 100%;
+    padding: 10px 15px;
+    margin-top: 20px;
+    background-color: #4a6999;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.change-password-button:hover {
+    background-color: #3a5577;
+}
+
+/* 全体のレイアウトを中央に整列 */
+.content {
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px); /* header & footerの高さを除いたスペースを考慮 */
+    padding: 10px;
+}
+
+.content h3{
+    margin-top: 100px;
+}
+
+
+.change-success{
+    margin-top: 100px;
+}
+
+/* スマホ表示向けの設定 */
+@media (max-width: 768px) {
+    .name-change-section {
+        margin-top: 100px; /* 上部の余白を調整 */
+        padding: 15px; /* スペースを少し減らす */
+    }
+}

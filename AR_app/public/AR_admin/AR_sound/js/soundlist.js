@@ -1,23 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
     // モデル情報を取得するためのAPI呼び出し
-    fetch('/napisy')  // モデル情報を取得するエンドポイント
+    fetch('/sound')  // モデル情報を取得するエンドポイント
         .then(response => response.json())  // JSONレスポンスを取得
         .then(data => {
-            const napisy = document.querySelector('.napisy ul');  // モデル情報を表示する要素を選択
+            const sound = document.querySelector('.sound ul');  // モデル情報を表示する要素を選択
 
             // 取得したモデル情報をリストに表示
-            data.forEach(model => {
+            const uniqueMdltexts = [...new Set(data.map(model => model.mdlsound))];  // 重複するmdltextを除外
+
+            uniqueMdltexts.forEach(mdlsound => {
                 const listItem = document.createElement('li');
 
                 // モデルテキストにリンクを追加
                 listItem.innerHTML = `
-                    モデルID: ${model.mdlid}<br>
-                    字幕テキスト: <a href="napisylist.html?mdltext=${model.mdltext}" class="napisytext">
-                        ${model.mdltext}
-                    </a>
+                    音声テキスト: <a href="soundlist.html?mdlsound=${mdlsound}" class="soundtext">${mdlsound}</a>
                 `;
 
-                napisy.appendChild(listItem); // リストに追加
+                sound.appendChild(listItem); // リストに追加
             });
 
         })
