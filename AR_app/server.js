@@ -5,8 +5,8 @@ const https = require('https'); // httpsモジュールをインポート
 const app = express();
 
 // SSL証明書の読み込み
-const privateKey = fs.readFileSync(path.join(__dirname, 'certs', 'private-key.pem'), 'utf8');
-const certificate = fs.readFileSync(path.join(__dirname, 'certs', 'certificate.pem'), 'utf8');
+const privateKey = fs.readFileSync(path.join(__dirname, 'private-key.pem'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'certificate.pem'), 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 // ルートをインポート
