@@ -1,42 +1,34 @@
+// server.js
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
-const https = require('https'); // httpsモジュールをインポート
 const app = express();
 
 // ルートをインポート
-const markerRoutes2 = require('./routes/markerRoutes2');
-const adminlogin = require('./routes/admin');
-const newadmin = require('./routes/newAdmin');
-const modellistRoutes = require('./routes/modellistRoutes');
+const markerRoutes2 = require('./routes/markerRoutes2'); // markerRoutesをインポート
+const adminlogin = require('./routes/admin'); // adminログインルートをインポート
+const newadmin = require('./routes/newAdmin'); // 新規adminルートをインポート
+const modellistRoutes = require('./routes/modellistRoutes'); // モデルリストのルートをインポート
 const napisyRoutes = require('./routes/napisyRoutes');
 const soundRoutes = require('./routes/soundRoutes');
 const napisylistRoutes = require('./routes/napisylistRoutes');
-
-// ボディパーサー設定
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// ボディパーサー設定 (POSTデータを受け取るため)
+app.use(express.urlencoded({ extended: true }));  // URLエンコードされたデータの処理
+app.use(express.json());  // JSONデータの処理
 
 // public フォルダを静的ファイルの提供場所として指定
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));  // 'public' フォルダを静的ファイルとして公開
 
 // APIエンドポイントを設定
-app.use('/api', markerRoutes2);
-app.use('/api', adminlogin);
-app.use('/api', newadmin);
-app.use('/modellist', modellistRoutes);
+app.use('/api', markerRoutes2);  // /api/markerinfo2 にアクセスできるように設定
+app.use('/api', adminlogin);     // /api/login エンドポイントが有効になります
+app.use('/api', newadmin);       // /api/newAdmin エンドポイントが有効になります
+app.use('/modellist', modellistRoutes); // /modellist エンドポイントが有効になります
 app.use('/napisy', napisyRoutes);
 app.use('/sound', soundRoutes);
 app.use('/napisylist', napisylistRoutes);
 
-// SSL証明書を読み込む
-const options = {
-  key: fs.readFileSync(path.join(__dirname, 'certs', 'private-key.pem')), // プライベートキーのパス
-  cert: fs.readFileSync(path.join(__dirname, 'certs', 'certificate.pem')), // 証明書ファイルのパス
-};
-
-// HTTPSサーバーの起動
+// サーバーの起動
 const PORT = 3000;
-https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
-  console.log(`サーバーが https://44.200.130.41:${PORT} で起動しました`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`サーバーが http://localhost:${PORT} で起動しました`);
 });
