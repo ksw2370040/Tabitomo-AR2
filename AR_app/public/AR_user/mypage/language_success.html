@@ -6,28 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/mypage.css">
     <title>マイページ</title>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // 仮の言語リスト（データベースから取得予定のもの）
-            const languages = ["日本語", "英語", "中国語", "フランス語", "韓国語"];
-
-            // ボタンを挿入するコンテナを取得
-            const container = document.querySelector(".button-container");
-            container.innerHTML = ""; // 初期内容をクリア
-
-            // 各言語のボタンを生成して追加
-            languages.forEach(language => {
-                const button = document.createElement("button");
-                button.textContent = language;
-                const link = document.createElement("a");
-                link.href = "#";  // 必要に応じてリンク先を設定
-                link.appendChild(button);
-                container.appendChild(link);
-            });
-        });
-    </script>
 </head>
-
 <body>
 
     <header>
@@ -39,13 +18,12 @@
     </header>
 
     <div class="content">
-        <div class="button-container">
-            <!-- JavaScriptで言語リストが挿入される -->
+       
+        <div class="change-success">
+          <h2>言語変更完了！（ここは変更後の各言語で表示されたり）</h2>
         </div>
 
         <a href="mypage.html" class="back-button">戻る</a>
-
-        <a href="mypage.html">マイページに</a>
 
     </div>
 

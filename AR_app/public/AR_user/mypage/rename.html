@@ -27,6 +27,11 @@
             <input type="text" id="new-name" placeholder="新しい名前を入力" required>
 
             <a href="javascript:void(0);" id="change-name-link" class="change-name-button">名前を変更</a>
+<script>
+    document.getElementById("change-name-link").addEventListener("click", function() {
+        window.location.href = "renamesuccess.html";
+    });
+</script>
         </div>
 
         <a href="mypage.html" class="back-button">戻る</a>

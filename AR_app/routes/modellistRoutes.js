@@ -18,4 +18,21 @@ router.get('/', async (req, res) => {
     });
 });
 
+router.delete('/:mdlid', async (req, res) => {
+    const mdlid = req.params.mdlid;  // URLパラメータから削除対象のモデルIDを取得
+    const query = 'DELETE FROM model_info WHERE mdlid = $1';
+
+    connection.query(query, [mdlid], (err, results) => {
+        if (err) {
+            console.error('データベースエラー:', err);
+            return res.status(500).send('サーバーエラー');
+        }
+        if (results.rowCount > 0) {
+            res.status(200).send('削除成功');
+        } else {
+            res.status(404).send('モデルが見つかりません');
+        }
+    });
+});
+
 module.exports = router;

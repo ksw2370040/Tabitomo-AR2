@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || '管理者システム' %></title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <h1><a href="/menu">管理者システム</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: <%= adminname || '未設定' %></p>
+            </li>
+            <li><a href="/logout">ログアウト</a></li>
+        </ul>
+    </header>
+
+    <main>
+        <!-- サイドバー -->
+        <div class="sidebar">
+            <div class="sidebar-container">
+                <a href="/menu"><button>システムメニュー</button></a>
+                <div class="container">
+                    <a href="/user"><button>ユーザー情報</button></a>
+                    <a href="/marker"><button>マーカー情報</button></a>
+                    <a href="/model"><button>3Dモデル</button></a>
+                    <a href="/subtitle"><button>字幕管理</button></a>
+                    <a href="/sound"><button>音声管理</button></a>
+                    <a href="/map"><button>マップ管理</button></a>
+                    <a href="/language"><button>言語管理</button></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div class="container">
+            <%- content %>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer>
+        <p>© 2024 TIC 大原学園 C-2</p>
+    </footer>
+
+    <!-- スクリプト -->
+    <script>
+        // ページ遷移時にadminnameを設定
+        const storedAdminName = localStorage.getItem('adminname');
+        if (storedAdminName) {
+            document.querySelector('header p').textContent = `ユーザー名: ${storedAdminName}`;
+        }
+    </script>
+</body>
+
+</html>

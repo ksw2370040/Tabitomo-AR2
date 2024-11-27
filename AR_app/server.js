@@ -37,5 +37,5 @@ app.use('/napisylist', napisylistRoutes);
 // HTTPSサーバーの起動
 const PORT = 3000;
 https.createServer(credentials, app).listen(PORT, '0.0.0.0', () => {
-  console.log(`サーバーが https://3.238.65.121:${PORT} で起動しました`);
+  console.log(`サーバーが https://3.239.66.141:${PORT} で起動しました`);
 });

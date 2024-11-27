@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - 管理者システム</title> <!-- 動的にタイトルが入る -->
+    <link rel="stylesheet" href="/styles.css">  <!-- CSS -->
+</head>
+<body>
+    <header>
+        <h1><a href="/menu">管理者システム</a></h1>
+        <ul>
+            <li><p>ユーザー名: <%= adminname %></p></li> <!-- ユーザー名を表示 -->
+            <li><a href="/logout">ログアウト</a></li>
+        </ul>
+    </header>
+
+    <main>
+        <!-- メインコンテンツ部分（menu.ejs の内容がここに入る） -->
+        <%- body %>  
+    </main>
+
+    <footer>
+        <p>© 2024 TIC 大原学園 C-2</p>
+    </footer>
+</body>
+</html>

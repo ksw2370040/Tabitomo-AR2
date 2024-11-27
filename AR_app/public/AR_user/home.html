@@ -13,7 +13,7 @@
     <header>
         <h1>ホーム</h1>
         <ul>
-            <li>ID:</li>
+            <li><p>名前:</p></li>
             <li><a href="logout.html">ログアウト</a></li>
         </ul>
     </header>
@@ -21,6 +21,7 @@
     <div class="content">
         <div class="button-container">
             <a href="test2.html"><button>AR</ARea></button></a>
+            <a href="map.html"><button>※作成中-マップ-</button></a>
             <a href="map.html"><button>マップ</button></a>
             <a href="mypage/mypage.html"><button>マイページ</button></a>
         </div>
@@ -31,5 +32,23 @@
     </footer>
 
 </body>
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams2 = new URLSearchParams(window.location.search);
+    let username = urlParams2.get('username');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
+    if (username) {
+        localStorage.setItem('username', username);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        username = localStorage.getItem('username');
+    }
+
+    // adminnameが存在する場合にページに表示
+    if (username) {
+        document.querySelector('header p').textContent = `name: ${username}`;
+    }
+</script>
 
 </html>
