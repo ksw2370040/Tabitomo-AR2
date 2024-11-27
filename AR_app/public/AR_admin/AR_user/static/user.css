@@ -16,7 +16,7 @@ body {
     background-color: #ffffff;
 }
 
-main{
+main {
     padding-bottom: 50px;
 }
 
@@ -34,7 +34,11 @@ header {
     border-bottom: 2px solid #ffffff;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 50px;
+    height: 70px;
+}
+
+#logout {
+    font-size: 0.5em;
 }
 
 header h1 {
@@ -48,16 +52,16 @@ header a {
     font-size: 1em;
 }
 
-header p{
+header p {
     font-size: 0.5em;
     margin-right: 50px;
 }
 
-li{
+li {
     list-style: none;
 }
 
-ul{
+ul {
     padding-left: 0;
 }
 
@@ -65,34 +69,38 @@ ul{
 
 main {
     flex-grow: 1;
-  }
+    margin-top: 70px;
+}
 
 /* サイドバー */
 .sideber {
     position: fixed;
-    top: 50px; /* ヘッダーの高さを考慮 */
     left: 0;
     width: 200px;
-    height: calc(100vh - 60px - 40px); /* ヘッダー分を引いた高さ */
+    height: calc(100vh - 70px);
+    /* ヘッダーの高さを引いた高さ */
     background-color: #ffffff;
     padding: 20px 0;
-    padding-bottom: 50px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    overflow-y:scroll /*スクロールばあ*/
-    
 }
 
+/* サイドバー内のコンテンツ */
 .sideber-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    /* 垂直方向の中央揃え */
     align-items: center;
+    height: 100%;
+    /* サイドバーの高さを使う */
     gap: 15px;
 }
 
+/* その他のスタイル */
 .sideber-container a {
     width: 80%;
     text-align: center;
-    border:1px solid;
+    border: 1px solid;
     border-color: #333;
 }
 
@@ -114,17 +122,20 @@ main {
 
 /* メインコンテンツ */
 .container {
-    margin-top: 50px; /* ヘッダーの高さを考慮 */
-    margin-left: 220px; /* サイドバーの幅を考慮 */
+    margin-top: 50px;
+    /* ヘッダーの高さを考慮 */
+    margin-left: 220px;
+    /* サイドバーの幅を考慮 */
     padding: 20px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2列 */
+    grid-template-columns: repeat(2, 1fr);
+    /* 2列 */
     gap: 15px;
 }
 
-.container a{
+.container a {
     padding: 20px 20px 20px 20px;
-    border:1px solid;
+    border: 1px solid;
     border-color: #333;
 }
 

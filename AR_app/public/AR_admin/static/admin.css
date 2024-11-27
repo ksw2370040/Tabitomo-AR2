@@ -34,7 +34,7 @@ header {
     border-bottom: 2px solid #ffffff;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 50px;
+    height: 70px;
 }
 
 header h1 {
@@ -65,33 +65,34 @@ ul {
 
 main {
     flex-grow: 1;
+    margin-top: 70px;
 }
 
 /* サイドバー */
 .sideber {
     position: fixed;
-    top: 50px;
-    /* ヘッダーの高さを考慮 */
     left: 0;
     width: 200px;
-    height: calc(100vh - 60px - 40px);
-    /* ヘッダー分を引いた高さ */
+    height: calc(100vh - 70px);
+    /* ヘッダーの高さを引いた高さ */
     background-color: #ffffff;
     padding: 20px 0;
-    padding-bottom: 50px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    overflow-y: scroll
-        /*スクロールばあ*/
-
 }
 
+/* サイドバー内のコンテンツ */
 .sideber-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    /* 垂直方向の中央揃え */
     align-items: center;
+    height: 100%;
+    /* サイドバーの高さを使う */
     gap: 15px;
 }
 
+/* その他のスタイル */
 .sideber-container a {
     width: 80%;
     text-align: center;
