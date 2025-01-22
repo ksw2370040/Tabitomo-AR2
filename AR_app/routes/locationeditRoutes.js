@@ -9,10 +9,10 @@ const multer = require('multer');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const directoryMap = {
-            'mdlimage': 'C:/Tabitomo-AR/AR_app/public/Content/.glb',
-            'patt': 'C:/Tabitomo-AR/AR_app/public/Content/.patt',
-            'mkimage': 'C:/Tabitomo-AR/AR_app/public/Content/markerimage'
-        };
+            'mdlimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/.glb',
+            'patt': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/.patt',
+            'mkimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/markerimage',
+              };
         cb(null, directoryMap[file.fieldname] || 'default/path');
     },
     filename: (req, file, cb) => {

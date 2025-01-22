@@ -10,7 +10,7 @@ const fs = require('fs');  // fs モジュールをインポート
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // サウンドファイルの保存先ディレクトリ
-    cb(null, 'C:/Tabitomo-AR/AR_app/public/Content/sound');
+    cb(null, '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/sound');
   },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now();
@@ -92,7 +92,7 @@ router.post('/edit', upload.single('soundFile'), async (req, res) => {
     try {
         // ファイルがアップロードされた場合、古いファイルを削除
         if (soundFile) {
-            const oldFilePath = path.join('C:/Tabitomo-AR/AR_app/public/Content/sound', oldsoundfile);
+            const oldFilePath = path.join('/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/sound', oldsoundfile);
             if (fs.existsSync(oldFilePath)) {
                 fs.unlinkSync(oldFilePath);
             }
