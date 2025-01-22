@@ -10,11 +10,11 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // フィールド名に応じたアップロード先ディレクトリのマッピング
     const directoryMap = {
-      'mdlimage': 'C:/Tabitomo-AR/AR_app/public/Content/.glb',
-      'patt': 'C:/Tabitomo-AR/AR_app/public/Content/.patt',
-      'mkimage': 'C:/Tabitomo-AR/AR_app/public/Content/markerimage',
-      'sound': 'C:/Tabitomo-AR/AR_app/public/Content/sound',
-      'subtitles': 'C:/Tabitomo-AR/AR_app/public/Content/napisy'
+      'mdlimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/.glb',
+      'patt': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/.patt',
+      'mkimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/markerimage',
+      'sound': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/sound',
+      'subtitles': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy'
     };
     // マッピングされたディレクトリを使用。デフォルトは 'default/path'
     cb(null, directoryMap[file.fieldname] || 'default/path');
@@ -56,7 +56,7 @@ router.post('/add', upload.fields([
     );
 
     // MODEL2テーブルの最大IDを取得し、新しいIDを生成
-    const { rows: modelRows } = await db.query(`
+    const { rows: modelRows } = await db.query(` 
       SELECT MAX(CAST(SUBSTRING(mdlID FROM 4) AS INTEGER)) AS max_id,
              MAX(CAST(SUBSTRING(mdlsound FROM 2) AS INTEGER)) AS max_sound,
              MAX(CAST(SUBSTRING(mdltext FROM 2) AS INTEGER)) AS max_text
@@ -74,10 +74,11 @@ router.post('/add', upload.fields([
     const subtitles = req.files['subtitles'] ? req.files['subtitles'][0].filename : null;
 
     // MODEL2テーブルにデータを挿入
-    await db.query(`
-      INSERT INTO MODEL2 (mdlID, locationID, mdlname, mdlimage, mkname, patt, mkimage, mdlsound, mdltext)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    `, [mdlID, newLocationID, mdlname, mdlimage, mkname, patt, mkimage, mdlsound, mdltext]);
+    await db.query(` 
+      INSERT INTO MODEL2 (mdlID, locationID, mdlname, mdlimage, mkname, patt, mkimage, mdlsound, mdltext) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, 
+      [mdlID, newLocationID, mdlname, mdlimage, mkname, patt, mkimage, mdlsound, mdltext]
+    );
 
     // サウンドファイルの登録（存在する場合）
     if (sound) {
