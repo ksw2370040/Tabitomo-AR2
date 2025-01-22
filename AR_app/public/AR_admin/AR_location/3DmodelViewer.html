@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3Dモデルビューア</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        model-viewer {
+            width: 90vw; /* 画面の90%の幅を使用 */
+            height: 70vh; /* 画面の70%の高さを使用 */
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>3Dモデルビューア</h1>
+        <button class="back-btn">戻る</button>
+
+    </header>
+    <main>
+        <div id="viewer-container">
+            <p id="error-message" class="error" style="display: none;">モデルファイルが見つかりません。</p>
+            <model-viewer id="model-viewer" 
+                          src="" 
+                          alt="3Dモデル" 
+                          auto-rotate 
+                          camera-controls 
+                          style="display: none;"></model-viewer>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const modelFileName = urlParams.get('model');
+
+            const modelViewer = document.getElementById('model-viewer');
+            const errorMessage = document.getElementById('error-message');
+
+            if (modelFileName) {
+                const modelPath = `/Content/.glb/${encodeURIComponent(modelFileName)}`;
+
+                // URLの確認
+                fetch(modelPath, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            modelViewer.src = modelPath;
+                            modelViewer.style.display = 'block';
+                        } else {
+                            throw new Error('ファイルが存在しません。');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('エラー:', error);
+                        errorMessage.style.display = 'block';
+                    });
+            } else {
+                errorMessage.textContent = 'URLパラメーター "model" が指定されていません。';
+                errorMessage.style.display = 'block';
+            }
+        });
+        document.querySelectorAll('.back-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        window.location.href = document.referrer; // 前のページにリダイレクト
+                    });
+                });
+    </script>
+</body>
+
+</html>

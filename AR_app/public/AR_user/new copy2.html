@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録</title>
+    <link rel="stylesheet" href="static/newac.css">
+    <!-- フォント推奨: Noto Sans JP -->
+</head>
+
+<body>
+
+    <header>
+        <h1>新規登録</h1>
+    </header>
+
+    <main>
+        <div class="registration-container">
+            <div class="app-title">
+            <h1>新規登録</h1>
+            </div>
+            <form id="registration-form" method="post">
+                <!-- ユーザー名 -->
+                <div class="form-group">
+                    <label for="username">ユーザー名</label>
+                    <input type="text" id="username" name="username" placeholder="ユーザー名を入力" required>
+                </div>
+
+                <!-- パスワード -->
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" placeholder="パスワードを入力" required autocomplete="new-password">
+                </div>
+
+                <!-- パスワード（確認用） -->
+                <div class="form-group">
+                    <label for="password-confirm">パスワード（確認用）</label>
+                    <input type="password" id="password-confirm" name="passwordConfirm" placeholder="もう一度入力" required autocomplete="new-password">
+                </div>
+
+                <!-- 言語選択 -->
+                <div class="form-group">
+                 
+                    <label for="languagename">言語選択</label>
+                    <select id="languagename" name="languagename" required>
+                        <option value="" disabled selected>言語を選択してください</option>
+                        <option value="日本語">日本語</option>
+                        <option value="英語">英語</option>
+                        <option value="中国語">中国語</option>
+                        <option value="フランス語">フランス語</option>
+                        <option value="韓国語">韓国語</option>
+                    </select>
+                
+                </div>
+
+                <!-- 登録ボタン -->
+                <button type="submit">登録内容確認</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+    </footer>
+
+    <script src="js/user.js" defer></script>
+
+</body>
+
+</html>

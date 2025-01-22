@@ -25,3 +25,14 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('モデル情報の取得に失敗しました。');
         });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mdltext = urlParams.get('mdltext'); // URL パラメータから mdltext を取得
+
+    const addButton = document.querySelector('.add-btn');
+    if (addButton && mdltext) {
+        // 新規追加ボタンのリンクを修正
+        addButton.href = `/AR_admin/AR_napisy/napisyadd.html?mdltext=${mdltext}`;
+    }
+});

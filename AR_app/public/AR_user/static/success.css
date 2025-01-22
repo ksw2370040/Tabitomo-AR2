@@ -1,0 +1,25 @@
+/* 共通スタイル */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    flex-direction: column;
+}
+
+.complete-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-url {
+    transition: transform .2s;
+
+    &:active {
+        transform: scale(.95);
+    }
+}

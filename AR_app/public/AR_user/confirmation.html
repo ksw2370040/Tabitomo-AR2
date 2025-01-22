@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/confirmation.css">
+    <title>登録確認</title>
+</head>
+
+<body>
+
+    <header>
+    </header>
+
+    <main>
+        <div class="confirmation">
+            <h1>新規登録内容確認</h1>
+            <div class="confirmation-container">
+                <p>ユーザー名: <span id="confirm-username"></span></p>
+                <p>パスワード: <span id="confirm-password"></span></p> <!-- パスワードを伏せる -->
+                <p>選択した言語: <span id="confirm-languagename"></span></p>
+                <button class="confirm-button" id="confirm-register">登録</button>
+
+                <div class="back-button">
+                    <a href="new.html">
+                        <button>戻る</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/user.js" defer></script> <!-- 変更したJavaScriptを読み込み -->
+
+</body>
+
+</html>

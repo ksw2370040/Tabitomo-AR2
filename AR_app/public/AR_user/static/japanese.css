@@ -1,0 +1,25 @@
+/* 共通スタイル */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    /* 横並びにする */
+    justify-content: center;
+    /* ボタンを中央寄せ */
+    gap: 10px;
+    /* ボタン間の間隔 */
+    margin: 10px 0;
+}
+
+.row button {
+    height: 26px;
+}

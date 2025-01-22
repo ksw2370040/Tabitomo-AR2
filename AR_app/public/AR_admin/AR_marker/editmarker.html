@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マーカー編集</title>
+    <link rel="stylesheet" href="static/marker.css">
+    <script src="js/marker.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <h1><a href="menu.html">管理者システム　　-マーカー編集-</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li id="logout">
+                <a href="">ログアウト</a>
+            </li>
+        </ul>
+    </header>
+
+    <main>
+        <div class="sideber">
+            <div class="sideber-container">
+                <a href="../menu.html"><button>メニュー</button></a>
+                <a href="../AR_user/user.html"><button>管理者情報</button></a>
+                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
+                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
+                <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
+                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="../AR_map/map.html"><button>マップ管理</button></a>
+            </div>
+        </div>
+
+        <div class="edit-container">
+            <h2>マーカー編集</h2>
+            <form id="editForm">
+                <div>
+                    <label for="mkid">ID: </label>
+                    <input type="text" id="mkid" readonly>
+                </div>
+                <div>
+                    <label for="mkname">名前: </label>
+                    <input type="text" id="mkname">
+                </div>
+                <div>
+                    <label for="patt">patt: </label>
+                    <input type="text" id="patt">
+                </div>
+                <div>
+                    <label for="mkimage">画像: </label>
+                    <input type="text" id="mkimage">
+                </div>
+                <button type="submit">保存</button>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // クエリパラメータからマーカーIDを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const mkid = urlParams.get('mkid');
+    
+        if (mkid) {
+            // APIを呼び出してマーカー情報を取得
+            fetch(`/api/markerinfo2/${mkid}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        // フォームにデータを入力
+                        document.getElementById('mkid').value = data.mkid;
+                        document.getElementById('mkname').value = data.mkname;
+                        document.getElementById('patt').value = data.patt;
+                        document.getElementById('mkimage').value = data.mkimage;
+                    } else {
+                        alert('マーカー情報の取得に失敗しました。');
+                    }
+                })
+                .catch(error => {
+                    console.error('エラー:', error);
+                    alert('マーカー情報の取得に失敗しました。');
+                });
+        } else {
+            alert('マーカーIDが指定されていません。');
+        }
+    });
+    </script>
+    

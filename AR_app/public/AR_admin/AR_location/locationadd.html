@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録</title>
+    <link rel="stylesheet" href="static/location.css">
+</head>
+<body>
+    <header>
+        <h1><a href="menu.html">管理者システム - 新規登録</a></h1>
+        <ul>
+            <li>
+                <!-- ユーザー名を表示するエリア -->
+                <p>ユーザー名: </p>
+            </li>
+            <li id="logout">
+                <!-- ログアウトリンク -->
+                <a href="#">ログアウト</a>
+            </li>
+        </ul>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h2>新規登録</h2>
+            <form id="bulk-register-form" enctype="multipart/form-data">
+                <!-- 場所情報 -->
+                <div class="form-group">
+                    <label for="locationName">場所名:</label>
+                    <!-- 場所名を入力するフィールド -->
+                    <input type="text" id="locationName" name="locationName" required placeholder="例: 東京タワー">
+                </div>
+                <div class="form-group">
+                    <label for="address">住所:</label>
+                    <!-- 住所を入力するフィールド -->
+                    <input type="text" id="address" name="address" required placeholder="例: 東京都港区芝公園">
+                </div>
+
+                <!-- モデル情報 -->
+                <div class="form-group">
+                    <label for="mdlname">モデル名:</label>
+                    <!-- モデル名を入力するフィールド -->
+                    <input type="text" id="mdlname" name="mdlname" required placeholder="例: モデル1">
+                </div>
+                <div class="form-group">
+                    <label for="mkname">マーカー名:</label>
+                    <!-- マーカー名を入力するフィールド -->
+                    <input type="text" id="mkname" name="mkname" required placeholder="例: マーカー1">
+                </div>
+                <div class="form-group">
+                    <label for="mdlimage">モデル画像（.glb）:</label>
+                    <!-- .glb形式のモデル画像をアップロード -->
+                    <input type="file" id="mdlimage" name="mdlimage" accept=".glb" required>
+                </div>
+                <div class="form-group">
+                    <label for="patt">パターンファイル（.patt）:</label>
+                    <!-- .patt形式のパターンファイルをアップロード -->
+                    <input type="file" id="patt" name="patt" accept=".patt" required>
+                </div>
+                <div class="form-group">
+                    <label for="mkimage">マーカー画像:</label>
+                    <!-- マーカー画像をアップロード -->
+                    <input type="file" id="mkimage" name="mkimage" accept="image/*" required>
+                </div>
+
+                <!-- オプション：音声ファイルと字幕ファイル -->
+                <div class="form-group">
+                    <label for="languagename">言語選択:</label>
+                    <!-- 言語を選択するドロップダウンメニュー -->
+                    <select id="languagename" name="languagename">
+                        <option value="日本語">日本語</option>
+                        <option value="英語">英語</option>
+                        <option value="韓国語">韓国語</option>
+                        <option value="中国語">中国語</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sound">音声ファイル（.mp3）:</label>
+                    <!-- 音声ファイルをアップロード -->
+                    <input type="file" id="sound" name="sound" accept=".mp3">
+                </div>
+                <div class="form-group">
+                    <label for="subtitles">字幕ファイル（.txt）:</label>
+                    <!-- 字幕ファイルをアップロード -->
+                    <input type="file" id="subtitles" name="subtitles" accept=".txt">
+                </div>
+
+                <div class="form-group">
+                    <!-- 登録ボタン -->
+                    <button type="submit" id="submit-button">新規登録</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // フォームと送信ボタンの取得
+            const form = document.getElementById('bulk-register-form');
+            const submitButton = document.getElementById('submit-button');
+
+            // フォーム送信時のイベントリスナー
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault(); // デフォルトのフォーム送信を無効化
+
+                submitButton.disabled = true; // ボタンを無効化して二重送信を防止
+                const formData = new FormData(form); // フォームデータを取得
+                const endpoint = '/locationadd/add'; // サーバーのエンドポイント
+
+                try {
+                    // 非同期でサーバーにデータを送信
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    // HTTPエラーが発生した場合に例外をスロー
+                    if (!response.ok) {
+                        throw new Error(`HTTPエラー: ${response.status}`);
+                    }
+
+                    // サーバーからのレスポンスを処理
+                    const data = await response.json();
+                    alert('一括新規登録が完了しました'); // 成功メッセージを表示
+                    window.location.href = document.referrer; // 前のページにリダイレクト
+                } catch (error) {
+                    // エラーをコンソールに出力し、ユーザーに通知
+                    console.error('エラー:', error);
+                    alert('登録中にエラーが発生しました。');
+                } finally {
+                    submitButton.disabled = false; // ボタンを再度有効化
+                }
+            });
+        });
+    </script>
+</body>
+</html>

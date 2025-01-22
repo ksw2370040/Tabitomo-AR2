@@ -4,7 +4,7 @@ const connection = require('../config'); // PostgreSQLの接続設定
 
 // modellistエンドポイント - モデル情報をJSONとして返す
 router.get('/', async (req, res) => {
-    const query = 'SELECT mdlid, mdltext FROM model_info';
+    const query = 'SELECT mdlid, mdltext FROM model2';
     connection.query(query, (err, results) => {
         if (err) {
             console.error('データベースエラー:', err);

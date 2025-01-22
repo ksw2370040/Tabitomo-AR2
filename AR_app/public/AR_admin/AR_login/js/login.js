@@ -9,6 +9,11 @@ function togglePassword() {
     if (passwordConfirmField) {
         passwordConfirmField.type = passwordConfirmField.type === "password" ? "text" : "password";
     }
+
+    const passwordnewField = document.getElementById("password");
+    if (passwordnewField) {
+        passwordnewField.type = passwordnewField.type === "password" ? "text" : "password";
+    }
 }
 
 // 新規登録フォームの処理
@@ -42,7 +47,7 @@ if (window.location.pathname.includes('confirmation.html')) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/newadmin', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    
+
         xhr.onload = function () {
             if (xhr.status === 200) {
                 window.location.href = "success.html";
@@ -71,7 +76,7 @@ document.getElementById('login-form')?.addEventListener('submit', function (even
         if (xhr.status === 200) {
             window.location.href = `/AR_admin/menu.html?adminname=${encodeURIComponent(adminname)}`;
         } else {
-            alert('ログイン失敗: ユーザー名またはパスワードが間違っています');
+            alert('ログイン失敗: 管理者名またはパスワードが間違っています');
         }
     };
 

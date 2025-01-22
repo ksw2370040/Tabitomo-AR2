@@ -59,7 +59,6 @@ header p {
 
 li {
     list-style: none;
-    margin-left: 220px;
     margin-bottom: 50px;
 }
 
@@ -72,6 +71,7 @@ ul {
 main {
     flex-grow: 1;
     margin-top: 70px;
+    display: flex;
 }
 
 /* サイドバー */
@@ -171,4 +171,43 @@ footer {
 
 .container button:hover {
     background-color: #ededed;
+}
+
+.modellist ul {
+    display: block;
+    /* グリッドから通常のリスト表示に変更 */
+    padding: 0;
+    /* 不要な余白を削除 */
+    gap: 0;
+    /* 列間の隙間は不要 */
+    list-style-type: none;
+    /* デフォルトのリストスタイルを削除 */
+    margin-left: 220px;
+    /* 必要であれば維持 */
+}
+
+.modellist ul li {
+    margin-bottom: 40px;
+    /* アイテム間の隙間 */
+}
+
+.modellist {
+    margin-top: 100px;
+}
+
+
+.addbotton button {
+    padding: 15px;
+    /* パディングを大きく */
+    font-size: 15px;
+    /* フォントサイズを大きく */
+    width: 150px;
+    /* 幅を指定 */
+    height: 50px;
+    /* 高さを指定 */
+}
+
+.addbotton {
+    margin-top: 30px;
+    margin-right: 30px;
 }

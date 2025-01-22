@@ -4,27 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/user.css">
-
     <title>新規登録</title>
-
-
+    <link rel="stylesheet" href="static/new.css">
+    <!-- フォント推奨: Noto Sans JP -->
 </head>
 
 <body>
-    <form action="home.html">
-        <label for="name">名前</label>
-        <input type="text" id="name" name="name" placeholder="名前を入力してください" required>
 
-        <label for="password">パスワード</label>
-        <input type="password" id="password" name="password" placeholder="パスワードを入力してください" required>
+    <header>
+        <h1>新規登録</h1>
+    </header>
 
-        <label for="confirm-password">パスワード再入力</label>
-        <input type="password" id="confirm-password" name="confirm-password" placeholder="もう一度パスワードを入力してください" required>
+    <main>
+        <div class="registration-container">
+            <form id="registration-form" method="post">
+                <!-- ユーザー名 -->
+                <div class="form-group">
+                    <label for="username">ユーザー名</label>
+                    <input type="text" id="username" name="username" placeholder="ユーザー名を入力" required>
+                </div>
 
-        <button type="submit">登録</button>
-    </form>
-    <a href="home.html"><button type="submit">登録</button></a>
+                <!-- パスワード -->
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" placeholder="パスワードを入力" required
+                        autocomplete="new-password">
+                </div>
+
+                <!-- パスワード（確認用） -->
+                <div class="form-group">
+                    <label for="password-confirm">パスワード（確認用）</label>
+                    <input type="password" id="password-confirm" name="passwordConfirm" placeholder="もう一度入力" required
+                        autocomplete="new-password">
+                </div>
+
+                <div id="show-password">
+                    <input type="checkbox" id="checkbox" onclick="togglePassword()">
+                    <label for="checkbox" onclick="" id="checkboxlabel">パスワード表示</onclick>
+                </div>
+
+                <!-- 言語選択 -->
+                <div class="form-group">
+                    <label for="languagename">言語選択</label>
+                    <select id="languagename" name="languagename" required>
+                        <option value="" disabled selected>言語を選択してください</option>
+                        <option value="日本語">日本語</option>
+                        <option value="英語">英語</option>
+                        <option value="韓国語">韓国語</option>
+                        <option value="中国語">中国語</option>
+                    </select>
+                </div>
+
+                <!-- 登録ボタン -->
+                <button class="confirm-button" type="submit">登録内容確認</button>
+            </form>
+            <div class="back-button">
+                <a href="selectaccount.html">
+                    <button>戻る</button>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/user.js" defer></script>
+
 </body>
 
 </html>

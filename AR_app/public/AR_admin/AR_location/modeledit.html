@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モデル編集</title>
+</head>
+
+<body>
+    <h1>モデル編集</h1>
+    <form id="edit-form" enctype="multipart/form-data">
+        <label for="locationname">場所名:</label>
+        <input type="text" id="locationname" name="locationname"><br>
+
+        <label for="address">住所:</label>
+        <input type="text" id="address" name="address"><br>
+
+        <label for="mdlname">モデル名:</label>
+        <input type="text" id="mdlname" name="mdlname"><br>
+
+        <label for="mdlimage">モデル画像:</label>
+        <input type="file" id="mdlimage" name="mdlimage" accept=".glb"><br>
+        <span id="mdlimage-name"></span><br>
+
+        <label for="mkname">マーカー名:</label>
+        <input type="text" id="mkname" name="mkname"><br>
+
+        <label for="patt">パターンファイル:</label>
+        <input type="file" id="patt" name="patt" accept=".patt"><br>
+        <span id="patt-name"></span><br>
+
+        <label for="mkimage">マーカー画像:</label>
+        <input type="file" id="mkimage" name="mkimage" accept="image/*"><br>
+        <span id="mkimage-name"></span><br>
+
+        <button type="submit">更新</button>
+    </form>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const mdlid = urlParams.get('mdlid');
+
+        if (mdlid) {
+            fetch(`/locationedit?mdlid=${mdlid}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('locationname').value = data.locationname;
+                    document.getElementById('address').value = data.address;
+                    document.getElementById('mdlname').value = data.mdlname;
+                    document.getElementById('mkname').value = data.mkname;
+
+                    // 既存のファイル名を表示
+                    document.getElementById('mdlimage-name').textContent = `現在のモデル画像: ${data.mdlimage}`;
+                    document.getElementById('patt-name').textContent = `現在のパターンファイル: ${data.patt}`;
+                    document.getElementById('mkimage-name').textContent = `現在のマーカー画像: ${data.mkimage}`;
+                })
+                .catch(error => {
+                    console.error('エラー:', error);
+                    alert('データを取得できませんでした。');
+                });
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            formData.append('mdlid', mdlid);
+
+            fetch('/locationedit/edit', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.href = '/AR_admin/AR_location/location.html';
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('エラーが発生しました');
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAR with Multiple Markers</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading AR Models...</div>
+
+    <a-scene embedded arjs>
+        <!-- Camera for AR -->
+        <a-camera></a-camera>
+
+        <!-- Marker for AR, this will be dynamically updated with models -->
+        <a-marker id="ar-marker" preset="hiro">
+            <a-entity id="3d-model" scale="0.5 0.5 0.5" visible="false"></a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        // Fetch models data from the server
+        fetch('/modelsRoutes/models')
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    data.forEach(modelData => {
+                        // Create a new marker for each model
+                        const marker = document.createElement('a-marker');
+                        marker.setAttribute('type', 'pattern');
+                        marker.setAttribute('url', `Content/.patt/${modelData.patt}`);
+                        marker.setAttribute('id', `marker-${modelData.mdlid}`);
+
+                        // Create a new 3D model for each marker
+                        const model = document.createElement('a-entity');
+                        model.setAttribute('id', `model-${modelData.mdlid}`);
+                        model.setAttribute('src', `Content/.glb/${modelData.mdlimage}`);
+                        model.setAttribute('scale', '0.5 0.5 0.5');
+                        model.setAttribute('visible', 'false');
+                        
+                        // Add the model to the marker
+                        marker.appendChild(model);
+                        document.querySelector('a-scene').appendChild(marker);
+
+                        // Add event listeners for the marker
+                        marker.addEventListener('markerFound', function() {
+                            model.setAttribute('visible', true);
+                        });
+
+                        marker.addEventListener('markerLost', function() {
+                            model.setAttribute('visible', false);
+                        });
+                    });
+                } else {
+                    document.getElementById('loading').innerText = 'No models available.';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching AR models:', error);
+                document.getElementById('loading').innerText = 'Failed to load AR models.';
+            });
+    </script>
+</body>
+</html>

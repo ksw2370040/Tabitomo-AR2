@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字幕編集</title>
+    <link rel="stylesheet" href="static/napisylist.css">
+</head>
+<body>
+
+<main>
+    <form id="edit-napisy-form" enctype="multipart/form-data">
+        <div>
+            <label for="currentlanguagename">現在の言語名:</label>
+            <h2 id="currentlanguagename" style="display:inline;"></h2>  <!-- 言語名を表示 -->
+            <input type="text" id="currentlanguagename-input" name="currentlanguagename" readonly style="display:none;">  <!-- 非表示のinput -->
+        </div>
+
+        <div>
+            <label for="languagename">言語名:</label>
+            <select id="languagename" name="languagename">
+                <!-- サーバーから動的にリストを取得 -->
+            </select>
+        </div>
+
+        <div>
+            <label for="napisyfile">ファイル名:</label>
+            <h2 id="currentnapisyfile" style="display:inline;"></h2> <!-- ファイル名を表示 -->
+            <input type="text" id="napisyfile" name="napisyfile" required pattern="[a-zA-Z0-9\-_.]+" title="半角英数字、ハイフン、アンダースコア、ドットのみが使用できます" style="display:none;"> <!-- 非表示のinput -->
+        </div>
+
+        <div>
+            <label for="napisycontent">ファイル内容:</label>
+            <textarea id="napisycontent" name="napisycontent" rows="10" required></textarea>
+        </div>
+
+        <div>
+            <label for="newNapisyFile">新しい字幕ファイル:</label>
+            <input type="file" id="newNapisyFile" name="napisyFile" accept=".txt">
+        </div>
+
+        <button type="submit">保存</button>
+    </form>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const oldnapisyfile = urlParams.get('napisyfile');
+        const oldlanguagename = urlParams.get('languagename');
+        const oldmdltext = urlParams.get('mdltext');
+
+        // 言語リストを取得してセレクトボックスに表示
+        fetch(`/napisylist/languages?mdltext=${oldmdltext}`)
+            .then(response => response.json())
+            .then(data => {
+                const languagenameSelect = document.getElementById('languagename');
+                // 現在の言語名を最初の選択肢に挿入
+                const defaultOption = document.createElement('option');
+                defaultOption.value = oldlanguagename;
+                defaultOption.textContent = oldlanguagename;
+                defaultOption.selected = true;  // 現在の言語名を選択状態に
+                languagenameSelect.appendChild(defaultOption);
+
+                // 他の言語をリストに追加
+                data.forEach(lang => {
+                    if (lang !== oldlanguagename) {
+                        const option = document.createElement('option');
+                        option.value = lang;
+                        option.textContent = lang;
+                        languagenameSelect.appendChild(option);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('言語リストの取得に失敗しました:', error);
+                alert('言語リストの取得に失敗しました。');
+            });
+
+        // ファイル内容の読み込み
+        fetch(`/napisylist/edit?mdltext=${oldmdltext}&napisyfile=${oldnapisyfile}`)
+            .then(response => response.json())
+            .then(data => {
+                // 現在のファイル名と内容を表示
+                document.getElementById('currentnapisyfile').textContent = oldnapisyfile;
+                document.getElementById('napisycontent').value = data.content;
+                document.getElementById('currentlanguagename').textContent = oldlanguagename;
+                // 非表示のinputに値を設定
+                document.getElementById('currentlanguagename-input').value = oldlanguagename;
+                document.getElementById('napisyfile').value = oldnapisyfile;
+            })
+            .catch(error => {
+                console.error('ファイルの内容取得に失敗しました:', error);
+                alert('ファイルの内容取得に失敗しました。');
+            });
+
+        // 新しいファイルが選択された場合
+        document.getElementById('newNapisyFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // 新しいファイル内容を表示
+                    document.getElementById('napisycontent').value = e.target.result;
+                    // ファイル名を反映
+                    document.getElementById('napisyfile').value = file.name;
+                };
+                reader.readAsText(file);  // ファイル内容をテキストとして読み込み
+            }
+        });
+
+        // フォーム送信時の処理
+        document.getElementById('edit-napisy-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            formData.append('oldnapisyfile', oldnapisyfile);
+            formData.append('oldlanguagename', oldlanguagename);
+            formData.append('oldmdltext', oldmdltext);
+
+            fetch('/napisylist/edit', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('字幕情報を更新しました。');
+                        window.location.href = `/AR_admin/AR_napisy/napisylist.html?mdltext=${encodeURIComponent(oldmdltext)}`;
+                    } else {
+                        alert(result.error || '字幕情報の更新に失敗しました。');
+                    }
+                })
+                .catch(error => {
+                    console.error('字幕情報の更新に失敗しました:', error);
+                    alert('字幕情報の更新に失敗しました。');
+                });
+        });
+    });
+</script>
+
+</body>
+</html>

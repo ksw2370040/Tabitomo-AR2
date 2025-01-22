@@ -48,4 +48,31 @@ router.post('/markerregister', upload.single('mkimage'), (req, res) => {
     });
 });
 
+// 新規登録フォームの表示
+router.get('/new', (req, res) => {
+    // mkidの最大値を取得（例: 'M0010'）
+    const query = 'SELECT MAX(mkid) AS max_mkid FROM marker';
+    connection.query(query, (err, result) => {
+        if (err) {
+            console.error('データベースエラー:', err);
+            return res.status(500).json({ success: false, message: 'サーバーエラー' });
+        }
+
+        let nextMkid = 'M0001'; // デフォルトの値（最初のmkid）
+        if (result.rows[0].max_mkid) {
+            // 最大mkid（例: 'M0010'）を取り出す
+            const maxMkid = result.rows[0].max_mkid;
+            // 数値部分を抽出してインクリメント
+            const numPart = parseInt(maxMkid.slice(1)); // 'M'を取り除いて数値部分を取得
+            const nextNum = numPart + 1; // 数値をインクリメント
+
+            // 次のmkidを生成（例: 'M0011'）
+            nextMkid = 'M' + String(nextNum).padStart(4, '0');
+        }
+
+        res.render('newMarkerForm', { nextMkid }); // `nextMkid`をテンプレートに渡して表示
+    });
+});
+
+
 module.exports = router;

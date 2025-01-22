@@ -1,3 +1,4 @@
+<!-- C:\Tabitomo-AR\AR_app\public\AR_user\login.html -->
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,35 +6,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="static/user.css">
-    <script src="js/login.js" defer></script>
-
-
+    <link rel="stylesheet" href="static/login.css">
+    <script src="js/user.js" defer></script>
 </head>
 
 <body>
     <div class="login">
+        <div class="app-title">
+            <h1>ログイン</h1>
+        </div>
         <div class="login-screen">
-            <div class="app-title">
-                <h1>Login</h1>
-            </div>
-
             <form id="login-form" class="login-form">
                 <div class="control-group">
-                    <input type="text" class="login-field" value="" placeholder="Username" id="login-name" name="adminname" required>
-                    <label class="login-field-icon fui-user" for="login-name"></label>
+                    <label for="login-pass">ユーザー名</label>
+                    <input type="text" class="login-field" value="" placeholder="ユーザー名を入力" id="login-name"
+                        name="username" required>
+                    <!-- <label class="login-field-icon fui-user" for="login-name"></label> -->
                 </div>
 
                 <div class="control-group">
-                    <input type="password" class="login-field" value="" placeholder="Password" id="login-pass" name="password" required>
-                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    <label for="login-pass">パスワード</label>
+                    <input type="password" class="login-field" value="" placeholder="パスワードを入力" id="login-pass"
+                        name="password" required>
+                    <!-- <label class="login-field-icon fui-lock" for="login-pass"></label> -->
                 </div>
                 <div id="show-password">
-                    <input type="checkbox" onclick="togglePassword()"> パスワード表示
+                    <input type="checkbox" id="checkbox" onclick="togglePassword()">
+                    <label for="checkbox" onclick="" id="checkboxlabel">パスワード表示</onclick>
                 </div>
-                <button type="submit" class="btn btn-primary btn-large btn-block">Login</button>
+                <button class="login-button" type="submit">Login</button>
             </form>
-            <a class="btn btn-primary btn-large btn-block" href="home.html">Login</a>
+
+            <div class="button-group">
+                <a class="new-url" href="new.html">
+                    <button>新規登録</button>
+                </a>
+                <a class="select-url" href="selectaccount.html">
+                    <button>戻る</button>
+                </a>
+            </div>
         </div>
     </div>
 </body>

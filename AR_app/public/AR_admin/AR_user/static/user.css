@@ -155,18 +155,48 @@ footer {
 }
 
 /* ボタン */
-.container button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1em;
-    color: #333;
-    background-color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.container a.btn_18 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    height: 4rem;
+    width: 500px;
+    margin: auto;
+    padding: 0 4rem;
+    border-radius: 100vw;
+    background: #ffffff;
+    background-size: 400%;
+    color: #000000;
 }
 
-.container button:hover {
-    background-color: #ededed;
+.container a.btn_18:hover::before {
+    transform: scaleX(1);
+}
+
+.container a.btn_18:hover {
+    color: #fff;
+}
+
+.container a.btn_18 span {
+    position: relative;
+    z-index: 1;
+}
+
+.container a.btn_18::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    width: 100%;
+    height: inherit;
+    border-radius: inherit;
+    background: linear-gradient(82.3deg,
+            rgb(110, 255, 183) 10.8%,
+            rgb(0, 80, 172) 94.3%);
+    transition: all 0.45s;
 }

@@ -17,7 +17,10 @@ body {
 }
 
 main {
-    padding-bottom: 50px;
+    margin-left: 220px;
+    /* サイドバー幅に合わせて余白を確保 */
+    padding: 20px;
+    /* 内側の余白 */
 }
 
 /* Header styling */
@@ -59,7 +62,6 @@ header p {
 
 li {
     list-style: none;
-    margin-left: 220px;
     margin-bottom: 50px;
 }
 
@@ -71,7 +73,7 @@ ul {
 
 main {
     flex-grow: 1;
-    margin-top: 70px;
+    margin-top: 50px;
 }
 
 /* サイドバー */
@@ -171,4 +173,71 @@ footer {
 
 .container button:hover {
     background-color: #ededed;
+}
+
+
+
+/* その他のスタイル */
+.markerinfo h2 {
+    width: 80%;
+    display: inline-flex;
+    /* 横並びにする */
+}
+
+.markerinfo {
+    padding: 100;
+}
+
+.newmarkerbotton {
+    display: flex;
+    /* 横並びの制御をフレックスに */
+    justify-content: flex-end;
+    /* 左寄せに設定 */
+}
+
+.newmarkerbotton a {
+    display: inline-block;
+    /* ボタンをブロック要素に */
+    width: 150px;
+    /* 固定幅 */
+    padding: 10px 20px;
+    /* 内側の余白 */
+    font-size: 16px;
+    /* フォントサイズ */
+    text-align: center;
+    /* 中央揃え */
+    text-decoration: none;
+    /* 下線を消す */
+    color: #ffffff;
+    /* テキスト色 */
+    background-color: #333333;
+    /* 背景色 */
+    border-radius: 5px;
+    /* 角丸 */
+    margin-top: 20px;
+}
+
+/* ボタンにホバーしたときの効果 */
+.newmarkerbotton a:hover {
+    background-color: #0056b3;
+    /* ホバー時の色 */
+}
+
+
+.markerinfo ul {
+    display: block;
+    /* 縦並びに変更 */
+    gap: 0;
+    /* 不要な列間の隙間を削除 */
+    list-style-type: none;
+    /* デフォルトのリストスタイルを削除 */
+    padding-right: 0;
+    /* 不要な余白を削除 */
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.markerinfo ul li {
+    margin-bottom: 20px;
+    /* アイテム間の隙間を設定 */
 }

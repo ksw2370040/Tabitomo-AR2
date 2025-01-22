@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/mypage.css">
+    <script src="../js/user.js" defer></script>
     <title>マイページ</title>
 </head>
 <body>
@@ -12,19 +13,17 @@
     <header>
         <h1>マイページ</h1>
         <ul>
-            <li>ID:</li>
-            <li><a href="logout.html">ログアウト</a></li>
+            <li><p id="username-display"></p> <!-- ユーザー名表示用のIDを追加 --></li>
+            <li><a href="../logout.html">ログアウト</a></li>
         </ul>
     </header>
 
     <div class="content">
-       
         <div class="change-success">
-          <h2>言語変更完了！（ここは変更後の各言語で表示されたり）</h2>
+            <h2>言語変更完了！（ここは変更後の各言語で表示されたり）</h2>
         </div>
 
         <a href="mypage.html" class="back-button">戻る</a>
-
     </div>
 
     <footer>
@@ -32,5 +31,39 @@
     </footer>
 
 </body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let username = urlParams.get('username');
+
+    // usernameがURLパラメータにある場合、ローカルストレージに保存
+    if (username) {
+        localStorage.setItem('username', username);
+    } else {
+        // ローカルストレージから取得
+        username = localStorage.getItem('username');
+    }
+
+    // ユーザー名が存在する場合、ヘッダーに表示
+    if (username) {
+        document.getElementById('username-display').textContent = `名前: ${username}`;
+    }
+</script>
+<script>
+    // URLパラメータまたはローカルストレージからlanguagenameを取得
+    let languagename = urlParams.get('languagename');
+
+    // languagenameがURLパラメータにある場合はローカルストレージに保存
+    if (languagename) {
+        localStorage.setItem('languagename', languagename);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        languagename = localStorage.getItem('languagename');
+    }
+
+    // 言語変更後のメッセージにlanguagenameを反映
+    if (languagename) {
+        document.querySelector('.change-success h2').textContent = `言語変更完了！（言語: ${languagename}）`;
+    }
+</script>
 
 </html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3Dモデル登録</title>
+    <link rel="stylesheet" href="static/modeladd.css">
+</head>
+
+<body>
+    <header>
+        <h1><a href="../menu.html">管理者システム　　-3Dモデル-</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li id="logout">
+                <a href="">ログアウト</a>
+            </li>
+        </ul>
+    </header>
+
+    <main>
+
+        <div class="sideber">
+            <div class="sideber-container">
+                <a href="../menu.html"><button>メニュー</button></a>
+                <a href="../AR_user/user.html"><button>管理者情報</button></a>
+                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
+                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
+                <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
+                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="../AR_map/map.html"><button>マップ管理</button></a>
+                <!-- <a href="AR_language/language.html"><button>言語管理</button></a> -->
+            </div>
+        </div>
+
+        <form id="model-add-form" enctype="multipart/form-data">
+            <div>
+                <label for="mdlname">モデル名:</label>
+                <input type="text" id="mdlname" name="mdlname" required>
+            </div>
+            <div>
+                <label for="mdlfile">モデルファイル (.glb, .gltf):</label>
+                <input type="file" id="mdlfile" name="mdlfile" accept=".glb,.gltf" required>
+            </div>
+            <div>
+                <label for="mkfile">マーカーファイル (.patt):</label>
+                <input type="file" id="mkfile" name="mkfile" accept=".patt" required>
+            </div>
+            <div>
+                <label for="language">言語:</label>
+                <select id="language" name="language" required>
+                    <option value="japan">日本語</option>
+                    <option value="english">英語</option>
+                    <option value="china">中国語</option>
+                    <option value="korea">韓国語</option>
+                </select>
+            </div>
+            <div>
+                <label for="mdlsound">音声ファイル:</label>
+                <input type="file" id="mdlsound-file" name="mdlsound" accept="audio/*">
+                <button type="button" id="record-sound-btn">録音開始</button>
+                <audio id="recorded-audio" controls style="display: none;"></audio>
+                <input type="hidden" id="recorded-sound" name="recorded-sound">
+            </div>
+            <div>
+                <label for="mdltext">字幕ファイル (.srt):</label>
+                <input type="file" id="mdltext" name="mdltext" accept=".srt">
+            </div>
+            <button type="submit">登録</button>
+        </form>
+    </main>
+
+    <script src="js/modeladd.js" defer></script>
+</body>
+
+</html>

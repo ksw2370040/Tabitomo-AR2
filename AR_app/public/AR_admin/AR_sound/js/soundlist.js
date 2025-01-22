@@ -22,6 +22,76 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => {
             console.error('モデル情報の取得中にエラーが発生しました:', error);
-            alert('モデル情報の取得に失敗しました。');
         });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mdlsound = urlParams.get('mdlsound'); // URL パラメータから mdlsound を取得
+
+    const addButton = document.querySelector('.add-btn');
+    if (addButton && mdlsound) {
+        // 新規追加ボタンのリンクを修正
+        addButton.href = `/AR_admin/AR_sound/soundadd.html?mdlsound=${mdlsound}`;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', async function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mdlsound = urlParams.get('mdlsound');
+    const languageSelect = document.getElementById('language-select');
+
+    if (!mdlsound) {
+        alert('音声テキストが指定されていません。');
+        return;
+    }
+
+    document.getElementById('mdlsound').value = mdlsound;
+
+    // 言語リストを取得して選択肢に追加
+    try {
+        const response = await fetch(`/soundlist/languages?mdlsound=${mdlsound}`);
+        const availableLanguages = await response.json();
+
+        if (!response.ok) throw new Error(availableLanguages.error || '言語情報の取得に失敗しました');
+
+        if (availableLanguages.length === 0) {
+            alert('追加可能な言語がありません。前の画面に戻ります。');
+            window.location.href = document.referrer || '/sound'; // 前のページに戻る
+            return;
+        }
+
+        availableLanguages.forEach(language => {
+            const option = document.createElement('option');
+            option.value = language;
+            option.textContent = language;
+            languageSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error(error);
+        window.location.href = document.referrer || '/sound';
+    }
+
+    // フォーム送信処理
+    document.getElementById('sound-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        try {
+            const response = await fetch('/soundlist/add', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert('音声が追加されました！');
+                window.location.href = document.referrer; // 前のページにリダイレクト
+            } else {
+                throw new Error(result.error || 'エラーが発生しました');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
 });

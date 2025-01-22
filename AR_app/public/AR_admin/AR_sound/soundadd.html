@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声追加</title>
+    <link rel="stylesheet" href="static/soundadd.css">
+    
+</head>
+
+<body>
+    <header>
+        <h1><a href="menu.html">管理者システム　　-音声情報-</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li id="logout">
+                <a href="">ログアウト</a>
+            </li>
+        </ul>
+    </header>
+
+    <main>
+        <div class="sideber">
+            <div class="sideber-container">
+                <a href="../menu.html"><button>メニュー</button></a>
+                <a href="../AR_user/user.html"><button>管理者情報</button></a>
+                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
+                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
+                <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
+                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="../AR_map/map.html"><button>マップ管理</button></a>
+            </div>
+        </div>
+
+        <form id="sound-form" enctype="multipart/form-data">
+            <label for="sound-file">音声ファイルを選択 (mp3):</label>
+            <input type="file" id="sound-file" name="soundFile" accept="audio/mp3" required>
+            <br><br>
+
+            <label for="language-select">言語選択:</label>
+            <select id="language-select" name="languagename" required>
+                <option value="">言語を選択</option>
+            </select>
+            <br><br>
+
+            <input type="hidden" id="mdlsound" name="mdlsound">
+            <button type="submit">送信</button>
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', async function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const mdlsound = urlParams.get('mdlsound');
+                const languageSelect = document.getElementById('language-select');
+
+                if (!mdlsound) {
+                    alert('音声テキストが指定されていません。');
+                    return;
+                }
+
+                document.getElementById('mdlsound').value = mdlsound;
+
+                // 言語リストを取得して選択肢に追加
+                try {
+                    const response = await fetch(`/soundlist/languages?mdlsound=${mdlsound}`);
+                    const availableLanguages = await response.json();
+
+                    if (!response.ok) throw new Error(availableLanguages.error || '言語情報の取得に失敗しました');
+
+                    if (availableLanguages.length === 0) {
+                        alert('追加可能な言語がありません。前の画面に戻ります。');
+                        window.location.href = document.referrer || '/sound'; // 前のページに戻る
+                        return;
+                    }
+
+                    availableLanguages.forEach(language => {
+                        const option = document.createElement('option');
+                        option.value = language;
+                        option.textContent = language;
+                        languageSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error(error);
+                    alert('言語情報の取得に失敗しました');
+                    window.location.href = document.referrer || '/sound';
+                }
+
+                // フォーム送信処理
+                document.getElementById('sound-form').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const formData = new FormData(event.target);
+
+                    try {
+                        const response = await fetch('/soundlist/add', {
+                            method: 'POST',
+                            body: formData,
+                        });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            alert('音声が追加されました！');
+                            window.location.href = document.referrer; // 前のページにリダイレクト
+                        } else {
+                            throw new Error(result.error || 'エラーが発生しました');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert('送信に失敗しました');
+                    }
+                });
+            });
+        </script>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声編集</title>
+    <link rel="stylesheet" href="static/soundlist.css">
+    
+</head>
+<body>
+    <header>
+        <h1><a href="../menu.html">管理者システム　　-音声情報-</a></h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li id="logout">
+                <a href="">ログアウト</a>
+            </li>
+        </ul>
+
+    <main>
+
+        <div class="sideber">
+            <div class="sideber-container">
+                <a href="../menu.html"><button>メニュー</button></a>
+                <a href="../AR_user/user.html"><button>管理者情報</button></a>
+                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
+                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
+                <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
+                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="../AR_map/map.html"><button>マップ管理</button></a>
+                <!-- <a href="AR_language/language.html"><button>言語管理</button></a> -->
+            </div>
+        </div>
+
+
+        <form id="edit-sound-form" enctype="multipart/form-data">
+            <div>
+                <label for="languagename">言語名:</label>
+                <select id="languagename" name="languagename">
+                    <!-- サーバーから動的にリストを取得 -->
+                </select>
+            </div>
+            <div>
+                <label for="soundfile">新しい音声ファイル:</label>
+                <input type="file" id="soundfile" name="soundFile" accept=".mp3">
+            </div>
+            <button type="submit">保存</button>
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const oldsoundfile = urlParams.get('soundfile');
+            const oldlanguagename = urlParams.get('languagename');
+            const oldmdlsound = urlParams.get('mdlsound');
+
+            // 言語リストを取得してセレクトボックスに表示
+            fetch(`/soundlist/languages?mdlsound=${oldmdlsound}`)
+                .then(response => response.json())
+                .then(data => {
+                    const languagenameSelect = document.getElementById('languagename');
+                    data.forEach(lang => {
+                        const option = document.createElement('option');
+                        option.value = lang;
+                        option.textContent = lang;
+                        languagenameSelect.appendChild(option);
+                    });
+                    languagenameSelect.value = oldlanguagename;
+                })
+                .catch(error => {
+                    console.error('言語リストの取得に失敗しました:', error);
+                    alert('言語リストの取得に失敗しました。');
+                });
+
+            // フォーム送信時の処理
+            document.getElementById('edit-sound-form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                formData.append('oldsoundfile', oldsoundfile);
+                formData.append('oldlanguagename', oldlanguagename);
+                formData.append('oldmdlsound', oldmdlsound);
+
+                fetch('/soundlist/edit', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert('音声情報を更新しました。');
+                            window.location.href = `/AR_admin/AR_sound/soundlist.html?mdlsound=${encodeURIComponent(oldmdlsound)}`;
+                        } else {
+                            alert(result.error || '音声情報の更新に失敗しました。');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('音声情報の更新に失敗しました:', error);
+                        alert('音声情報の更新に失敗しました。');
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
