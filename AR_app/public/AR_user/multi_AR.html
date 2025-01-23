@@ -63,27 +63,34 @@
           marker.setAttribute('url', `/Content/.patt/${item.patt}`);
           markersContainer.appendChild(marker);
 
-          // モデルをマーカーに追加
-          const modelEntity = document.createElement('a-entity');
-          modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
-          modelEntity.setAttribute('scale', '0.5 0.5 0.5');
-          modelEntity.setAttribute('position', '0 0 0');
-          modelEntity.setAttribute('visible', 'false');
-          marker.appendChild(modelEntity);
+          // マーカー画像のサイズを取得
+          const img = new Image();
+          img.src = `/Content/.patt/${item.patt}`;
+          img.onload = () => {
+            const markerWidth = img.width;
+            const markerHeight = img.height;
 
-          // マーカーのイベントリスナー
-          marker.addEventListener('markerFound', () => {
-            modelEntity.setAttribute('visible', 'true');
+            // モデルをマーカーに追加
+            const modelEntity = document.createElement('a-entity');
+            modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
+            modelEntity.setAttribute('scale', `${markerWidth / 1000} ${markerHeight / 1000} ${markerWidth / 1000}`); // 画像サイズに基づいてスケーリング
             modelEntity.setAttribute('position', '0 0.5 0'); // モデルを少し上に表示
-            playAudio(markerId);
-            if (subtitlesVisible) startSubtitles(markerId, subtitleElement);
-          });
-
-          marker.addEventListener('markerLost', () => {
             modelEntity.setAttribute('visible', 'false');
-            stopAudio(markerId);
-            stopSubtitles(markerId, subtitleElement);
-          });
+            marker.appendChild(modelEntity);
+
+            // マーカーのイベントリスナー
+            marker.addEventListener('markerFound', () => {
+              modelEntity.setAttribute('visible', 'true');
+              playAudio(markerId);
+              if (subtitlesVisible) startSubtitles(markerId, subtitleElement);
+            });
+
+            marker.addEventListener('markerLost', () => {
+              modelEntity.setAttribute('visible', 'false');
+              stopAudio(markerId);
+              stopSubtitles(markerId, subtitleElement);
+            });
+          };
         });
 
         // 音量ボタン
