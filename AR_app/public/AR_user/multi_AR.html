@@ -63,13 +63,13 @@
           models.forEach(model => {
             // アセットアイテムを追加
             assets.innerHTML += `
-              <a-asset-item id="model-${model.mdlimage}" src="/Content/${model.mdlimage}"></a-asset-item>
-              <audio id="audio-${model.mdlimage}" src="/Content/${model.soundfile}" preload="auto"></audio>
+              <a-asset-item id="model-${model.mdlimage}" src="/Content/.glb/${model.mdlimage}"></a-asset-item>
+              <audio id="audio-${model.mdlimage}" src="/Content/sound/${model.soundfile}" preload="auto"></audio>
             `;
 
             // マーカーを追加
             markersContainer.innerHTML += `
-              <a-marker id="marker-${model.patt}" type="pattern" preset="custom" url="/Content/${model.patt}">
+              <a-marker id="marker-${model.patt}" type="pattern" preset="custom" url="/Content/.patt/${model.patt}">
                 <a-entity id="model-${model.patt}" scale="1 1 1" animation-mixer="loop: repeat" 
                           gltf-model="#model-${model.mdlimage}" visible="false"></a-entity>
               </a-marker>
