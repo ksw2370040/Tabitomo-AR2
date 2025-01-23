@@ -1,7 +1,13 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 const connection = require('../config'); // DB接続の設定
-const path = require('path'); // パスの操作に使用
+
+// 静的ファイルの提供
+const publicDirectory = path.join(__dirname, '..', 'public');
+
+// ファイルへのパスを正しく設定
+router.use('/Content', express.static(path.join(publicDirectory, 'Content')));
 
 // 全てのモデルデータを取得するエンドポイント
 router.get('/multiAR', async (req, res) => {
@@ -30,26 +36,7 @@ router.get('/multiAR', async (req, res) => {
         `;
         
         const result = await connection.query(query);
-
-        // 結果を適切な形式で整形
-        const formattedResults = result.rows.map(row => {
-            return {
-                mdlID: row.mdlid,
-                mdlname: row.mdlname,
-                mdlimage: row.mdlimage ? path.join('/Content/.glb', row.mdlimage) : '',  // nullチェックを追加
-                mkname: row.mkname,
-                patt: row.patt ? path.join('/Content/.patt', row.patt) : '',  // nullチェックを追加
-                mkimage: row.mkimage,
-                mdlsound: row.mdlsound,
-                mdltext: row.mdltext,
-                languagename: row.languagename,
-                soundfile: row.soundfile ? path.join('/Content/sound', row.soundfile) : '',  // nullチェックを追加
-                napisyfile: row.napisyfile ? path.join('/Content/subtitles', row.napisyfile) : ''  // nullチェックを追加
-            };
-        });
-
-        // 整形したデータを返す
-        res.json(formattedResults);
+        res.json(result.rows);
     } catch (error) {
         console.error('データの取得中にエラーが発生しました:', error);
         res.status(500).json({ error: 'データの取得中にエラーが発生しました。' });

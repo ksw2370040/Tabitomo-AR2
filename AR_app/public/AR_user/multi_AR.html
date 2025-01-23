@@ -6,7 +6,7 @@
     <title>AR Demo</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
-        </head>
+  </head>
   <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs>
       <!-- 3Dモデルを表示する場所 -->
@@ -18,32 +18,49 @@
         .then(response => response.json())
         .then(data => {
           data.forEach(item => {
+            // マーカーパターンのパス（相対パス）
+            const markerPatternPath = `/Content/.patt/${item.patt}`;
+
+            // 3Dモデルのパス（相対パス）
+            const modelPath = `/Content/.glb/${item.mdlimage}`;
+
+            // 音声ファイルのパス（相対パス）
+            const soundPath = item.soundfile ? `/Content/sound/${item.soundfile}` : null;
+
+            // 字幕ファイルのパス（相対パス）
+            const subtitlePath = item.napisyfile ? `/Content/napisy/${item.napisyfile}` : null;
+
             // マーカーを作成
             const marker = document.createElement('a-marker');
             marker.setAttribute('type', 'pattern');
-            marker.setAttribute('url', item.patt); // マーカーパターンのパス
+            marker.setAttribute('url', markerPatternPath);
 
             // 3Dモデルのエンティティを作成
             const modelEntity = document.createElement('a-entity');
-            modelEntity.setAttribute('gltf-model', item.mdlimage); // 3Dモデルのファイルパス
+            modelEntity.setAttribute('gltf-model', modelPath);
             modelEntity.setAttribute('scale', '1 1 1');
             modelEntity.setAttribute('position', '0 0 0');
             modelEntity.setAttribute('visible', 'false'); // 初期状態では非表示
 
             // 音声ファイルの設定（オプション）
-            if (item.soundfile) {
+            if (soundPath) {
               const soundEntity = document.createElement('a-sound');
-              soundEntity.setAttribute('src', `url(${item.soundfile})`);
+              soundEntity.setAttribute('src', `url(${soundPath})`);
               modelEntity.appendChild(soundEntity);
             }
 
             // 字幕ファイルの設定（オプション）
-            if (item.napisyfile) {
+            if (subtitlePath) {
               const subtitleEntity = document.createElement('a-text');
-              subtitleEntity.setAttribute('value', item.napisyfile); // 字幕ファイルの内容を表示
+              subtitleEntity.setAttribute('value', subtitlePath); // 字幕ファイルの内容を表示
               subtitleEntity.setAttribute('position', '0 1 0');
               modelEntity.appendChild(subtitleEntity);
             }
+
+            // マーカーが認識された時にモデルを表示
+            marker.addEventListener('tracked', function () {
+              modelEntity.setAttribute('visible', 'true');
+            });
 
             // マーカーにモデルを追加
             marker.appendChild(modelEntity);
