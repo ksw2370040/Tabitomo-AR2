@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebAR with Multi Markers</title>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script> <!-- 変更されたCDN -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   <link rel="stylesheet" href="static/user.css">
 </head>
 <body style="margin: 0; overflow: hidden;">
@@ -17,6 +17,11 @@
 
   <div id="subtitle" style="position: absolute; bottom: 10%; width: 100%; text-align: center; font-size: 1.5em; color: white; background: rgba(0, 0, 0, 0.5); padding: 10px; display: none;">字幕がここに表示されます</div>
   
+  <div style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
+    <button id="toggle-volume" style="margin-bottom: 10px;">音量ON</button>
+    <button id="toggle-subtitle">字幕OFF</button>
+  </div>
+
   <script>
     const audioElements = {};
     const subtitlesData = {};
@@ -25,49 +30,47 @@
     let subtitlesVisible = false;
     let audioMuted = false;
 
-    // モデルとマーカーをAPIから動的にロード
-    async function loadARData() {
-      try {
-        const response = await fetch('/api/multiAR');
-        const data = await response.json();
-
+    // APIからモデルデータを取得
+    fetch('/api/multiAR')
+      .then((response) => response.json())
+      .then((data) => {
         const assetsContainer = document.querySelector('#assets');
         const markersContainer = document.querySelector('#markers');
         const subtitleElement = document.querySelector('#subtitle');
 
         data.forEach((item) => {
-          const markerId = `marker-${item.mdlID}`;
+          const markerId = `marker-${item.mdlid}`;
 
-          // 3Dモデルをアセットに追加
+          // モデル追加
           const modelAsset = document.createElement('a-asset-item');
-          modelAsset.setAttribute('id', `model-${item.mdlID}`);
+          modelAsset.setAttribute('id', `model-${item.mdlid}`);
           modelAsset.setAttribute('src', `/Content/.glb/${item.mdlimage}`);
           assetsContainer.appendChild(modelAsset);
 
           // 音声設定
-          const audio = new Audio(`/Content/sound/${item.soundfile}`);
+          const audio = new Audio(`/Content/sound/${item.mdlsound}`);
           audioElements[markerId] = audio;
 
           // 字幕データ
           subtitlesData[markerId] = item.napisyfile ? item.napisyfile.split('\n') : [];
           markerStates[markerId] = { currentSubtitleIndex: 0, subtitleTimeout: null };
 
-          // マーカーの作成
+          // マーカー作成
           const marker = document.createElement('a-marker');
           marker.setAttribute('id', markerId);
           marker.setAttribute('type', 'pattern');
           marker.setAttribute('url', `/Content/.patt/${item.patt}`);
           markersContainer.appendChild(marker);
 
-          // モデルの設定と配置
+          // モデルをマーカーに追加
           const modelEntity = document.createElement('a-entity');
-          modelEntity.setAttribute('gltf-model', `#model-${item.mdlID}`);
-          modelEntity.setAttribute('scale', '1 1 1'); // サイズ調整
+          modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
+          modelEntity.setAttribute('scale', '1 1 1'); // 変更点：モデルのサイズを調整
           modelEntity.setAttribute('position', '0 0 0');
           modelEntity.setAttribute('visible', 'false');
           marker.appendChild(modelEntity);
 
-          // マーカーのイベント処理
+          // マーカーのイベントリスナー
           marker.addEventListener('markerFound', () => {
             modelEntity.setAttribute('visible', 'true');
             playAudio(markerId);
@@ -81,14 +84,22 @@
           });
         });
 
-      } catch (error) {
-        console.error('ARデータの読み込みに失敗しました', error);
-      }
-    }
+        // 音量ボタン
+        document.querySelector('#toggle-volume').addEventListener('click', () => {
+          audioMuted = !audioMuted;
+          Object.values(audioElements).forEach((audio) => {
+            audio.muted = audioMuted;
+          });
+          document.querySelector('#toggle-volume').textContent = audioMuted ? '音量OFF' : '音量ON';
+        });
 
-    loadARData();
+        // 字幕ボタン
+        document.querySelector('#toggle-subtitle').addEventListener('click', () => {
+          subtitlesVisible = !subtitlesVisible;
+          document.querySelector('#toggle-subtitle').textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
+        });
+      });
 
-    // 音声の再生
     function playAudio(markerId) {
       const audio = audioElements[markerId];
       if (audio) {
@@ -97,7 +108,6 @@
       }
     }
 
-    // 音声の停止
     function stopAudio(markerId) {
       const audio = audioElements[markerId];
       if (audio) {
@@ -105,7 +115,6 @@
       }
     }
 
-    // 字幕の表示
     function startSubtitles(markerId, subtitleElement) {
       const subtitles = subtitlesData[markerId];
       const state = markerStates[markerId];
@@ -120,28 +129,12 @@
       }
     }
 
-    // 字幕の停止
     function stopSubtitles(markerId, subtitleElement) {
       const state = markerStates[markerId];
       clearTimeout(state.subtitleTimeout);
       state.currentSubtitleIndex = 0;
       subtitleElement.style.display = 'none';
     }
-
-    // 音量切替
-    document.querySelector('#toggle-volume').addEventListener('click', () => {
-      audioMuted = !audioMuted;
-      Object.values(audioElements).forEach((audio) => {
-        audio.muted = audioMuted;
-      });
-      document.querySelector('#toggle-volume').textContent = audioMuted ? '音量OFF' : '音量ON';
-    });
-
-    // 字幕表示切替
-    document.querySelector('#toggle-subtitle').addEventListener('click', () => {
-      subtitlesVisible = !subtitlesVisible;
-      document.querySelector('#toggle-subtitle').textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
-    });
   </script>
 </body>
 </html>
