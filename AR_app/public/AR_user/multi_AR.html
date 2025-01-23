@@ -2,23 +2,31 @@
 <html lang="ja">
   <head>
     <link rel="stylesheet" href="static/user.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.3.0/jsQR.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR</title>
+    <title>3Dモデル一覧</title>
   </head>
 
-  <body style="margin: 0px; overflow: hidden;">
-    <div id="marker-images-container" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 10px;">
-      <!-- マーカー画像がここに動的に追加されます -->
+  <body>
+    <h1>3Dモデル一覧</h1>
+
+    <div id="model-list">
+      <!-- モデル一覧が動的に追加される場所 -->
+    </div>
+
+    <div id="selected-model">
+      <!-- 選択したモデルが表示される場所 -->
+      <h2>選択したモデル</h2>
+      <a-scene embedded>
+        <a-entity id="model-display" position="0 0 0"></a-entity>
+        <a-camera></a-camera>
+      </a-scene>
     </div>
 
     <div id="subtitle">ここに字幕が表示されます</div>
     <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
     <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
     <a href="home.html"><button class="top-right-button">戻る</button></a>
-
-    <canvas id="qr-canvas" style="display:none;"></canvas>
 
     <script>
       const subtitle = document.querySelector('#subtitle');
@@ -30,7 +38,7 @@
       let subtitleTimeout;
       let subtitlesVisible = false;
       let audioMuted = false;
-      
+
       // 音量切替
       toggleVolumeButton.addEventListener('click', function () {
         audioMuted = !audioMuted;
@@ -43,23 +51,37 @@
         }
       });
 
-      // サーバーからマルチARデータを取得
+      // サーバーから3Dモデルデータを取得
       fetch('/api/multiAR')
         .then(response => response.json())
         .then(models => {
-          const markerImagesContainer = document.querySelector('#marker-images-container');
+          const modelListContainer = document.querySelector('#model-list');
+          const modelDisplay = document.querySelector('#model-display');
 
           models.forEach(model => {
-            // マーカー画像を追加
-            markerImagesContainer.innerHTML += `
-              <div style="border: 1px solid #ccc; padding: 10px;">
-                <h3>マーカー: ${model.patt}</h3>
-                <img src="/Content/markerimage/${model.mkimage}" alt="Marker Image" style="width: 150px; height: 150px; object-fit: cover;">
+            // モデルアイテムを一覧表示
+            modelListContainer.innerHTML += `
+              <div class="model-item">
+                <h3>モデル: ${model.mdlimage}</h3>
+                <button onclick="displayModel('${model.mdlimage}')">モデルを表示</button>
               </div>
             `;
           });
+
+          // モデルを選択した場合に表示
+          window.displayModel = function(modelId) {
+            const modelEntity = document.createElement('a-entity');
+            modelEntity.setAttribute('gltf-model', `/Content/.glb/${modelId}`);
+            modelEntity.setAttribute('scale', '1 1 1');
+            modelEntity.setAttribute('position', '0 0 0');
+            modelEntity.setAttribute('rotation', '0 0 0');
+            
+            // 既存のモデルを削除し新しいモデルを表示
+            modelDisplay.innerHTML = ''; 
+            modelDisplay.appendChild(modelEntity);
+          }
         })
-        .catch(error => console.error('Error fetching multiAR data:', error));
+        .catch(error => console.error('Error fetching models data:', error));
 
       // サブタイトルの表示
       function loadSubtitles() {
