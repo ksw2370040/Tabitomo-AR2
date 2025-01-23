@@ -10,10 +10,10 @@
 <body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
     <a-assets id="assets">
-      <!-- 必要な3Dモデルや素材をここに追加 -->
+      <!-- モデルや素材を追加 -->
     </a-assets>
 
-    <!-- マーカーと3Dモデルを配置する部分 -->
+    <!-- マーカー設定 -->
     <a-marker id="marker-1" type="pattern" url="/path/to/your-marker.patt">
       <a-entity gltf-model="/path/to/your-3d-model.glb" scale="0.5 0.5 0.5" position="0 0 0" visible="false"></a-entity>
     </a-marker>
@@ -37,22 +37,60 @@
     let subtitlesVisible = false;
     let audioMuted = false;
 
-    // 音声設定や字幕表示のロジックはそのまま
+    // APIからモデルデータを取得
+    fetch('/api/multiAR')
+      .then((response) => response.json())
+      .then((data) => {
+        const assetsContainer = document.querySelector('#assets');
+        const markersContainer = document.querySelector('a-scene');
+        const subtitleElement = document.querySelector('#subtitle');
 
-    // マーカーのイベントリスナー
-    document.querySelector('#marker-1').addEventListener('markerFound', () => {
-      const modelEntity = document.querySelector('#marker-1 > a-entity');
-      modelEntity.setAttribute('visible', 'true'); // モデルを表示
-      playAudio('marker-1'); // 音声再生
-      if (subtitlesVisible) startSubtitles('marker-1', document.querySelector('#subtitle')); // 字幕表示
-    });
+        data.forEach((item) => {
+          const markerId = `marker-${item.mdlid}`;
 
-    document.querySelector('#marker-1').addEventListener('markerLost', () => {
-      const modelEntity = document.querySelector('#marker-1 > a-entity');
-      modelEntity.setAttribute('visible', 'false'); // モデルを非表示
-      stopAudio('marker-1'); // 音声停止
-      stopSubtitles('marker-1', document.querySelector('#subtitle')); // 字幕停止
-    });
+          // モデル追加
+          const modelAsset = document.createElement('a-asset-item');
+          modelAsset.setAttribute('id', `model-${item.mdlid}`);
+          modelAsset.setAttribute('src', `/Content/.glb/${item.mdlimage}`);
+          assetsContainer.appendChild(modelAsset);
+
+          // 音声設定
+          const audio = new Audio(`/Content/sound/${item.mdlsound}`);
+          audioElements[markerId] = audio;
+
+          // 字幕データ
+          subtitlesData[markerId] = item.napisyfile ? item.napisyfile.split('\n') : [];
+          markerStates[markerId] = { currentSubtitleIndex: 0, subtitleTimeout: null };
+
+          // マーカー作成
+          const marker = document.createElement('a-marker');
+          marker.setAttribute('id', markerId);
+          marker.setAttribute('type', 'pattern');
+          marker.setAttribute('url', `/Content/.patt/${item.patt}`);
+          markersContainer.appendChild(marker);
+
+          // モデルをマーカーに追加
+          const modelEntity = document.createElement('a-entity');
+          modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
+          modelEntity.setAttribute('scale', '1 1 1');
+          modelEntity.setAttribute('position', '0 0 0');
+          modelEntity.setAttribute('visible', 'false');
+          marker.appendChild(modelEntity);
+
+          // マーカーのイベントリスナー
+          marker.addEventListener('markerFound', () => {
+            modelEntity.setAttribute('visible', 'true');
+            playAudio(markerId);
+            if (subtitlesVisible) startSubtitles(markerId, subtitleElement);
+          });
+
+          marker.addEventListener('markerLost', () => {
+            modelEntity.setAttribute('visible', 'false');
+            stopAudio(markerId);
+            stopSubtitles(markerId, subtitleElement);
+          });
+        });
+      });
 
     // 音声再生
     function playAudio(markerId) {
@@ -93,6 +131,21 @@
       state.currentSubtitleIndex = 0;
       subtitleElement.style.display = 'none';
     }
+
+    // 音量ボタン
+    document.querySelector('#toggle-volume').addEventListener('click', () => {
+      audioMuted = !audioMuted;
+      Object.values(audioElements).forEach((audio) => {
+        audio.muted = audioMuted;
+      });
+      document.querySelector('#toggle-volume').textContent = audioMuted ? '音量OFF' : '音量ON';
+    });
+
+    // 字幕ボタン
+    document.querySelector('#toggle-subtitle').addEventListener('click', () => {
+      subtitlesVisible = !subtitlesVisible;
+      document.querySelector('#toggle-subtitle').textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
+    });
   </script>
 </body>
 </html>
