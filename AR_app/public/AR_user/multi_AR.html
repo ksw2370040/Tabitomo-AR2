@@ -53,10 +53,10 @@
             modelListContainer.innerHTML += `
               <div class="model-item">
                 <h3>モデル: ${model.mdlimage}</h3>
-                <a-entity scale="1 1 1">
+                <a-entity scale="2 2 2">
                   <!-- 修正: パスを適切に設定 -->
                   <a-asset-item id="model-${model.mdlimage}" src="/Content/.glb/${model.mdlimage}"></a-asset-item>
-                  <a-entity gltf-model="#model-${model.mdlimage}" scale="0.5 0.5 0.5"></a-entity>
+                  <a-entity gltf-model="#model-${model.mdlimage}" scale="2 2 2"></a-entity>
                 </a-entity>
                 <!-- 音声再生ボタン -->
                 <audio id="audio-${model.mdlimage}" src="/Content/sound/${model.soundfile}" preload="auto"></audio>
