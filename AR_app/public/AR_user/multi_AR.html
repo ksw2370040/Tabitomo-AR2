@@ -4,19 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebAR with Multi Markers</title>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script> <!-- 変更されたCDN -->
+  <!-- AR.jsとA-Frameライブラリを読み込む -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script> <!-- 最新のCDN -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <link rel="stylesheet" href="static/user.css">
 </head>
 <body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+  <!-- AR.jsのシーン設定 -->
+  <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; camera_parameters: /Content/camera_para.dat;">
     <a-assets id="assets"></a-assets>
     <div id="markers"></div>
-    <a-entity camera position="0 0 10"></a-entity>
+    <a-entity camera position="0 0 10"></a-entity> <!-- カメラ設定 -->
   </a-scene>
 
-  <div id="subtitle" style="position: absolute; bottom: 10%; width: 100%; text-align: center; font-size: 1.5em; color: white; background: rgba(0, 0, 0, 0.5); padding: 10px; display: none;">字幕がここに表示されます</div>
+  <!-- 字幕表示エリア -->
+  <div id="subtitle" style="position: absolute; bottom: 10%; width: 100%; text-align: center; font-size: 1.5em; color: white; background: rgba(0, 0, 0, 0.5); padding: 10px; display: none;">
+    字幕がここに表示されます
+  </div>
   
+  <!-- ボタンUI -->
   <div style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
     <button id="toggle-volume" style="margin-bottom: 10px;">音量ON</button>
     <button id="toggle-subtitle">字幕OFF</button>
@@ -65,7 +71,7 @@
           // モデルをマーカーに追加
           const modelEntity = document.createElement('a-entity');
           modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
-          modelEntity.setAttribute('scale', '1 1 1'); // 変更点：モデルのサイズを調整
+          modelEntity.setAttribute('scale', '1 1 1'); // モデルのサイズ調整
           modelEntity.setAttribute('position', '0 0 0');
           modelEntity.setAttribute('visible', 'false');
           marker.appendChild(modelEntity);
