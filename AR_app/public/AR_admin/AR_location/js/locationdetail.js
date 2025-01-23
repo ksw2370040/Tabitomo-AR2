@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <strong>パターン:</strong> ${model.patt}<br>
                             <strong>マーカー画像:</strong> 
                             <img src="/Content/markerimage/${model.mkimage}" alt="${model.mkimage}" width="200">
-                            <a href="/Content/markerimage/${model.mkimage}" download="${model.mkimage}" class="download-btn">
+                            <a href="../../Content/markerimage/${model.mkimage}" download="${model.mkimage}" class="download-btn">
                                 <button>ダウンロード</button>
                             </a><br>
                             <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">音声ファイル</a></strong><br>
