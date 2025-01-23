@@ -44,7 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             <button class="viewer-btn" data-mdlimage="${model.mdlimage}">3Dモデル表示</button><br>
                             <strong>マーカー名:</strong> ${model.mkname}<br>
                             <strong>パターン:</strong> ${model.patt}<br>
-                            <strong>マーカー画像:</strong> <img src="/Content/markerimage/${model.mkimage}" alt="${model.mkimage}" width="200"><br>
+                            <strong>マーカー画像:</strong> 
+                            <img src="/Content/markerimage/${model.mkimage}" alt="${model.mkimage}" width="200">
+                            <a href="/Content/markerimage/${model.mkimage}" download="${model.mkimage}" class="download-btn">
+                                <button>ダウンロード</button>
+                            </a><br>
                             <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">音声ファイル</a></strong><br>
                             ${model.soundfiles.length > 0 ? model.soundfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}<br>
                             <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdlsound=${model.mdlsound}">テキストファイル</a></strong><br>
