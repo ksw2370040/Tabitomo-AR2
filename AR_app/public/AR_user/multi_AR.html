@@ -14,15 +14,6 @@
       <!-- モデル一覧が動的に追加される場所 -->
     </div>
 
-    <div id="selected-model">
-      <!-- 選択したモデルが表示される場所 -->
-      <h2>選択したモデル</h2>
-      <a-scene embedded>
-        <a-entity id="model-display" position="0 0 0"></a-entity>
-        <a-camera></a-camera>
-      </a-scene>
-    </div>
-
     <div id="subtitle">ここに字幕が表示されます</div>
     <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
     <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
@@ -56,32 +47,33 @@
         .then(response => response.json())
         .then(models => {
           const modelListContainer = document.querySelector('#model-list');
-          const modelDisplay = document.querySelector('#model-display');
 
           models.forEach(model => {
             // モデルアイテムを一覧表示
             modelListContainer.innerHTML += `
               <div class="model-item">
                 <h3>モデル: ${model.mdlimage}</h3>
-                <button onclick="displayModel('${model.mdlimage}')">モデルを表示</button>
+                <a-entity scale="1 1 1">
+                  <!-- 修正: パスを適切に設定 -->
+                  <a-asset-item id="model-${model.mdlimage}" src="/Content/.glb/${model.mdlimage}"></a-asset-item>
+                  <a-entity gltf-model="#model-${model.mdlimage}" scale="0.5 0.5 0.5"></a-entity>
+                </a-entity>
+                <!-- 音声再生ボタン -->
+                <audio id="audio-${model.mdlimage}" src="/Content/sound/${model.soundfile}" preload="auto"></audio>
+                <button onclick="playAudio('${model.mdlimage}')">音声再生</button>
               </div>
             `;
           });
-
-          // モデルを選択した場合に表示
-          window.displayModel = function(modelId) {
-            const modelEntity = document.createElement('a-entity');
-            modelEntity.setAttribute('gltf-model', `/Content/.glb/${modelId}`);
-            modelEntity.setAttribute('scale', '1 1 1');
-            modelEntity.setAttribute('position', '0 0 0');
-            modelEntity.setAttribute('rotation', '0 0 0');
-            
-            // 既存のモデルを削除し新しいモデルを表示
-            modelDisplay.innerHTML = ''; 
-            modelDisplay.appendChild(modelEntity);
-          }
         })
         .catch(error => console.error('Error fetching models data:', error));
+
+      // 音声再生
+      function playAudio(modelId) {
+        const audioElement = document.querySelector(`#audio-${modelId}`);
+        if (audioElement) {
+          audioElement.play();
+        }
+      }
 
       // サブタイトルの表示
       function loadSubtitles() {
