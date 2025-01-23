@@ -24,6 +24,7 @@ const locationdetailRoutes = require('./routes/locationdetailRoutes');
 const locationaddRoutes = require('./routes/locationaddRoutes');
 const locationeditRoutes = require('./routes/locationeditRoutes');
 const modelsRoutes = require('./routes/modelsRoutes');
+const multiAR = require('./routes/multiAR');
 
 // ボディパーサー設定
 app.use(express.urlencoded({ extended: true }));
@@ -48,6 +49,7 @@ app.use('/locationdetail', locationdetailRoutes);
 app.use('/locationadd', locationaddRoutes);
 app.use('/locationedit', locationeditRoutes);
 app.use('/modelsRoutes', modelsRoutes);
+app.use('/api', multiAR);
 
 // HTTPSサーバーの起動
 const PORT = 3000;

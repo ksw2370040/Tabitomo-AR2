@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAR Multi-Marker Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.0.1/aframe/build/aframe-ar.min.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <!-- AR.js Scene -->
+    <a-scene embedded arjs>
+        <a-assets id="models"></a-assets>
+        
+        <!-- マーカーとモデルは動的に生成されます -->
+        <div id="markers"></div>
+    </a-scene>
+
+    <script>
+        // APIからマーカーデータとモデル情報を取得
+        fetch('/api/multiAR')
+            .then((response) => response.json())
+            .then((data) => {
+                const modelsContainer = document.querySelector('#models');
+                const markersContainer = document.querySelector('#markers');
+
+                data.forEach((item) => {
+                    // モデルを定義
+                    const model = document.createElement('a-asset-item');
+                    model.setAttribute('id', `model-${item.mdlid}`);
+                    model.setAttribute('src', `/Content/.glb/${item.mdlimage}`);
+                    modelsContainer.appendChild(model);
+
+                    // マーカーを生成
+                    const marker = document.createElement('a-marker');
+                    marker.setAttribute('type', 'pattern');
+                    marker.setAttribute('url', `/Content/.patt/${item.patt}`);
+                    marker.setAttribute('id', `marker-${item.mdlid}`);
+
+                    // モデルをマーカー内に配置
+                    const modelEntity = document.createElement('a-entity');
+                    modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
+                    modelEntity.setAttribute('scale', '0.5 0.5 0.5'); // モデルのスケール調整
+                    modelEntity.setAttribute('position', '0 0 0');
+                    marker.appendChild(modelEntity);
+
+                    markersContainer.appendChild(marker);
+                });
+            })
+            .catch((error) => console.error('データの取得中にエラーが発生しました:', error));
+    </script>
+</body>
+</html>
