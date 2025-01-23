@@ -1,6 +1,6 @@
-const express = require('express'); // expressモジュールのインポート
-const router = express.Router(); // express.Router() でルーターを定義
-const connection = require('../config'); // PostgreSQLの接続設定
+const express = require('express');
+const router = express.Router();
+const connection = require('../config');
 
 // 全てのモデルデータを取得するエンドポイント
 router.get('/multiAR', async (req, res) => {
@@ -29,8 +29,6 @@ router.get('/multiAR', async (req, res) => {
         `;
 
         const result = await connection.query(query);
-
-        // 取得したデータを行ごとにJSON形式で返す
         res.json(result.rows);
     } catch (error) {
         console.error('データの取得中にエラーが発生しました:', error);
@@ -38,4 +36,4 @@ router.get('/multiAR', async (req, res) => {
     }
 });
 
-module.exports = router; // ルーターをエクスポート
+module.exports = router;
