@@ -50,6 +50,7 @@
           // 音声設定
           const audio = new Audio(`/Content/sound/${item.mdlsound}`);
           audioElements[markerId] = audio;
+          audio.load(); // 音声のプリロード
 
           // 字幕データ
           subtitlesData[markerId] = item.napisyfile ? item.napisyfile.split('\n') : [];
@@ -73,6 +74,7 @@
           // マーカーのイベントリスナー
           marker.addEventListener('markerFound', () => {
             modelEntity.setAttribute('visible', 'true');
+            modelEntity.setAttribute('position', '0 0.5 0'); // モデルを少し上に表示
             playAudio(markerId);
             if (subtitlesVisible) startSubtitles(markerId, subtitleElement);
           });
@@ -86,11 +88,7 @@
 
         // 音量ボタン
         document.querySelector('#toggle-volume').addEventListener('click', () => {
-          audioMuted = !audioMuted;
-          Object.values(audioElements).forEach((audio) => {
-            audio.muted = audioMuted;
-          });
-          document.querySelector('#toggle-volume').textContent = audioMuted ? '音量OFF' : '音量ON';
+          toggleAudio();
         });
 
         // 字幕ボタン
@@ -100,6 +98,7 @@
         });
       });
 
+    // 音声の再生
     function playAudio(markerId) {
       const audio = audioElements[markerId];
       if (audio) {
@@ -108,6 +107,7 @@
       }
     }
 
+    // 音声の停止
     function stopAudio(markerId) {
       const audio = audioElements[markerId];
       if (audio) {
@@ -115,10 +115,12 @@
       }
     }
 
+    // 字幕の表示
     function startSubtitles(markerId, subtitleElement) {
       const subtitles = subtitlesData[markerId];
       const state = markerStates[markerId];
       if (subtitles.length > 0 && state.currentSubtitleIndex < subtitles.length) {
+        subtitleElement.style.display = 'none';
         subtitleElement.textContent = subtitles[state.currentSubtitleIndex];
         subtitleElement.style.display = 'block';
         state.currentSubtitleIndex++;
@@ -129,11 +131,23 @@
       }
     }
 
+    // 字幕の停止
     function stopSubtitles(markerId, subtitleElement) {
       const state = markerStates[markerId];
       clearTimeout(state.subtitleTimeout);
       state.currentSubtitleIndex = 0;
       subtitleElement.style.display = 'none';
+    }
+
+    // 音量管理
+    function toggleAudio() {
+      audioMuted = !audioMuted;
+      Object.values(audioElements).forEach((audio) => {
+        audio.muted = audioMuted;
+      });
+      const volumeButton = document.querySelector('#toggle-volume');
+      volumeButton.textContent = audioMuted ? '音量OFF' : '音量ON';
+      volumeButton.style.backgroundColor = audioMuted ? 'red' : 'green'; // 色で音量状態を示す
     }
   </script>
 </body>
