@@ -9,12 +9,21 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
-    <a-assets id="assets"></a-assets>
-    <div id="markers"></div>
+    <a-assets id="assets">
+      <!-- 必要な3Dモデルや素材をここに追加 -->
+    </a-assets>
+
+    <!-- マーカーと3Dモデルを配置する部分 -->
+    <a-marker id="marker-1" type="pattern" url="/path/to/your-marker.patt">
+      <a-entity gltf-model="/path/to/your-3d-model.glb" scale="0.5 0.5 0.5" position="0 0 0" visible="false"></a-entity>
+    </a-marker>
+
+    <!-- カメラ設定 -->
+    <a-entity camera></a-entity>
   </a-scene>
 
   <div id="subtitle" style="position: absolute; bottom: 10%; width: 100%; text-align: center; font-size: 1.5em; color: white; background: rgba(0, 0, 0, 0.5); padding: 10px; display: none;">字幕がここに表示されます</div>
-  
+
   <div style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
     <button id="toggle-volume" style="margin-bottom: 10px;">音量ON</button>
     <button id="toggle-subtitle">字幕OFF</button>
@@ -28,81 +37,22 @@
     let subtitlesVisible = false;
     let audioMuted = false;
 
-    // カメラの選択を取得
-    navigator.mediaDevices.enumerateDevices()
-      .then(devices => {
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        if (videoDevices.length > 0) {
-          console.log('利用可能なカメラ:', videoDevices);
-          // 最初のカメラを選択
-          const constraints = { video: { deviceId: videoDevices[0].deviceId } };
-          return navigator.mediaDevices.getUserMedia(constraints);
-        } else {
-          throw new Error('カメラが見つかりませんでした');
-        }
-      })
-      .then(stream => {
-        const videoElement = document.querySelector('video');
-        videoElement.srcObject = stream;
-      })
-      .catch(error => {
-        console.error('カメラの取得に失敗:', error);
-      });
+    // 音声設定や字幕表示のロジックはそのまま
 
-    // APIからモデルデータを取得
-    fetch('/api/multiAR')
-      .then((response) => response.json())
-      .then((data) => {
-        const assetsContainer = document.querySelector('#assets');
-        const markersContainer = document.querySelector('#markers');
-        const subtitleElement = document.querySelector('#subtitle');
+    // マーカーのイベントリスナー
+    document.querySelector('#marker-1').addEventListener('markerFound', () => {
+      const modelEntity = document.querySelector('#marker-1 > a-entity');
+      modelEntity.setAttribute('visible', 'true'); // モデルを表示
+      playAudio('marker-1'); // 音声再生
+      if (subtitlesVisible) startSubtitles('marker-1', document.querySelector('#subtitle')); // 字幕表示
+    });
 
-        data.forEach((item) => {
-          const markerId = `marker-${item.mdlid}`;
-
-          // モデル追加
-          const modelAsset = document.createElement('a-asset-item');
-          modelAsset.setAttribute('id', `model-${item.mdlid}`);
-          modelAsset.setAttribute('src', `/Content/.glb/${item.mdlimage}`);
-          assetsContainer.appendChild(modelAsset);
-
-          // 音声設定
-          const audio = new Audio(`/Content/sound/${item.mdlsound}`);
-          audioElements[markerId] = audio;
-
-          // 字幕データ
-          subtitlesData[markerId] = item.napisyfile ? item.napisyfile.split('\n') : [];
-          markerStates[markerId] = { currentSubtitleIndex: 0, subtitleTimeout: null };
-
-          // マーカー作成
-          const marker = document.createElement('a-marker');
-          marker.setAttribute('id', markerId);
-          marker.setAttribute('type', 'pattern');
-          marker.setAttribute('url', `/Content/.patt/${item.patt}`);
-          markersContainer.appendChild(marker);
-
-          // モデルをマーカーに追加
-          const modelEntity = document.createElement('a-entity');
-          modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
-          modelEntity.setAttribute('scale', '1 1 1');
-          modelEntity.setAttribute('position', '0 0 0');
-          modelEntity.setAttribute('visible', 'false');
-          marker.appendChild(modelEntity);
-
-          // マーカーのイベントリスナー
-          marker.addEventListener('markerFound', () => {
-            modelEntity.setAttribute('visible', 'true');
-            playAudio(markerId);
-            if (subtitlesVisible) startSubtitles(markerId, subtitleElement);
-          });
-
-          marker.addEventListener('markerLost', () => {
-            modelEntity.setAttribute('visible', 'false');
-            stopAudio(markerId);
-            stopSubtitles(markerId, subtitleElement);
-          });
-        });
-      });
+    document.querySelector('#marker-1').addEventListener('markerLost', () => {
+      const modelEntity = document.querySelector('#marker-1 > a-entity');
+      modelEntity.setAttribute('visible', 'false'); // モデルを非表示
+      stopAudio('marker-1'); // 音声停止
+      stopSubtitles('marker-1', document.querySelector('#subtitle')); // 字幕停止
+    });
 
     // 音声再生
     function playAudio(markerId) {
