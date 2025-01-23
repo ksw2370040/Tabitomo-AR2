@@ -54,7 +54,7 @@
       });
 
       // サーバーからマルチARデータを取得
-      fetch('/multiAR')
+      fetch('/api/multiAR')
         .then(response => response.json())
         .then(models => {
           const assets = document.querySelector('#assets');
