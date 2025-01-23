@@ -1,151 +1,60 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebAR with Multi Markers</title>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-</head>
-<body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
-    <a-assets id="assets">
-      <!-- モデルや素材を追加 -->
-    </a-assets>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Demo</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://rawgit.com/MozillaReality/aframe-ar.js/master/dist/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+      <!-- 3Dモデルを表示する場所 -->
+    </a-scene>
 
-    <!-- マーカー設定 -->
-    <a-marker id="marker-1" type="pattern" url="/path/to/your-marker.patt">
-      <a-entity gltf-model="/path/to/your-3d-model.glb" scale="0.5 0.5 0.5" position="0 0 0" visible="false"></a-entity>
-    </a-marker>
+    <script>
+      // APIからARデータを取得
+      fetch('/api/multiAR')
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(item => {
+            // マーカーを作成
+            const marker = document.createElement('a-marker');
+            marker.setAttribute('type', 'pattern');
+            marker.setAttribute('url', item.patt); // マーカーパターンのパス
 
-    <!-- カメラ設定 -->
-    <a-entity camera></a-entity>
-  </a-scene>
+            // 3Dモデルのエンティティを作成
+            const modelEntity = document.createElement('a-entity');
+            modelEntity.setAttribute('gltf-model', item.mdlimage); // 3Dモデルのファイルパス
+            modelEntity.setAttribute('scale', '1 1 1');
+            modelEntity.setAttribute('position', '0 0 0');
+            modelEntity.setAttribute('visible', 'false'); // 初期状態では非表示
 
-  <div id="subtitle" style="position: absolute; bottom: 10%; width: 100%; text-align: center; font-size: 1.5em; color: white; background: rgba(0, 0, 0, 0.5); padding: 10px; display: none;">字幕がここに表示されます</div>
+            // 音声ファイルの設定（オプション）
+            if (item.soundfile) {
+              const soundEntity = document.createElement('a-sound');
+              soundEntity.setAttribute('src', `url(${item.soundfile})`);
+              modelEntity.appendChild(soundEntity);
+            }
 
-  <div style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
-    <button id="toggle-volume" style="margin-bottom: 10px;">音量ON</button>
-    <button id="toggle-subtitle">字幕OFF</button>
-  </div>
+            // 字幕ファイルの設定（オプション）
+            if (item.napisyfile) {
+              const subtitleEntity = document.createElement('a-text');
+              subtitleEntity.setAttribute('value', item.napisyfile); // 字幕ファイルの内容を表示
+              subtitleEntity.setAttribute('position', '0 1 0');
+              modelEntity.appendChild(subtitleEntity);
+            }
 
-  <script>
-    const audioElements = {};
-    const subtitlesData = {};
-    const markerStates = {};
-    const subtitleDisplayDuration = 2000;
-    let subtitlesVisible = false;
-    let audioMuted = false;
+            // マーカーにモデルを追加
+            marker.appendChild(modelEntity);
 
-    // APIからモデルデータを取得
-    fetch('/api/multiAR')
-      .then((response) => response.json())
-      .then((data) => {
-        const assetsContainer = document.querySelector('#assets');
-        const markersContainer = document.querySelector('a-scene');
-        const subtitleElement = document.querySelector('#subtitle');
-
-        data.forEach((item) => {
-          const markerId = `marker-${item.mdlid}`;
-
-          // モデル追加
-          const modelAsset = document.createElement('a-asset-item');
-          modelAsset.setAttribute('id', `model-${item.mdlid}`);
-          modelAsset.setAttribute('src', `/Content/.glb/${item.mdlimage}`);
-          assetsContainer.appendChild(modelAsset);
-
-          // 音声設定
-          const audio = new Audio(`/Content/sound/${item.mdlsound}`);
-          audioElements[markerId] = audio;
-
-          // 字幕データ
-          subtitlesData[markerId] = item.napisyfile ? item.napisyfile.split('\n') : [];
-          markerStates[markerId] = { currentSubtitleIndex: 0, subtitleTimeout: null };
-
-          // マーカー作成
-          const marker = document.createElement('a-marker');
-          marker.setAttribute('id', markerId);
-          marker.setAttribute('type', 'pattern');
-          marker.setAttribute('url', `/Content/.patt/${item.patt}`);
-          markersContainer.appendChild(marker);
-
-          // モデルをマーカーに追加
-          const modelEntity = document.createElement('a-entity');
-          modelEntity.setAttribute('gltf-model', `#model-${item.mdlid}`);
-          modelEntity.setAttribute('scale', '1 1 1');
-          modelEntity.setAttribute('position', '0 0 0');
-          modelEntity.setAttribute('visible', 'false');
-          marker.appendChild(modelEntity);
-
-          // マーカーのイベントリスナー
-          marker.addEventListener('markerFound', () => {
-            modelEntity.setAttribute('visible', 'true');
-            playAudio(markerId);
-            if (subtitlesVisible) startSubtitles(markerId, subtitleElement);
+            // シーンにマーカーを追加
+            document.querySelector('a-scene').appendChild(marker);
           });
-
-          marker.addEventListener('markerLost', () => {
-            modelEntity.setAttribute('visible', 'false');
-            stopAudio(markerId);
-            stopSubtitles(markerId, subtitleElement);
-          });
+        })
+        .catch(error => {
+          console.error('ARデータの取得に失敗しました:', error);
         });
-      });
-
-    // 音声再生
-    function playAudio(markerId) {
-      const audio = audioElements[markerId];
-      if (audio) {
-        audio.currentTime = 0;
-        audio.play();
-      }
-    }
-
-    // 音声停止
-    function stopAudio(markerId) {
-      const audio = audioElements[markerId];
-      if (audio) {
-        audio.pause();
-      }
-    }
-
-    // 字幕表示
-    function startSubtitles(markerId, subtitleElement) {
-      const subtitles = subtitlesData[markerId];
-      const state = markerStates[markerId];
-      if (subtitles.length > 0 && state.currentSubtitleIndex < subtitles.length) {
-        subtitleElement.textContent = subtitles[state.currentSubtitleIndex];
-        subtitleElement.style.display = 'block';
-        state.currentSubtitleIndex++;
-        state.subtitleTimeout = setTimeout(() => {
-          subtitleElement.style.display = 'none';
-          startSubtitles(markerId, subtitleElement);
-        }, subtitleDisplayDuration);
-      }
-    }
-
-    // 字幕停止
-    function stopSubtitles(markerId, subtitleElement) {
-      const state = markerStates[markerId];
-      clearTimeout(state.subtitleTimeout);
-      state.currentSubtitleIndex = 0;
-      subtitleElement.style.display = 'none';
-    }
-
-    // 音量ボタン
-    document.querySelector('#toggle-volume').addEventListener('click', () => {
-      audioMuted = !audioMuted;
-      Object.values(audioElements).forEach((audio) => {
-        audio.muted = audioMuted;
-      });
-      document.querySelector('#toggle-volume').textContent = audioMuted ? '音量OFF' : '音量ON';
-    });
-
-    // 字幕ボタン
-    document.querySelector('#toggle-subtitle').addEventListener('click', () => {
-      subtitlesVisible = !subtitlesVisible;
-      document.querySelector('#toggle-subtitle').textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
