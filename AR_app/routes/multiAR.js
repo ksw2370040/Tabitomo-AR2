@@ -14,15 +14,9 @@ router.get('/multiAR', async (req, res) => {
     try {
         const query = `
             SELECT 
-                m.mdlID,
-                m.mdlname,
                 m.mdlimage,
-                m.mkname,
                 m.patt,
                 m.mkimage,
-                m.mdlsound,
-                m.mdltext,
-                s.languagename,
                 s.soundfile,
                 n.napisyfile
             FROM 
