@@ -36,15 +36,15 @@ router.get('/multiAR', async (req, res) => {
             return {
                 mdlID: row.mdlid,
                 mdlname: row.mdlname,
-                mdlimage: path.join('/Content/.glb', row.mdlimage),  // モデル画像ファイルのパスをフルパスに変換
+                mdlimage: row.mdlimage ? path.join('/Content/.glb', row.mdlimage) : '',  // nullチェックを追加
                 mkname: row.mkname,
-                patt: path.join('/Content/.patt', row.patt),  // マーカーパターンファイルのパスをフルパスに変換
+                patt: row.patt ? path.join('/Content/.patt', row.patt) : '',  // nullチェックを追加
                 mkimage: row.mkimage,
                 mdlsound: row.mdlsound,
                 mdltext: row.mdltext,
                 languagename: row.languagename,
-                soundfile: path.join('/Content/sound', row.soundfile),  // 音声ファイルのパスをフルパスに変換
-                napisyfile: path.join('/Content/subtitles', row.napisyfile)  // 字幕ファイルのパスをフルパスに変換
+                soundfile: row.soundfile ? path.join('/Content/sound', row.soundfile) : '',  // nullチェックを追加
+                napisyfile: row.napisyfile ? path.join('/Content/subtitles', row.napisyfile) : ''  // nullチェックを追加
             };
         });
 
