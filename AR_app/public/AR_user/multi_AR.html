@@ -1,119 +1,178 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <link rel="stylesheet" href="static/user.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3Dモデル一覧</title>
-  </head>
+  <!-- C:\Tabitomo-AR\AR_app\public\AR_user\test2.html -->
+<head>
+  <link rel="stylesheet" href="static/user.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.3.0/jsQR.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAR</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+</head>
 
-  <body>
-    <h1>3Dモデル一覧</h1>
+<body style="margin: 0px; overflow: hidden;">
+  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" id="scene" embedded gesture-detector>
+    <a-assets>
+      <a-asset-item id="animated-asset" src="../Content/.glb/free_ac_unit-1737428006151.glb"></a-asset-item>
+      <audio id="audio" src="tanktop.mp3" preload="auto"></audio>
+    </a-assets>
 
-    <div id="model-list">
-      <!-- モデル一覧が動的に追加される場所 -->
-    </div>
+    <a-marker id="animated-marker" type="pattern" preset="custom" url="../Content/.patt/pattern-marker-1737338253777.patt"
+      raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+      <a-entity id="model" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset" class="clickable"
+        animation="property: rotation; to: 0 0 0; dur: 3600; easing: linear; loop: true" gesture-handler
+        visible="false"></a-entity>
+    </a-marker>
 
-    <div id="subtitle">ここに字幕が表示されます</div>
-    <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
-    <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
-    <a href="home.html"><button class="top-right-button">戻る</button></a>
+    <a-assets>
+      <a-asset-item id="animated-asset2" src="../Content/.glb/hiyoko5-1737515973677.glb"></a-asset-item>
+      <audio id="audio2" src="tanktop.mp3" preload="auto"></audio>
+    </a-assets>
 
-    <script>
-      const subtitle = document.querySelector('#subtitle');
-      const toggleVolumeButton = document.querySelector('#toggle-volume');
-      const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
-      
-      let subtitles = [];
-      let currentSubtitleIndex = 0;
-      let subtitleTimeout;
-      let subtitlesVisible = false;
-      let audioMuted = false;
+    <a-marker id="animated-marker2" type="pattern" preset="custom" url="../Content/.patt/pattern-a-1737515973681.patt"
+      raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+      <a-entity id="model2" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset" class="clickable"
+        animation="property: rotation; to: 0 0 0; dur: 3600; easing: linear; loop: true" gesture-handler
+        visible="false"></a-entity>
+    </a-marker>
 
-      // 音量切替
-      toggleVolumeButton.addEventListener('click', function () {
-        audioMuted = !audioMuted;
-        if (audioMuted) {
-          audio.muted = true;
-          toggleVolumeButton.textContent = '音量OFF';
-        } else {
-          audio.muted = false;
-          toggleVolumeButton.textContent = '音量ON';
-        }
-      });
+    <a-entity camera position="0 0 10"></a-entity>
+  </a-scene>
 
-      // サーバーから3Dモデルデータを取得
-      fetch('/api/multiAR')
-        .then(response => response.json())
-        .then(models => {
-          const modelListContainer = document.querySelector('#model-list');
+  <div id="subtitle">ここに字幕が表示されます</div>
 
-          models.forEach(model => {
-            // モデルアイテムを一覧表示
-            modelListContainer.innerHTML += `
-              <div class="model-item">
-                <h3>モデル: ${model.mdlimage}</h3>
-                <a-entity scale="2 2 2">
-                  <!-- 修正: パスを適切に設定 -->
-                  <a-asset-item id="model-${model.mdlimage}" src="/Content/.glb/${model.mdlimage}"></a-asset-item>
-                  <a-entity gltf-model="#model-${model.mdlimage}" scale="2 2 2"></a-entity>
-                </a-entity>
-                <!-- 音声再生ボタン -->
-                <audio id="audio-${model.mdlimage}" src="/Content/sound/${model.soundfile}" preload="auto"></audio>
-                <button onclick="playAudio('${model.mdlimage}')">音声再生</button>
-              </div>
-            `;
-          });
+  <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
+  <!--実装するかも？<button id="take-photo" style="right: 200px;">写真を撮る</button> -->
+  <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
+  <a href="home.html"><button class="top-right-button">戻る</button></a>
+
+  <canvas id="qr-canvas" style="display:none;"></canvas>
+
+  <script>
+    const marker = document.querySelector('#animated-marker');
+    const model = document.querySelector('#model');
+    const audio = document.querySelector('#audio');
+    const subtitle = document.querySelector('#subtitle');
+    const toggleVolumeButton = document.querySelector('#toggle-volume');
+    const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
+    const takePhotoButton = document.querySelector('#take-photo');
+
+    let subtitles = [];
+    let currentSubtitleIndex = 0;
+    const displayDuration = 2000;
+    let subtitleTimeout;
+    let subtitlesVisible = false;
+    let audioMuted = false;
+
+    toggleVolumeButton.addEventListener('click', function () {
+      audioMuted = !audioMuted;
+
+      if (audioMuted) {
+        audio.muted = true;
+        toggleVolumeButton.textContent = '音量OFF';
+      } else {
+        audio.muted = false;
+        toggleVolumeButton.textContent = '音量ON';
+      }
+    });
+
+    function loadSubtitles() {
+      return fetch('zimaku.txt')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
         })
-        .catch(error => console.error('Error fetching models data:', error));
+        .then(text => {
+          subtitles = text.split('\n');
+        })
+        .catch(error => console.error('Error fetching subtitles:', error));
+    }
 
-      // 音声再生
-      function playAudio(modelId) {
-        const audioElement = document.querySelector(`#audio-${modelId}`);
-        if (audioElement) {
-          audioElement.play();
-        }
-      }
+    function showSubtitle() {
+      if (subtitlesVisible && currentSubtitleIndex < subtitles.length) {
+        subtitle.textContent = subtitles[currentSubtitleIndex];
+        subtitle.style.display = 'block';
+        currentSubtitleIndex++;
 
-      // サブタイトルの表示
-      function loadSubtitles() {
-        return fetch('zimaku.txt')
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.text();
-          })
-          .then(text => {
-            subtitles = text.split('\n');
-          })
-          .catch(error => console.error('Error fetching subtitles:', error));
-      }
-
-      function showSubtitle() {
-        if (subtitlesVisible && currentSubtitleIndex < subtitles.length) {
-          subtitle.textContent = subtitles[currentSubtitleIndex];
-          subtitle.style.display = 'block';
-          currentSubtitleIndex++;
-
-          subtitleTimeout = setTimeout(() => {
-            subtitle.style.display = 'none';
-            showSubtitle();
-          }, 2000);
-        }
-      }
-
-      toggleSubtitleButton.addEventListener('click', function () {
-        subtitlesVisible = !subtitlesVisible;
-        if (subtitlesVisible) {
-          toggleSubtitleButton.textContent = '字幕ON';
-          showSubtitle();
-        } else {
-          toggleSubtitleButton.textContent = '字幕OFF';
+        subtitleTimeout = setTimeout(() => {
           subtitle.style.display = 'none';
-          clearTimeout(subtitleTimeout);
-        }
+          showSubtitle();
+        }, displayDuration);
+      }
+    }
+
+    marker.addEventListener('markerFound', function () {
+      model.setAttribute('visible', true);
+      audio.play();
+      loadSubtitles().then(() => {
+        showSubtitle();
       });
-    </script>
-  </body>
+    });
+
+    marker.addEventListener('markerLost', function () {
+      model.setAttribute('visible', false);
+      audio.pause();
+      audio.currentTime = 0;
+      subtitle.style.display = 'none';
+      currentSubtitleIndex = 0;
+      clearTimeout(subtitleTimeout);
+    });
+
+    toggleSubtitleButton.addEventListener('click', function () {
+      subtitlesVisible = !subtitlesVisible;
+
+      if (subtitlesVisible) {
+        toggleSubtitleButton.textContent = '字幕ON';
+        showSubtitle();
+      } else {
+        toggleSubtitleButton.textContent = '字幕OFF';
+        subtitle.style.display = 'none';
+        clearTimeout(subtitleTimeout);
+      }
+    });
+
+    // スクリーンショット機能
+    takePhotoButton.addEventListener('click', function () {
+      const scene = document.querySelector('a-scene');
+      const renderer = scene.renderer;
+
+      // 新しいキャンバスを作成し、WebGLコンテキストの内容を描画する準備
+      const captureCanvas = document.createElement('canvas');
+      const context = captureCanvas.getContext('2d');
+
+      // WebGLコンテキストのサイズを取得
+      captureCanvas.width = renderer.domElement.width;
+      captureCanvas.height = renderer.domElement.height;
+
+      // WebGLレンダラーがフレームを描画してからキャプチャする
+      function captureFrame() {
+        // レンダリングが完了しているか確認
+        if (renderer.domElement) {
+          context.drawImage(renderer.domElement, 0, 0);
+          // キャプチャした画像を保存
+          captureCanvas.toBlob(function (blob) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'screenshot.png';
+            link.click();
+          }, 'image/png');
+        } else {
+          // レンダラーがまだ描画していない場合、再度試す
+          requestAnimationFrame(captureFrame);
+        }
+      }
+
+      // 最初のフレームをキャプチャする
+      captureFrame();
+    });
+
+
+
+  </script>
+</body>
+
 </html>
