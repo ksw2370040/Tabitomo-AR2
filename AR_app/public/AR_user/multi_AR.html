@@ -17,24 +17,21 @@
     <a-assets>
       <a-asset-item id="animated-asset" src="../Content/.glb/free_ac_unit-1737428006151.glb"></a-asset-item>
       <audio id="audio" src="tanktop.mp3" preload="auto"></audio>
+      <a-asset-item id="animated-asset2" src="../Content/.glb/hiyoko5-1737515973677.glb"></a-asset-item>
+      <audio id="audio2" src="tanktop.mp3" preload="auto"></audio>
     </a-assets>
 
     <a-marker id="animated-marker" type="pattern" preset="custom" url="../Content/.patt/pattern-marker-1737338253777.patt"
       raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
       <a-entity id="model" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset" class="clickable"
-        animation="property: rotation; to: 0 0 0; dur: 3600; easing: linear; loop: true" gesture-handler
+        animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
         visible="false"></a-entity>
     </a-marker>
 
-    <a-assets>
-      <a-asset-item id="animated-asset2" src="../Content/.glb/hiyoko5-1737515973677.glb"></a-asset-item>
-      <audio id="audio2" src="tanktop.mp3" preload="auto"></audio>
-    </a-assets>
-
     <a-marker id="animated-marker2" type="pattern" preset="custom" url="../Content/.patt/pattern-a-1737515973681.patt"
       raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-      <a-entity id="model2" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset" class="clickable"
-        animation="property: rotation; to: 0 0 0; dur: 3600; easing: linear; loop: true" gesture-handler
+      <a-entity id="model2" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset2" class="clickable"
+        animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
         visible="false"></a-entity>
     </a-marker>
 
@@ -44,20 +41,23 @@
   <div id="subtitle">ここに字幕が表示されます</div>
 
   <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
-  <!--実装するかも？<button id="take-photo" style="right: 200px;">写真を撮る</button> -->
   <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
   <a href="home.html"><button class="top-right-button">戻る</button></a>
 
   <canvas id="qr-canvas" style="display:none;"></canvas>
 
   <script>
-    const marker = document.querySelector('#animated-marker');
-    const model = document.querySelector('#model');
-    const audio = document.querySelector('#audio');
+    const marker1 = document.querySelector('#animated-marker');
+    const model1 = document.querySelector('#model');
+    const audio1 = document.querySelector('#audio');
+
+    const marker2 = document.querySelector('#animated-marker2');
+    const model2 = document.querySelector('#model2');
+    const audio2 = document.querySelector('#audio2');
+
     const subtitle = document.querySelector('#subtitle');
     const toggleVolumeButton = document.querySelector('#toggle-volume');
     const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
-    const takePhotoButton = document.querySelector('#take-photo');
 
     let subtitles = [];
     let currentSubtitleIndex = 0;
@@ -70,10 +70,12 @@
       audioMuted = !audioMuted;
 
       if (audioMuted) {
-        audio.muted = true;
+        audio1.muted = true;
+        audio2.muted = true;
         toggleVolumeButton.textContent = '音量OFF';
       } else {
-        audio.muted = false;
+        audio1.muted = false;
+        audio2.muted = false;
         toggleVolumeButton.textContent = '音量ON';
       }
     });
@@ -105,22 +107,24 @@
       }
     }
 
-    marker.addEventListener('markerFound', function () {
-      model.setAttribute('visible', true);
-      audio.play();
-      loadSubtitles().then(() => {
-        showSubtitle();
+    function handleMarkerEvents(marker, model, audio) {
+      marker.addEventListener('markerFound', function () {
+        model.setAttribute('visible', true);
+        audio.play();
+        loadSubtitles().then(() => {
+          showSubtitle();
+        });
       });
-    });
 
-    marker.addEventListener('markerLost', function () {
-      model.setAttribute('visible', false);
-      audio.pause();
-      audio.currentTime = 0;
-      subtitle.style.display = 'none';
-      currentSubtitleIndex = 0;
-      clearTimeout(subtitleTimeout);
-    });
+      marker.addEventListener('markerLost', function () {
+        model.setAttribute('visible', false);
+        audio.pause();
+        audio.currentTime = 0;
+        subtitle.style.display = 'none';
+        currentSubtitleIndex = 0;
+        clearTimeout(subtitleTimeout);
+      });
+    }
 
     toggleSubtitleButton.addEventListener('click', function () {
       subtitlesVisible = !subtitlesVisible;
@@ -135,42 +139,8 @@
       }
     });
 
-    // スクリーンショット機能
-    takePhotoButton.addEventListener('click', function () {
-      const scene = document.querySelector('a-scene');
-      const renderer = scene.renderer;
-
-      // 新しいキャンバスを作成し、WebGLコンテキストの内容を描画する準備
-      const captureCanvas = document.createElement('canvas');
-      const context = captureCanvas.getContext('2d');
-
-      // WebGLコンテキストのサイズを取得
-      captureCanvas.width = renderer.domElement.width;
-      captureCanvas.height = renderer.domElement.height;
-
-      // WebGLレンダラーがフレームを描画してからキャプチャする
-      function captureFrame() {
-        // レンダリングが完了しているか確認
-        if (renderer.domElement) {
-          context.drawImage(renderer.domElement, 0, 0);
-          // キャプチャした画像を保存
-          captureCanvas.toBlob(function (blob) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'screenshot.png';
-            link.click();
-          }, 'image/png');
-        } else {
-          // レンダラーがまだ描画していない場合、再度試す
-          requestAnimationFrame(captureFrame);
-        }
-      }
-
-      // 最初のフレームをキャプチャする
-      captureFrame();
-    });
-
-
+    handleMarkerEvents(marker1, model1, audio1);
+    handleMarkerEvents(marker2, model2, audio2);
 
   </script>
 </body>
