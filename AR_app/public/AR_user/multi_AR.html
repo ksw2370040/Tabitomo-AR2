@@ -25,14 +25,16 @@
       <a-marker id="animated-marker" type="pattern" preset="custom" url="../Content/.patt/pattern-onigiri-01-dot-1737686219005.patt"
         raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
         <a-entity id="model" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset" class="clickable"
-          animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler visible="false"></a-entity>
+          animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler visible="false">
+        </a-entity>
       </a-marker>
 
       <!-- マーカー2 -->
       <a-marker id="animated-marker2" type="pattern" preset="custom" url="../Content/.patt/pattern-marker-1737683711197.patt"
         raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
         <a-entity id="model2" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset2" class="clickable"
-          animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler visible="false"></a-entity>
+          animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler visible="false">
+        </a-entity>
       </a-marker>
 
       <!-- カメラ設定 -->
@@ -49,8 +51,18 @@
     <canvas id="qr-canvas" style="display:none;"></canvas>
 
     <script>
-      // イベントハンドラや字幕などの処理
-      // （省略）
+      // モデルをクリックした際に音を鳴らすインタラクションの追加
+      document.querySelector('#model').addEventListener('click', function () {
+        var audio = document.querySelector('#audio');
+        audio.play();
+        console.log("モデル1がクリックされました");
+      });
+
+      document.querySelector('#model2').addEventListener('click', function () {
+        var audio2 = document.querySelector('#audio2');
+        audio2.play();
+        console.log("モデル2がクリックされました");
+      });
     </script>
   </body>
 </html>
