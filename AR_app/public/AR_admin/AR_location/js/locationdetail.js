@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <p>
                             <strong>モデル名:</strong> ${model.mdlname}<br>
                             <strong>モデルID:</strong> ${model.mdlid}<br>
-                            <strong>3Dモデル:</strong>${model.mdlname}<br>
+                            <strong>3Dモデル:</strong>${model.mdlimage}<br>
                             <button class="viewer-btn" data-mdlimage="${model.mdlimage}">3Dモデル表示</button><br>
                             <strong>マーカー名:</strong> ${model.mkname}<br>
                             <strong>パターン:</strong> ${model.patt}<br>
