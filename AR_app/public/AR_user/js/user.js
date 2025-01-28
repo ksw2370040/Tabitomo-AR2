@@ -82,7 +82,7 @@ document.getElementById('login-form')?.addEventListener('submit', function (even
 
     xhr.onload = function () {
         if (xhr.status === 200) {
-            window.location.href = `/AR_user/home.html?username=${encodeURIComponent(username)}`;
+            window.location.href = `/AR_user/home.html?username=${encodeURIComponent(username)}?userid=${encodeURIComponent(userid)}&languagename=${encodeURIComponent(languagename)}`;
         } else {
             alert('ログイン失敗: ユーザー名またはパスワードが間違っています');
         }
