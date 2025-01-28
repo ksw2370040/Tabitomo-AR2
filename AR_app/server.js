@@ -49,7 +49,7 @@ app.use('/locationdetail', locationdetailRoutes);
 app.use('/locationadd', locationaddRoutes);
 app.use('/locationedit', locationeditRoutes);
 app.use('/modelsRoutes', modelsRoutes);
-app.use('/api', multiAR);
+app.use('/multiAR', multiAR);
 
 // HTTPSサーバーの起動
 const PORT = 3000;

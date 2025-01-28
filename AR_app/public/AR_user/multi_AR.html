@@ -1,151 +1,81 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <!-- C:\Tabitomo-AR\AR_app\public\AR_user\test2.html -->
+
 <head>
-  <link rel="stylesheet" href="static/user.css">
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebAR</title>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR表示</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
-  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" id="scene" embedded gesture-detector>
-    <a-assets>
-      <a-asset-item id="animated-asset" src="../Content/.glb/hiyoko5-1737683749786.glb" onerror="console.error('Failed to load GLB file: hiyoko5-1737683749786.glb');"></a-asset-item>
-      <audio id="audio" src="tanktop.mp3" preload="auto"></audio>
-      <a-asset-item id="animated-asset2" src="../Content/.glb/free_ac_unit-1737683705900.glb"></a-asset-item>
-      <audio id="audio2" src="tanktop.mp3" preload="auto"></audio>
-    </a-assets>
-    
-    <!-- マーカーの設定 -->
-    <a-marker id="animated-marker" type="pattern" preset="custom" url="../Content/.patt/pattern-C-group-1738026871043.patt"
-              raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-      <a-entity id="model" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset" class="clickable"
-                animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
-                visible="false"></a-entity>
-    </a-marker>
-    
-    <!-- 2つ目のマーカー設定 -->
-    <a-marker id="animated-marker2" type="pattern" preset="custom" url="../Content/.patt/pattern-marker-1737683711197.patt"
-              raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-      <a-entity id="model2" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset2" class="clickable"
-                animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
-                visible="false"></a-entity>
-    </a-marker>
-    
-    <!-- カメラ -->
-    <a-entity camera position="0 0 0"></a-entity>
-  </a-scene>
+    <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
+        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" id="scene" embedded>
+        
+        <a-assets>
+            <!-- 動的にモデルや音声を追加する -->
+        </a-assets>
 
-  <div id="subtitle">ここに字幕が表示されます</div>
+        <a-entity camera></a-entity>
+    </a-scene>
 
-  <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
-  <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
-  <a href="home.html"><button class="top-right-button">戻る</button></a>
+    <script>
+        // URLパラメータからuseridとlanguagenameを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const userid = urlParams.get('userid');
+        const languagename = urlParams.get('languagename');
 
-  <canvas id="qr-canvas" style="display:none;"></canvas>
+        if (!languagename) {
+            alert("languagenameが指定されていません！");
+        }
 
-  <script>
-    const marker1 = document.querySelector('#animated-marker');
-    const model1 = document.querySelector('#model');
-    const audio1 = document.querySelector('#audio');
+        // サーバーからARモデルデータを取得
+        fetch(`/multiAR?languagename=${languagename}`)
+            .then(response => response.json())
+            .then(models => {
+                models.forEach(model => {
+                    // 3Dモデルの追加
+                    const assetItem = document.createElement('a-asset-item');
+                    assetItem.id = model.mdlid;
+                    assetItem.setAttribute('src', `../Content/.glb/${model.mdlimage}`);
+                    assetItem.onerror = () => console.error(`Failed to load GLB file: ${model.mdlimage}`);
+                    document.querySelector('a-assets').appendChild(assetItem);
 
-    const marker2 = document.querySelector('#animated-marker2');
-    const model2 = document.querySelector('#model2');
-    const audio2 = document.querySelector('#audio2');
+                    // 音声ファイルの追加
+                    const audio = document.createElement('audio');
+                    audio.id = model.mdlid;
+                    audio.setAttribute('src', `../Content/${model.soundfile}`);
+                    audio.preload = 'auto';
+                    document.querySelector('a-assets').appendChild(audio);
 
-    const subtitle = document.querySelector('#subtitle');
-    const toggleVolumeButton = document.querySelector('#toggle-volume');
-    const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
+                    // マーカーの設定
+                    const marker = document.createElement('a-marker');
+                    marker.id = model.mdlid;
+                    marker.setAttribute('type', 'pattern');
+                    marker.setAttribute('preset', 'custom');
+                    marker.setAttribute('url', `../Content/.patt/${model.patt}`);
+                    marker.setAttribute('raycaster', 'objects: .clickable');
+                    marker.setAttribute('emitevents', 'true');
+                    marker.setAttribute('cursor', 'fuse: false; rayOrigin: mouse;');
 
-    let subtitles = [];
-    let currentSubtitleIndex = 0;
-    const displayDuration = 2000;
-    let subtitleTimeout;
-    let subtitlesVisible = false;
-    let audioMuted = false;
+                    const entity = document.createElement('a-entity');
+                    entity.setAttribute('scale', '1 1 1');
+                    entity.setAttribute('animation-mixer', 'loop: repeat');
+                    entity.setAttribute('gltf-model', `#${model.mdlid}`);
+                    entity.classList.add('clickable');
+                    entity.setAttribute('animation', 'property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true');
+                    entity.setAttribute('gesture-handler', '');
+                    entity.setAttribute('visible', 'false');
 
-    toggleVolumeButton.addEventListener('click', function () {
-      audioMuted = !audioMuted;
-
-      if (audioMuted) {
-        audio1.muted = true;
-        audio2.muted = true;
-        toggleVolumeButton.textContent = '音量OFF';
-      } else {
-        audio1.muted = false;
-        audio2.muted = false;
-        toggleVolumeButton.textContent = '音量ON';
-      }
-    });
-
-    function loadSubtitles() {
-      return fetch('zimaku.txt')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.text();
-        })
-        .then(text => {
-          subtitles = text.split('\n');
-        })
-        .catch(error => console.error('Error fetching subtitles:', error));
-    }
-
-    function showSubtitle() {
-      if (subtitlesVisible && currentSubtitleIndex < subtitles.length) {
-        subtitle.textContent = subtitles[currentSubtitleIndex];
-        subtitle.style.display = 'block';
-        currentSubtitleIndex++;
-
-        subtitleTimeout = setTimeout(() => {
-          subtitle.style.display = 'none';
-          showSubtitle();
-        }, displayDuration);
-      }
-    }
-
-    function handleMarkerEvents(marker, model, audio) {
-      marker.addEventListener('markerFound', function () {
-        model.setAttribute('visible', true);
-        audio.play();
-        loadSubtitles().then(() => {
-          showSubtitle();
-        });
-      });
-
-      marker.addEventListener('markerLost', function () {
-        model.setAttribute('visible', false);
-        audio.pause();
-        audio.currentTime = 0;
-        subtitle.style.display = 'none';
-        currentSubtitleIndex = 0;
-        clearTimeout(subtitleTimeout);
-      });
-    }
-
-    toggleSubtitleButton.addEventListener('click', function () {
-      subtitlesVisible = !subtitlesVisible;
-
-      if (subtitlesVisible) {
-        toggleSubtitleButton.textContent = '字幕ON';
-        showSubtitle();
-      } else {
-        toggleSubtitleButton.textContent = '字幕OFF';
-        subtitle.style.display = 'none';
-        clearTimeout(subtitleTimeout);
-      }
-    });
-
-    handleMarkerEvents(marker1, model1, audio1);
-    handleMarkerEvents(marker2, model2, audio2);
-
-  </script>
+                    marker.appendChild(entity);
+                    document.querySelector('a-scene').appendChild(marker);
+                });
+            })
+            .catch(error => {
+                console.error('ARモデルの取得に失敗しました:', error);
+            });
+    </script>
 </body>
 
 </html>

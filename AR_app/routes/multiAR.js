@@ -9,8 +9,14 @@ const publicDirectory = path.join(__dirname, '..', 'public');
 // ファイルへのパスを正しく設定
 router.use('/Content', express.static(path.join(publicDirectory, 'Content')));
 
-// 全てのモデルデータを取得するエンドポイント
-router.get('/multiAR', async (req, res) => {
+// 言語名を直接取得して、それを条件にデータを取得するエンドポイント
+router.get('/', async (req, res) => {
+    const languagename = req.query.languagename;  // URLパラメーターからlanguagenameを取得
+
+    if (!languagename) {
+        return res.status(400).json({ error: 'languagenameパラメーターが必要です' });
+    }
+
     try {
         const query = `
             SELECT 
@@ -20,16 +26,18 @@ router.get('/multiAR', async (req, res) => {
                 s.soundfile,
                 n.napisyfile
             FROM 
-                MODEL2 m
+                model2 m
             LEFT JOIN  
                 sound s ON m.mdlsound = s.mdlsound 
             LEFT JOIN  
                 napisy n ON m.mdltext = n.mdltext AND s.languagename = n.languagename
+            WHERE
+                s.languagename = $1
             ORDER BY
-                m.mdlID, s.languagename;
+                m.mdlid, s.languagename;
         `;
         
-        const result = await connection.query(query);
+        const result = await connection.query(query, [languagename]);
         res.json(result.rows);
     } catch (error) {
         console.error('データの取得中にエラーが発生しました:', error);
