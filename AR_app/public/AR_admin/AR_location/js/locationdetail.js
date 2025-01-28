@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             <a href="../../Content/markerimage/${model.mkimage}" download="${model.mkimage}" class="download-btn">
                                 <button>ダウンロード</button>
                             </a><br>
-                            <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">音声ファイル</a></strong><br>
+                            <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">テキストファイル</a></strong><br>
                             ${model.textfiles.length > 0 ? model.textfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}<br>
-                            <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdlsound=${model.mdlsound}">テキストファイル</a></strong><br>
+                            <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdlsound=${model.mdlsound}">音声ファイル</a></strong><br>
                             ${model.soundfiles.length > 0 ? model.soundfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}
                         </p>
                         <button class="edit-btn" data-mdlid="${mdlid}">編集</button>
