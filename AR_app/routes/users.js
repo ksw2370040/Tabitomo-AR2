@@ -7,7 +7,7 @@ const connection = require('../config');
 // ログインエンドポイント
 router.post('/userlogin', (req, res) => {
     const { username, password } = req.body;
- 
+
     // ユーザー情報取得クエリ（パスワードハッシュ含む）
     const query = 'SELECT * FROM users WHERE name = $1;';
     connection.query(query, [username], async (err, results) => {
@@ -15,20 +15,24 @@ router.post('/userlogin', (req, res) => {
             console.error('データベースエラー:', err);
             return res.status(500).send('サーバーエラー');
         }
- 
+
         if (results.rows.length === 0) {
             // ユーザーが存在しない場合
             return res.status(401).send('認証に失敗しました');
         }
- 
+
         const user = results.rows[0];
- 
+
         // パスワードの照合
         try {
             const match = await bcrypt.compare(password, user.password);
             if (match) {
-                // 認証成功
-                res.redirect(`/AR_user/home.html?username=${encodeURIComponent(username)}`);
+                // 認証成功、useridとlanguagenameも返す
+                res.json({
+                    username: user.name,
+                    userid: user.userid,
+                    languagename: user.languagename
+                });
             } else {
                 // パスワードが一致しない場合
                 res.status(401).send('認証に失敗しました');
@@ -39,6 +43,7 @@ router.post('/userlogin', (req, res) => {
         }
     });
 });
+
 // 新規管理者登録エンドポイント
 router.post('/newUser', async (req, res) => {
     const { username, password, passwordConfirm, languagename } = req.body;
