@@ -11,8 +11,9 @@
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
-  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;" id="scene" embedded gesture-detector>
+    <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true; trackingBackend: artoolkit; markersAreaEnabled: true;" 
+    id="scene" embedded gesture-detector>
     
     <a-assets id="assets">
       <!-- 動的に3Dモデルや音声がここに追加されます -->
