@@ -1,19 +1,15 @@
 const express = require('express');
 const path = require('path');
 const router = express.Router();
-const connection = require('../config'); // DB接続の設定
+const connection = require('../config'); // DB接続設定
 
 // 静的ファイルの提供
 const publicDirectory = path.join(__dirname, '..', 'public');
 router.use('/Content', express.static(path.join(publicDirectory, 'Content')));
 
-// 言語名を直接取得して、それを条件にデータを取得するエンドポイント
+// ARコンテンツを返すエンドポイント
 router.get('/', async (req, res) => {
-    const languagename = req.query.languagename;  // URLパラメーターからlanguagenameを取得
-
-    if (!languagename) {
-        return res.status(400).json({ error: 'languagenameパラメーターが必要です' });
-    }
+    const languagename = req.query.languagename || '日本語';  // パラメーターが無ければデフォルトを設定
 
     try {
         const query = `
@@ -35,48 +31,39 @@ router.get('/', async (req, res) => {
         
         const result = await connection.query(query, [languagename]);
 
-        // 生成したHTMLコードを格納する変数
-        let modelHtml = '';
-        let markerHtml = '';
-        let audioHtml = '';
-        let subtitleHtml = '';
+        const modelHtml = [];
+        const markerHtml = [];
+        const audioHtml = [];
+        const subtitleHtml = [];
 
-        // 結果を元にHTMLを生成
-        result.rows.forEach(data => {
-            // モデルのHTMLを生成 (a-assets内に格納)
-            modelHtml += `<a-asset-item id="${data.mdlid}" src="../Content/.glb/${data.mdlimage}"></a-asset-item>`;
-            
-            // マーカーのHTMLを生成
-            markerHtml += `
-                <a-marker id="animated-marker-${data.mdlid}" type="pattern" preset="custom" url="../Content/.patt/${data.patt}"
+        result.rows.forEach((data, index) => {
+            // モデルとマーカーのHTMLを生成
+            modelHtml.push(`<a-asset-item id="animated-asset-${index}" src="../Content/.glb/${data.mdlimage}" onerror="console.error('Failed to load GLB file: ${data.mdlimage}');"></a-asset-item>`);
+            markerHtml.push(`
+                <a-marker id="animated-marker-${index}" type="pattern" preset="custom" url="../Content/.patt/${data.patt}"
                           raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-                    <a-entity id="model-${data.mdlid}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#${data.mdlid}" class="clickable"
+                    <a-entity id="model-${index}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset-${index}" class="clickable"
                               animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
                               visible="false"></a-entity>
                 </a-marker>
-            `;
+            `);
 
-            // 音声ファイルが存在する場合、audio要素を作成
+            // 音声があれば追加
             if (data.soundfile) {
-                audioHtml += `<audio id="audio-${data.mdlid}" src="../Content/sound/${data.soundfile}" preload="auto"></audio>`;
+                audioHtml.push(`../Content/sound/${data.soundfile}`);
             }
-            
-            // 字幕ファイルが存在する場合、字幕のHTMLを作成
+
+            // 字幕があれば追加
             if (data.napisyfile) {
-                subtitleHtml += `<div id="subtitle-${data.mdlid}" class="subtitle">${data.napisyfile}</div>`;
+                subtitleHtml.push(`../Content/zimaku/${data.napisyfile}`);
             }
         });
 
-        // モデルHTML、マーカーHTML、音声、字幕HTMLをレスポンスとして返す
-        res.json({
-            modelHtml,
-            markerHtml,
-            audioHtml: audioHtml || null,  // 音声がない場合はnullを返す
-            subtitleHtml: subtitleHtml || null  // 字幕がない場合はnullを返す
-        });
+        res.json({ modelHtml, markerHtml, audioHtml, subtitleHtml });
+
     } catch (error) {
-        console.error('データの取得中にエラーが発生しました:', error);
-        res.status(500).json({ error: 'データの取得中にエラーが発生しました。' });
+        console.error('ARコンテンツ取得エラー:', error);
+        res.status(500).send('Error retrieving AR content.');
     }
 });
 
