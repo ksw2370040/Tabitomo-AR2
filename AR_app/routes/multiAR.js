@@ -9,7 +9,7 @@ router.use('/Content', express.static(path.join(publicDirectory, 'Content')));
 
 // ARコンテンツを返すエンドポイント
 router.get('/', async (req, res) => {
-    const languagename = req.query.languagename || '日本語';  // パラメーターが無ければデフォルトを設定
+    const languagename = req.query.languagename;  // パラメーターが無ければデフォルトを設定
 
     try {
         const query = `
