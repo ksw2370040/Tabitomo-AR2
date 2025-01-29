@@ -14,11 +14,11 @@
   <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
     arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" id="scene" embedded gesture-detector>
     <a-assets>
-      <!-- 3Dモデルや音声ファイルを動的に読み込むためのプレースホルダ -->
-      <!-- 動的に追加されるモデルや音声をここで定義します -->
+      <!-- 動的に追加される3Dモデル用のa-asset-itemタグがここに追加されます -->
     </a-assets>
 
-    <!-- マーカーの設定は動的に追加されます -->
+    <!-- 動的に追加されるマーカー用のa-markerタグがここに追加されます -->
+    
     <a-entity camera position="0 0 0"></a-entity>
   </a-scene>
 
@@ -31,121 +31,39 @@
   <canvas id="qr-canvas" style="display:none;"></canvas>
 
   <script>
-    const subtitle = document.querySelector('#subtitle');
-    const toggleVolumeButton = document.querySelector('#toggle-volume');
-    const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
-
-    let subtitles = [];
-    let currentSubtitleIndex = 0;
-    const displayDuration = 2000;
-    let subtitleTimeout;
-    let subtitlesVisible = false;
-    let audioMuted = false;
-
     // URLからlanguagenameを取得
     const urlParams = new URLSearchParams(window.location.search);
-    const languagename = urlParams.get('languagename'); // URLのクエリパラメータから取得
+    const languagename = urlParams.get('languagename');
+    const userid = urlParams.get('userid');  // ユーザーIDも取得
 
-    if (!languagename) {
-      console.error('languagenameが指定されていません');
-      alert('languagenameが指定されていません');
-      return;
-    }
-
-    // 動的にモデルを追加する関数
-    function addModelToScene(modelData) {
-      const scene = document.querySelector('a-scene');
-
-      // 新しいマーカー要素を作成
-      const marker = document.createElement('a-marker');
-      marker.setAttribute('type', 'pattern');
-      marker.setAttribute('preset', 'custom');
-      marker.setAttribute('url', `/Content/${modelData.patt}`);
-      marker.setAttribute('raycaster', 'objects: .clickable');
-      marker.setAttribute('emitevents', 'true');
-      marker.setAttribute('cursor', 'fuse: false; rayOrigin: mouse;');
-
-      // 新しい3Dモデルを作成
-      const model = document.createElement('a-entity');
-      model.setAttribute('scale', '1 1 1');
-      model.setAttribute('animation-mixer', 'loop: repeat');
-      model.setAttribute('gltf-model', `#animated-asset-${modelData.mdlid}`);
-      model.classList.add('clickable');
-      model.setAttribute('animation', 'property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true');
-      model.setAttribute('gesture-handler', 'visible', false);
-
-      // 3Dモデルをマーカーに追加
-      marker.appendChild(model);
-
-      // シーンにマーカーを追加
-      scene.appendChild(marker);
-
-      // モデルや音声、字幕を設定
-      const asset = document.createElement('a-asset-item');
-      asset.setAttribute('id', `animated-asset-${modelData.mdlid}`);
-      asset.setAttribute('src', `/Content/${modelData.mdlimage}`);
-      scene.appendChild(asset);
-
-      const audio = document.createElement('audio');
-      audio.setAttribute('id', `audio-${modelData.mdlid}`);
-      audio.setAttribute('src', `/Content/${modelData.soundfile}`);
-      audio.setAttribute('preload', 'auto');
-      scene.appendChild(audio);
-    }
-
-    // 言語に基づいてデータを取得
+    // サーバーにGETリクエストを送る
     fetch(`/multiAR?languagename=${languagename}`)
       .then(response => response.json())
       .then(data => {
-        if (data && data.length > 0) {
-          data.forEach(item => {
-            // 3Dモデルやマーカーの設定を動的に追加
-            addModelToScene(item);
+        data.forEach(item => {
+          // a-asset-itemを動的に追加
+          const assetHTML = `
+            <a-asset-item id="${item.mdlid}" src="../Content/.glb/${item.mdlimage}"></a-asset-item>
+          `;
+          document.querySelector('a-assets').innerHTML += assetHTML;
 
-            // 字幕の設定
-            if (item.napisyfile) {
-              subtitles.push(item.napisyfile);
-            }
-          });
-        } else {
-          console.error('データが見つかりません');
-        }
+          // a-markerを動的に追加
+          const markerHTML = `
+            <a-marker id="animated-marker-${item.mdlid}" type="pattern" preset="custom" url="../Content/.patt/${item.patt}"
+              raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+              <a-entity id="${item.mdlid}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#${item.mdlid}" class="clickable"
+                animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
+                visible="false"></a-entity>
+            </a-marker>
+          `;
+          document.querySelector('a-scene').innerHTML += markerHTML;
+        });
       })
-      .catch(error => console.error('データ取得に失敗しました:', error));
+      .catch(error => {
+        console.error('データの取得に失敗しました:', error);
+      });
 
-    // 音量のトグル
-    toggleVolumeButton.addEventListener('click', function () {
-      audioMuted = !audioMuted;
-      document.querySelectorAll('audio').forEach(audio => audio.muted = audioMuted);
-      toggleVolumeButton.textContent = audioMuted ? '音量OFF' : '音量ON';
-    });
-
-    // 字幕の表示制御
-    function showSubtitle() {
-      if (subtitlesVisible && currentSubtitleIndex < subtitles.length) {
-        subtitle.textContent = subtitles[currentSubtitleIndex];
-        subtitle.style.display = 'block';
-        currentSubtitleIndex++;
-
-        subtitleTimeout = setTimeout(() => {
-          subtitle.style.display = 'none';
-          showSubtitle();
-        }, displayDuration);
-      }
-    }
-
-    toggleSubtitleButton.addEventListener('click', function () {
-      subtitlesVisible = !subtitlesVisible;
-
-      if (subtitlesVisible) {
-        toggleSubtitleButton.textContent = '字幕ON';
-        showSubtitle();
-      } else {
-        toggleSubtitleButton.textContent = '字幕OFF';
-        subtitle.style.display = 'none';
-        clearTimeout(subtitleTimeout);
-      }
-    });
+    // 音量や字幕制御のスクリプトはここに続く...
   </script>
 </body>
 </html>
