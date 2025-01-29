@@ -5,8 +5,6 @@ const connection = require('../config'); // DB接続の設定
 
 // 静的ファイルの提供
 const publicDirectory = path.join(__dirname, '..', 'public');
-
-// ファイルへのパスを正しく設定
 router.use('/Content', express.static(path.join(publicDirectory, 'Content')));
 
 // 言語名を直接取得して、それを条件にデータを取得するエンドポイント
@@ -60,7 +58,7 @@ router.get('/', async (req, res) => {
 
             // 音声ファイルが存在する場合、audio要素を作成
             if (data.soundfile) {
-                audioHtml += `<audio id="audio-${data.mdlid}" src="../Content/.mp3/${data.soundfile}" preload="auto"></audio>`;
+                audioHtml += `<audio id="audio-${data.mdlid}" src="../Content/sound/${data.soundfile}" preload="auto"></audio>`;
             }
             
             // 字幕ファイルが存在する場合、字幕のHTMLを作成
