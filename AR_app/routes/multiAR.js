@@ -17,8 +17,8 @@ router.get('/', async (req, res) => {
                 m.mdlid,
                 m.mdlimage,
                 m.patt,
-                s.soundfile,
-                n.napisyfile
+                COALESCE(s.soundfile, '') AS soundfile,  -- NULLの場合は空文字を設定
+                COALESCE(n.napisyfile, '') AS napisyfile -- NULLの場合は空文字を設定
             FROM 
                 model2 m
             LEFT JOIN  

@@ -1,69 +1,71 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <link rel="stylesheet" href="static/user.css">
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebAR</title>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Multi Marker</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe-ar.js"></script> <!-- AR.js のライブラリ -->
+
 </head>
+<body>
+    <!-- ARシーン -->
+    <a-scene embedded arjs>
+        <!-- カメラ設定 -->
+        <a-camera position="0 0 0" gps-projected-camera></a-camera>
 
-<body style="margin: 0px; overflow: hidden;">
-  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" id="scene" embedded gesture-detector>
-    <a-assets>
-      <!-- 動的に追加される3Dモデル用のa-asset-itemタグがここに追加されます -->
-    </a-assets>
+        <!-- ARのための3Dモデルとマーカーを動的に生成 -->
+        <script>
+            // URLパラメータからlanguagenameを取得する関数
+            function getUrlParam(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
 
-    <!-- 動的に追加されるマーカー用のa-markerタグがここに追加されます -->
-    
-    <a-entity camera position="0 0 0"></a-entity>
-  </a-scene>
+            // languagenameをURLパラメータから取得
+            const languagename = getUrlParam('languagename') || '日本語';  // デフォルトは日本語
 
-  <div id="subtitle">ここに字幕が表示されます</div>
+            // サーバーからデータを取得して3Dモデルを動的に生成
+            fetch(`/multiAR?languagename=${encodeURIComponent(languagename)}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(model => {
+                        // 3Dモデルのファイルを読み込む
+                        const modelhtml = `
+                            <a-asset-item id="${model.mdlid}" src="../Content/.glb/${model.mdlimage}"></a-asset-item>
+                        `;
+                        document.querySelector('a-scene').innerHTML += modelhtml;
 
-  <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
-  <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
-  <a href="home.html"><button class="top-right-button">戻る</button></a>
+                        // マーカーの設定
+                        const markerhtml = `
+                            <a-marker id="${model.mdlid}-marker" type="pattern" preset="custom" url="../Content/.patt/${model.patt}"
+                                      raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+                                <a-entity id="${model.mdlid}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#${model.mdlid}" class="clickable"
+                                          animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
+                                          visible="false"></a-entity>
+                            </a-marker>
+                        `;
+                        document.querySelector('a-scene').innerHTML += markerhtml;
 
-  <canvas id="qr-canvas" style="display:none;"></canvas>
+                        // 音声がある場合、再生する
+                        if (model.soundfile) {
+                            const audioElement = document.createElement('audio');
+                            audioElement.src = `../Content/${model.soundfile}`;
+                            audioElement.preload = 'auto';
+                            audioElement.play();
+                        }
 
-  <script>
-    // URLからlanguagenameを取得
-    const urlParams = new URLSearchParams(window.location.search);
-    const languagename = urlParams.get('languagename');
-    const userid = urlParams.get('userid');  // ユーザーIDも取得
-
-    // サーバーにGETリクエストを送る
-    fetch(`/multiAR?languagename=${languagename}`)
-      .then(response => response.json())
-      .then(data => {
-        data.forEach(item => {
-          // a-asset-itemを動的に追加
-          const assetHTML = `
-            <a-asset-item id="${item.mdlid}" src="../Content/.glb/${item.mdlimage}"></a-asset-item>
-          `;
-          document.querySelector('a-assets').innerHTML += assetHTML;
-
-          // a-markerを動的に追加
-          const markerHTML = `
-            <a-marker id="animated-marker-${item.mdlid}" type="pattern" preset="custom" url="../Content/.patt/${item.patt}"
-              raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-              <a-entity id="${item.mdlid}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#${item.mdlid}" class="clickable"
-                animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
-                visible="false"></a-entity>
-            </a-marker>
-          `;
-          document.querySelector('a-scene').innerHTML += markerHTML;
-        });
-      })
-      .catch(error => {
-        console.error('データの取得に失敗しました:', error);
-      });
-
-    // 音量や字幕制御のスクリプトはここに続く...
-  </script>
+                        // 字幕がある場合、表示する
+                        if (model.napisyfile) {
+                            const subtitleElement = document.createElement('div');
+                            subtitleElement.classList.add('subtitle');
+                            subtitleElement.innerText = model.napisyfile;
+                            document.body.appendChild(subtitleElement);
+                        }
+                    });
+                })
+                .catch(error => console.error('データ取得エラー:', error));
+        </script>
+    </a-scene>
 </body>
 </html>

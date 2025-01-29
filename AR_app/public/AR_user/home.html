@@ -62,9 +62,9 @@
     }
 
     // ARボタンのURLにuseridとlanguagenameを追加
-    if (userid && languagename) {
+    if (languagename) {
         const arButton = document.getElementById('ar-button');
-        arButton.href = `multi_AR.html?userid=${encodeURIComponent(userid)}&languagename=${encodeURIComponent(languagename)}`;
+        arButton.href = `multi_AR.html?languagename=${encodeURIComponent(languagename)}`;
     }
 </script>
 
