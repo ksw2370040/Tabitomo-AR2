@@ -4,7 +4,7 @@ const router = express.Router();
 const connection = require('../config');  // データベース接続設定
 
 router.get('/', async (req, res) => {
-  const languagename = req.params.languagename;
+    const languagename = req.query.languagename || '日本語';
 
   try {
     const query = `
