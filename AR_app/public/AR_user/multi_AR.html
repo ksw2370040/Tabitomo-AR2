@@ -11,144 +11,84 @@
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
-    <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" renderer="logarithmicDepthBuffer: true;"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true; trackingBackend: artoolkit; markersAreaEnabled: true;" 
+  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true; trackingBackend: artoolkit; markersAreaEnabled: true;"
     id="scene" embedded gesture-detector>
     
-    <a-assets id="assets">
-      <!-- 動的に3Dモデルや音声がここに追加されます -->
-    </a-assets>
-
-    <div id="content"></div> <!-- マーカーとモデルを動的に生成 -->
-
+    <a-assets id="assets"></a-assets>
+    <div id="content"></div>
     <a-entity camera position="0 0 0"></a-entity>
   </a-scene>
 
-  <div id="subtitle" style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: white; font-size: 24px; display: none;">
-    ここに字幕が表示されます
-  </div>
+  <div id="subtitle" class="subtitle">ここに字幕が表示されます</div>
 
-  <button id="toggle-volume" class="top-right-button" style="right: 200px;">音量ON</button>
-  <button id="toggle-subtitle" class="top-right-button" style="right: 320px;">字幕OFF</button>
+  <button id="toggle-volume" class="top-right-button">音量ON</button>
+  <button id="toggle-subtitle" class="top-right-button">字幕OFF</button>
   <a href="home.html"><button class="top-right-button">戻る</button></a>
 
-  <canvas id="qr-canvas" style="display:none;"></canvas>
-
   <script>
-    // URL パラメータから languagename を取得
+    document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const languagename = urlParams.get('languagename') || '日本語';  // デフォルトは日本語
+    const languagename = urlParams.get('languagename') || '日本語';
 
     const subtitle = document.querySelector('#subtitle');
     const toggleVolumeButton = document.querySelector('#toggle-volume');
     const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
+    const assets = document.getElementById('assets');
+    const contentDiv = document.getElementById('content');
 
-    let subtitles = [];
-    let currentSubtitleIndex = 0;
-    const displayDuration = 2000;
-    let subtitleTimeout;
     let subtitlesVisible = false;
     let audioMuted = false;
 
-    // 音量のON/OFF切替
     toggleVolumeButton.addEventListener('click', function () {
-      audioMuted = !audioMuted;
-      const audios = document.querySelectorAll('audio');
-      audios.forEach(audio => {
-        audio.muted = audioMuted;
-      });
-
-      toggleVolumeButton.textContent = audioMuted ? '音量OFF' : '音量ON';
+        audioMuted = !audioMuted;
+        document.querySelectorAll('audio').forEach(audio => audio.muted = audioMuted);
+        toggleVolumeButton.textContent = audioMuted ? '音量OFF' : '音量ON';
     });
 
-    // 字幕のON/OFF切替
     toggleSubtitleButton.addEventListener('click', function () {
-      subtitlesVisible = !subtitlesVisible;
-      toggleSubtitleButton.textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
-      if (subtitlesVisible) {
-        showSubtitle();
-      } else {
-        subtitle.style.display = 'none';
-        clearTimeout(subtitleTimeout);
-      }
+        subtitlesVisible = !subtitlesVisible;
+        toggleSubtitleButton.textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
+        if (!subtitlesVisible) subtitle.style.display = 'none';
     });
 
-    // 字幕を取得する
-    function loadSubtitles() {
-      return fetch('zimaku.txt')
-        .then(response => response.text())
-        .then(text => {
-          subtitles = text.split('\n');
-        })
-        .catch(error => console.error('字幕の取得に失敗しました:', error));
-    }
-
-    // 字幕を表示
-    function showSubtitle() {
-      if (subtitlesVisible && currentSubtitleIndex < subtitles.length) {
-        subtitle.textContent = subtitles[currentSubtitleIndex];
-        subtitle.style.display = 'block';
-        currentSubtitleIndex++;
-
-        subtitleTimeout = setTimeout(() => {
-          subtitle.style.display = 'none';
-          showSubtitle();
-        }, displayDuration);
-      }
-    }
-
-    // マーカーのイベント設定
     function handleMarkerEvents(markerId, modelId, audioId) {
-      const marker = document.querySelector(`#${markerId}`);
-      const model = document.querySelector(`#${modelId}`);
-      const audio = document.querySelector(`#${audioId}`);
+        const marker = document.querySelector(`#${markerId}`);
+        const model = document.querySelector(`#${modelId}`);
+        const audio = document.querySelector(`#${audioId}`);
 
-      marker.addEventListener('markerFound', function () {
-        model.setAttribute('visible', true);
-        audio.play();
-        loadSubtitles().then(() => {
-          showSubtitle();
+        marker.addEventListener('markerFound', () => {
+            model.setAttribute('visible', true);
+            if (audio) audio.play();
         });
-      });
 
-      marker.addEventListener('markerLost', function () {
-        model.setAttribute('visible', false);
-        audio.pause();
-        audio.currentTime = 0;
-        subtitle.style.display = 'none';
-        currentSubtitleIndex = 0;
-        clearTimeout(subtitleTimeout);
-      });
+        marker.addEventListener('markerLost', () => {
+            model.setAttribute('visible', false);
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        });
     }
 
-    // サーバーからマーカー、モデル、音声のデータを取得
     fetch(`/multiAR?languagename=${languagename}`)
-      .then(response => response.json())
-      .then(data => {
-        const contentDiv = document.getElementById('content');
-        const assets = document.getElementById('assets');
+        .then(response => response.json())
+        .then(data => {
+            data.modelHtml.forEach((html, i) => assets.innerHTML += html);
+            data.markerHtml.forEach((html, i) => contentDiv.innerHTML += html);
+            data.audioHtml.forEach((src, i) => {
+                const audio = new Audio(src);
+                audio.id = `audio-${i}`;
+                document.body.appendChild(audio);
+            });
 
-        // 3DモデルとマーカーHTMLを動的に生成
-        data.markerHtml.forEach((markerHtml, index) => {
-          contentDiv.innerHTML += markerHtml;
-          assets.innerHTML += data.modelHtml[index];
-        });
+            data.markerHtml.forEach((_, i) => {
+                handleMarkerEvents(`animated-marker-${i}`, `model-${i}`, `audio-${i}`);
+            });
+        })
+        .catch(error => console.error('データ取得エラー:', error));
+});
 
-        // 音声と字幕のデータがあれば追加
-        data.audioHtml.forEach((audioHtml, index) => {
-          const audio = new Audio(audioHtml);
-          audio.id = `audio-${index}`;
-          document.body.appendChild(audio);  // 音声要素を追加
-        });
-
-        // 各マーカーに対するイベントを設定
-        data.markerHtml.forEach((_, index) => {
-          handleMarkerEvents(`animated-marker-${index}`, `model-${index}`, `audio-${index}`);
-        });
-      })
-      .catch(error => {
-        console.error('ARコンテンツの取得に失敗しました:', error);
-      });
   </script>
 </body>
 </html>
