@@ -1,105 +1,72 @@
-
-<!-- C:\Tabitomo-AR2\AR_app\public\AR_user\multi_AR.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <link rel="stylesheet" href="static/user.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebAR</title>
+  <title>Multi Marker AR</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
-  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true; trackingBackend: artoolkit; markersAreaEnabled: true;"
-    id="scene" embedded>
+  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
+           renderer="logarithmicDepthBuffer: true;" arjs="trackingMethod: best; sourceType: webcam;" embedded>
     
-    <a-assets id="assets"></a-assets>
-    <div id="content"></div>
-    <a-entity camera position="0 0 0"></a-entity>
+    <a-assets>
+      <!-- 動的に読み込むコンテンツをここに設定 -->
+    </a-assets>
+
+    <!-- マーカーの追加部分は動的に生成 -->
+    <a-camera></a-camera>
   </a-scene>
 
-  <div id="subtitle" class="subtitle">ここに字幕が表示されます</div>
-
-  <button id="toggle-volume" class="top-right-button">音量ON</button>
-  <button id="toggle-subtitle" class="top-right-button">字幕OFF</button>
-  <a href="home.html"><button class="top-right-button">戻る</button></a>
-
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      const languagename = urlParams.get('languagename') || '日本語';
+    const urlParams = new URLSearchParams(window.location.search);
+    const languagename = urlParams.get('languagename') || '日本語';
 
-      const subtitle = document.querySelector('#subtitle');
-      const toggleVolumeButton = document.querySelector('#toggle-volume');
-      const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
-      const assets = document.getElementById('assets');
-      const contentDiv = document.getElementById('content');
+    // サーバーからマーカーのデータを取得する
+    async function loadMarkersData() {
+      const response = await fetch(`/multiAR/${languagename}`);
+      const markers = await response.json();
 
-      let subtitlesVisible = false;
-      let audioMuted = false;
+      markers.forEach(marker => {
+        // マーカーを動的に生成
+        const markerElement = document.createElement('a-marker');
+        markerElement.setAttribute('id', marker.id);
+        markerElement.setAttribute('type', 'pattern');
+        markerElement.setAttribute('preset', 'custom');
+        markerElement.setAttribute('url', marker.patt);
+        
+        // マーカーの中に表示する3Dモデルを設定
+        const modelEntity = document.createElement('a-entity');
+        modelEntity.setAttribute('id', marker.id + '-model');
+        modelEntity.setAttribute('scale', '1 1 1');
+        modelEntity.setAttribute('gltf-model', marker.model);
+        markerElement.appendChild(modelEntity);
 
-      toggleVolumeButton.addEventListener('click', function () {
-        audioMuted = !audioMuted;
-        document.querySelectorAll('audio').forEach(audio => audio.muted = audioMuted);
-        toggleVolumeButton.textContent = audioMuted ? '音量OFF' : '音量ON';
-      });
+        // 音声を設定
+        const audioElement = document.createElement('audio');
+        audioElement.setAttribute('src', marker.audio);
+        audioElement.setAttribute('id', marker.audioId);
+        audioElement.setAttribute('preload', 'auto');
+        document.body.appendChild(audioElement);
 
-      toggleSubtitleButton.addEventListener('click', function () {
-        subtitlesVisible = !subtitlesVisible;
-        toggleSubtitleButton.textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
-        subtitle.style.display = subtitlesVisible ? 'block' : 'none';
-      });
-
-      function handleMarkerEvents(markerId, modelId, audioId) {
-        const marker = document.querySelector(`#${markerId}`);
-        const model = document.querySelector(`#${modelId}`);
-        const audio = document.querySelector(`#${audioId}`);
-
-        if (!marker || !model) return;
-
-        marker.addEventListener('markerFound', () => {
-          model.setAttribute('visible', true);
-          if (audio) audio.play();
-        });
-
-        marker.addEventListener('markerLost', () => {
-          model.setAttribute('visible', false);
-          if (audio) {
-            audio.pause();
-            audio.currentTime = 0;
-          }
-        });
-      }
-
-      fetch(`/multiAR?languagename=${languagename}`)
-        .then(response => {
-          if (!response.ok) throw new Error('データ取得に失敗しました');
-          return response.json();
-        })
-        .then(data => {
-          if (!data.modelHtml.length) {
-            console.warn("取得データが空です");
-            return;
-          }
-
-          data.modelHtml.forEach(html => assets.innerHTML += html);
-          data.markerHtml.forEach(html => contentDiv.innerHTML += html);
-          data.audioHtml.forEach(src => {
-            const audio = document.createElement('audio');
-            audio.src = src;
-            audio.preload = "auto";
-            document.body.appendChild(audio);
+        // 字幕を設定
+        fetch(marker.subtitle)
+          .then(response => response.text())
+          .then(text => {
+            const subtitleDiv = document.createElement('div');
+            subtitleDiv.textContent = text;
+            subtitleDiv.setAttribute('id', marker.subtitleId);
+            document.body.appendChild(subtitleDiv);
           });
 
-          data.markerHtml.forEach((_, i) => {
-            handleMarkerEvents(`animated-marker-${i}`, `model-${i}`, `audio-${i}`);
-          });
-        })
-        .catch(error => console.error('データ取得エラー:', error));
-    });
+        // マーカーをシーンに追加
+        document.querySelector('a-scene').appendChild(markerElement);
+      });
+    }
+
+    loadMarkersData();
   </script>
 </body>
 </html>
