@@ -38,11 +38,11 @@ router.get('/', async (req, res) => {
 
         result.rows.forEach((data, index) => {
             // モデルとマーカーのHTMLを生成
-            modelHtml.push(`<a-asset-item id="animated-asset-${index}" src="../Content/.glb/${data.mdlimage}" onerror="console.error('Failed to load GLB file: ${data.mdlimage}');"></a-asset-item>`);
+            modelHtml.push(`<a-asset-item id="animated-asset-${data.mdlid}" src="../Content/.glb/${data.mdlimage}" onerror="console.error('Failed to load GLB file: ${data.mdlimage}');"></a-asset-item>`);
             markerHtml.push(`
-                <a-marker id="animated-marker-${index}" type="pattern" preset="custom" url="../Content/.patt/${data.patt}"
+                <a-marker id="animated-marker-${data.mdlid}" type="pattern" preset="custom" url="../Content/.patt/${data.patt}"
                           raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-                    <a-entity id="model-${index}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset-${index}" class="clickable"
+                    <a-entity id="model-${data.mdlid}" scale="1 1 1" animation-mixer="loop: repeat" gltf-model="#animated-asset-${data.mdlid}" class="clickable"
                               animation="property: rotation; to: 0 360 0; dur: 3600; easing: linear; loop: true" gesture-handler
                               visible="false"></a-entity>
                 </a-marker>
