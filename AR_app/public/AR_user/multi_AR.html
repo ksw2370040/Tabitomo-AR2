@@ -7,7 +7,7 @@
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
- </head>
+</head>
 
 <body style="margin: 0px; overflow: hidden;">
   <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
@@ -17,7 +17,6 @@
       <!-- 動的に読み込むコンテンツをここに設定 -->
     </a-assets>
 
-    <!-- カメラを追加 -->
     <a-camera></a-camera>
   </a-scene>
 
@@ -139,7 +138,6 @@
 
         // 字幕を設定（字幕ファイルが存在する場合）
         if (marker.subtitle) {
-          // サーバーから字幕ファイルを読み込み
           loadSubtitles(marker.subtitle).then(() => {
             // サブタイトルを表示
             const subtitleDiv = document.createElement('div');
