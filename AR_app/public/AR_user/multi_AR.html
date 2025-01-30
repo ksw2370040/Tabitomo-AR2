@@ -13,14 +13,15 @@
            renderer="logarithmicDepthBuffer: true;" arjs="trackingMethod: best; sourceType: webcam;" embedded>
     
     <a-assets>
-      <!-- 動的に読み込むコンテンツをここに設定 -->
+      <!-- 動的に追加されるコンテンツ（モデル、パターンなど） -->
     </a-assets>
 
-    <!-- マーカーの追加部分は動的に生成 -->
+    <!-- カメラの設定 -->
     <a-camera></a-camera>
   </a-scene>
 
   <script>
+    // URLパラメータから言語設定を取得
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
 
@@ -30,18 +31,29 @@
       const markers = await response.json();
 
       markers.forEach(marker => {
-        // マーカーを動的に生成
+        // <a-assets>に動的に追加
+        const assetItemPattern = document.createElement('a-asset-item');
+        assetItemPattern.setAttribute('id', marker.id + '-pattern');
+        assetItemPattern.setAttribute('src', marker.patt); // パターンファイル
+        document.querySelector('a-assets').appendChild(assetItemPattern);
+
+        const assetItemModel = document.createElement('a-asset-item');
+        assetItemModel.setAttribute('id', marker.id + '-model');
+        assetItemModel.setAttribute('src', marker.model); // 3Dモデル
+        document.querySelector('a-assets').appendChild(assetItemModel);
+
+        // <a-marker>を動的に生成
         const markerElement = document.createElement('a-marker');
         markerElement.setAttribute('id', marker.id);
         markerElement.setAttribute('type', 'pattern');
         markerElement.setAttribute('preset', 'custom');
-        markerElement.setAttribute('url', marker.patt);
-        
-        // マーカーの中に表示する3Dモデルを設定
+        markerElement.setAttribute('url', `#${marker.id}-pattern`); // パターンを参照
+
+        // マーカー内に3Dモデルを追加
         const modelEntity = document.createElement('a-entity');
         modelEntity.setAttribute('id', marker.id + '-model');
+        modelEntity.setAttribute('gltf-model', `#${marker.id}-model`); // 3Dモデルを参照
         modelEntity.setAttribute('scale', '1 1 1');
-        modelEntity.setAttribute('gltf-model', marker.model);
         markerElement.appendChild(modelEntity);
 
         // 音声を設定
@@ -49,16 +61,22 @@
         audioElement.setAttribute('src', marker.audio);
         audioElement.setAttribute('id', marker.audioId);
         audioElement.setAttribute('preload', 'auto');
+        
+        // 音声はマーカークリック時に再生
+        markerElement.addEventListener('click', () => {
+          audioElement.play();
+        });
         document.body.appendChild(audioElement);
 
-        // 字幕を設定
+        // 字幕を表示
         fetch(marker.subtitle)
           .then(response => response.text())
           .then(text => {
-            const subtitleDiv = document.createElement('div');
-            subtitleDiv.textContent = text;
-            subtitleDiv.setAttribute('id', marker.subtitleId);
-            document.body.appendChild(subtitleDiv);
+            const subtitleEntity = document.createElement('a-text');
+            subtitleEntity.setAttribute('value', text);
+            subtitleEntity.setAttribute('position', '0 1 -2'); // 位置を調整
+            subtitleEntity.setAttribute('scale', '5 5 5'); // スケール調整
+            document.querySelector('a-scene').appendChild(subtitleEntity);
           });
 
         // マーカーをシーンに追加
