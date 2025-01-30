@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../config');  // データベース接続設定
 
-router.get('/:languagename', async (req, res) => {
+router.get('/', async (req, res) => {
   const languagename = req.params.languagename;
 
   try {
