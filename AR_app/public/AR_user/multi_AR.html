@@ -26,7 +26,7 @@
 
     // サーバーからマーカーのデータを取得する
     async function loadMarkersData() {
-      const response = await fetch(`/multiAR/${languagename}`);
+      const response = await fetch(`/multiAR/languagename=${languagename}`);
       const markers = await response.json();
 
       markers.forEach(marker => {
