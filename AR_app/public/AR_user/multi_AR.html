@@ -7,7 +7,7 @@
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
- </head>
+</head>
 
 <body style="margin: 0px; overflow: hidden;">
   <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
@@ -17,13 +17,86 @@
       <!-- 動的に読み込むコンテンツをここに設定 -->
     </a-assets>
 
-    <!-- カメラを追加 -->
     <a-camera></a-camera>
   </a-scene>
+
+  <div id="controls" style="position: fixed; top: 10px; left: 10px; z-index: 10; background-color: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
+    <button id="toggle-volume">音量ON</button>
+    <button id="toggle-subtitle">字幕OFF</button>
+  </div>
+
+  <div id="subtitle" style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: white; font-size: 20px; display: none;"></div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
+
+    const subtitle = document.querySelector('#subtitle');
+    const toggleVolumeButton = document.querySelector('#toggle-volume');
+    const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
+
+    let subtitles = [];
+    let currentSubtitleIndex = 0;
+    const displayDuration = 2000;
+    let subtitleTimeout;
+    let subtitlesVisible = false;
+    let audioMuted = false;
+
+    // 音量の切り替えボタンの動作
+    toggleVolumeButton.addEventListener('click', function () {
+      audioMuted = !audioMuted;
+      if (audioMuted) {
+        document.querySelectorAll('audio').forEach(audio => audio.muted = true);
+        toggleVolumeButton.textContent = '音量OFF';
+      } else {
+        document.querySelectorAll('audio').forEach(audio => audio.muted = false);
+        toggleVolumeButton.textContent = '音量ON';
+      }
+    });
+
+    // 字幕をファイルから読み込む
+    function loadSubtitles(subtitleFile) {
+      return fetch(subtitleFile)
+        .then(response => response.text())
+        .then(text => {
+          subtitles = text.split('\n');
+        })
+        .catch(error => console.error('Error fetching subtitles:', error));
+    }
+
+    // 字幕を表示する
+    function showSubtitle() {
+      if (subtitlesVisible && currentSubtitleIndex < subtitles.length) {
+        subtitle.textContent = subtitles[currentSubtitleIndex];
+        subtitle.style.display = 'block';
+        currentSubtitleIndex++;
+
+        subtitleTimeout = setTimeout(() => {
+          subtitle.style.display = 'none';
+          showSubtitle();
+        }, displayDuration);
+      }
+    }
+
+    // マーカーに関連付けられたイベント処理
+    function handleMarkerEvents(marker, model, audio, subtitleFile) {
+      marker.addEventListener('markerFound', function () {
+        model.setAttribute('visible', true);
+        audio.play();
+        loadSubtitles(subtitleFile).then(() => {
+          showSubtitle();
+        });
+      });
+
+      marker.addEventListener('markerLost', function () {
+        model.setAttribute('visible', false);
+        audio.pause();
+        audio.currentTime = 0;
+        subtitle.style.display = 'none';
+        currentSubtitleIndex = 0;
+        clearTimeout(subtitleTimeout);
+      });
+    }
 
     // サーバーからマーカーのデータを取得する
     async function loadMarkersData() {
@@ -65,19 +138,21 @@
 
         // 字幕を設定（字幕ファイルが存在する場合）
         if (marker.subtitle) {
-          fetch(marker.subtitle)
-            .then(response => response.text())
-            .then(text => {
-              const subtitleDiv = document.createElement('div');
-              subtitleDiv.textContent = text;
-              subtitleDiv.setAttribute('id', marker.subtitleId);
-              subtitleDiv.setAttribute('style', 'position: absolute; top: 10px; left: 10px; color: white; font-size: 20px;');
-              document.body.appendChild(subtitleDiv);
-            });
+          loadSubtitles(marker.subtitle).then(() => {
+            // サブタイトルを表示
+            const subtitleDiv = document.createElement('div');
+            subtitleDiv.textContent = "字幕ファイル読み込み中...";
+            subtitleDiv.setAttribute('id', marker.subtitleId);
+            subtitleDiv.setAttribute('style', 'position: absolute; top: 10px; left: 10px; color: white; font-size: 20px;');
+            document.body.appendChild(subtitleDiv);
+          });
         }
 
         // シーンにマーカーを追加
         document.querySelector('a-scene').appendChild(markerElement);
+
+        // 音声と字幕を含むマーカーのイベント処理
+        handleMarkerEvents(markerElement, modelEntity, audioElement, marker.subtitle);
       });
     }
 
