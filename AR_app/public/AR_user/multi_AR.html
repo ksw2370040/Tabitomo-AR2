@@ -19,53 +19,11 @@
       <!-- 動的に読み込むコンテンツ -->
     </a-assets>
 
-    <!-- カメラのスケールを変更してズームする -->
-    <a-camera position="0 0 0" scale="2 2 2" zoom-controls></a-camera>
+    <a-camera position="0 0 0"></a-camera>
 
   </a-scene>
 
   <script>
-    AFRAME.registerComponent('zoom-controls', {
-      schema: {
-        minZoom: { type: 'number', default: 2 },   
-        maxZoom: { type: 'number', default: 10 }   
-      },
-      init: function () {
-        this.camera = this.el;
-        this.zoomLevel = this.data.minZoom;
-        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
-        this.startDistance = 0;
-
-        window.addEventListener('wheel', (event) => {
-          this.adjustZoom(event.deltaY * -0.05);
-        });
-
-        window.addEventListener('touchstart', (event) => {
-          if (event.touches.length === 2) {
-            this.startDistance = this.getTouchDistance(event.touches);
-          }
-        });
-
-        window.addEventListener('touchmove', (event) => {
-          if (event.touches.length === 2) {
-            const newDistance = this.getTouchDistance(event.touches);
-            const zoomChange = (newDistance - this.startDistance) * 0.1;
-            this.adjustZoom(zoomChange);
-            this.startDistance = newDistance;
-          }
-        });
-      },
-      adjustZoom: function (delta) {
-        this.zoomLevel = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoomLevel + delta));
-        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
-      },
-      getTouchDistance: function (touches) {
-        const dx = touches[0].clientX - touches[1].clientX;
-        const dy = touches[0].clientY - touches[1].clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-      }
-    });
-
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
 
@@ -76,47 +34,45 @@
           throw new Error('ネットワークエラーが発生しました。');
         }
         const markers = await response.json();
-
         markers.forEach(marker => {
-          const assetItem = document.createElement('a-asset-item');
-          assetItem.setAttribute('id', `model-${marker.id}`);
-          assetItem.setAttribute('src', marker.model);
-          assetItem.setAttribute('crossorigin', 'anonymous');
-          document.querySelector('a-assets').appendChild(assetItem);
-
-          const markerElement = document.createElement('a-marker');
-          markerElement.setAttribute('id', marker.id);
-          markerElement.setAttribute('type', 'pattern');
-          markerElement.setAttribute('preset', 'custom');
-          markerElement.setAttribute('url', marker.patt);
-          
-          const modelEntity = document.createElement('a-entity');
-          modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-          modelEntity.setAttribute('scale', 'auto'); 
-          modelEntity.setAttribute('position', 'auto'); 
-          
-          markerElement.appendChild(modelEntity);
-
-          handleAudioAndSubtitles(marker); // 音声と字幕の処理を関数化
-
-          document.querySelector('a-scene').appendChild(markerElement);
-
-          handleMarkerEvents(markerElement, marker); // イベント処理を関数化
-
-          // モデルがロードされた後にスケール調整
-          modelEntity.addEventListener('model-loaded', function () {
-            const model = modelEntity.getObject3D('mesh');
-            const bbox = new THREE.Box3().setFromObject(model);
-            const size = bbox.getSize(new THREE.Vector3());
-            const scaleFactor = 1 / Math.max(size.x, size.y, size.z);  // 最大の辺を基準にスケーリング
-            modelEntity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
-          });
+          loadMarker(marker);
         });
 
       } catch (error) {
         console.error('マーカーの読み込みに失敗しました:', error);
         alert('データの読み込みに失敗しました。再試行してください。');
       }
+    }
+
+    function loadMarker(marker) {
+      const assetItem = document.createElement('a-asset-item');
+      assetItem.setAttribute('id', `model-${marker.id}`);
+      assetItem.setAttribute('src', marker.model);
+      assetItem.setAttribute('crossorigin', 'anonymous');
+      document.querySelector('a-assets').appendChild(assetItem);
+
+      const markerElement = document.createElement('a-marker');
+      markerElement.setAttribute('id', marker.id);
+      markerElement.setAttribute('type', 'pattern');
+      markerElement.setAttribute('preset', 'custom');
+      markerElement.setAttribute('url', marker.patt);
+      
+      const modelEntity = document.createElement('a-entity');
+      modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
+      modelEntity.setAttribute('scale', 'auto'); 
+      modelEntity.setAttribute('position', 'auto'); 
+      
+      markerElement.appendChild(modelEntity);
+
+      handleAudioAndSubtitles(marker);
+
+      document.querySelector('a-scene').appendChild(markerElement);
+
+      modelEntity.addEventListener('model-loaded', function () {
+        scaleModel(modelEntity);
+      });
+
+      handleMarkerEvents(markerElement, marker);
     }
 
     function handleAudioAndSubtitles(marker) {
@@ -145,35 +101,51 @@
 
     function handleMarkerEvents(markerElement, marker) {
       markerElement.addEventListener('markerFound', () => {
-        if (marker.audio) {
-          const audio = document.getElementById(marker.audioId);
-          if (audio) {
-            audio.play();
-          }
-        }
-        if (marker.subtitle) {
-          const subtitle = document.getElementById(marker.subtitleId);
-          if (subtitle) {
-            subtitle.style.display = 'block';
-          }
-        }
+        playAudioAndShowSubtitles(marker);
       });
 
       markerElement.addEventListener('markerLost', () => {
-        if (marker.audio) {
-          const audio = document.getElementById(marker.audioId);
-          if (audio) {
-            audio.pause();
-            audio.currentTime = 0;
-          }
-        }
-        if (marker.subtitle) {
-          const subtitle = document.getElementById(marker.subtitleId);
-          if (subtitle) {
-            subtitle.style.display = 'none';
-          }
-        }
+        stopAudioAndHideSubtitles(marker);
       });
+    }
+
+    function playAudioAndShowSubtitles(marker) {
+      if (marker.audio) {
+        const audio = document.getElementById(marker.audioId);
+        if (audio) {
+          audio.play();
+        }
+      }
+      if (marker.subtitle) {
+        const subtitle = document.getElementById(marker.subtitleId);
+        if (subtitle) {
+          subtitle.style.display = 'block';
+        }
+      }
+    }
+
+    function stopAudioAndHideSubtitles(marker) {
+      if (marker.audio) {
+        const audio = document.getElementById(marker.audioId);
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      }
+      if (marker.subtitle) {
+        const subtitle = document.getElementById(marker.subtitleId);
+        if (subtitle) {
+          subtitle.style.display = 'none';
+        }
+      }
+    }
+
+    function scaleModel(modelEntity) {
+      const model = modelEntity.getObject3D('mesh');
+      const bbox = new THREE.Box3().setFromObject(model);
+      const size = bbox.getSize(new THREE.Vector3());
+      const scaleFactor = 1 / Math.max(size.x, size.y, size.z);
+      modelEntity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
     }
 
     loadMarkersData();
