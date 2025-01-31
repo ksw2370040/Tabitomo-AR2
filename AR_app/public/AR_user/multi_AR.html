@@ -19,8 +19,8 @@
       <!-- 動的に読み込むコンテンツ -->
     </a-assets>
 
-    <!-- ズームコントロールを持つカメラ -->
-    <a-camera position="0 1.6 5" zoom-controls></a-camera>
+    <!-- 最初から最小ズームに設定 -->
+    <a-camera position="0 1.6 2" zoom-controls></a-camera>
 
   </a-scene>
 
@@ -32,7 +32,7 @@
       },
       init: function () {
         this.camera = this.el;
-        this.zoomLevel = 5;  // 初期ズーム値
+        this.zoomLevel = this.data.minZoom;  // 最初から最小ズームに設定
         this.startDistance = 0;
 
         // マウスホイールでズーム
