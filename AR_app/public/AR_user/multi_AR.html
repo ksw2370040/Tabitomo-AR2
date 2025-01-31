@@ -20,7 +20,7 @@
     </a-assets>
 
     <!-- カメラのスケールを変更してズームする -->
-    <a-camera position="0 1.6 0" scale="2 2 2" zoom-controls></a-camera>
+    <a-camera position="0 0 0" scale="2 2 2" zoom-controls></a-camera>
 
   </a-scene>
 
@@ -96,7 +96,7 @@
         const modelEntity = document.createElement('a-entity');
         modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
         modelEntity.setAttribute('scale', '0.25 0.25 0.25');
-        modelEntity.setAttribute('position', '0.25 0.25 0.25');
+        modelEntity.setAttribute('position', '0 0 0');
         markerElement.appendChild(modelEntity);
 
         // 音声設定
