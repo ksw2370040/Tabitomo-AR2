@@ -85,11 +85,16 @@
         markerElement.setAttribute('type', 'pattern');
         markerElement.setAttribute('preset', 'custom');
         markerElement.setAttribute('url', marker.patt);
-        
+
         const modelEntity = document.createElement('a-entity');
         modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-        modelEntity.setAttribute('scale', '0.25 0.25 0.25'); 
-        modelEntity.setAttribute('position', 'auto'); 
+        
+        // スケールの自動調整
+        modelEntity.setAttribute('scale', 'auto auto auto'); // ここはモデルに応じてスケールを調整
+
+        // 位置の自動調整 (位置はマーカーの位置に基づく)
+        modelEntity.setAttribute('position', '0 0 0'); // 必要に応じて位置調整
+
         markerElement.appendChild(modelEntity);
 
         if (marker.audio) {
