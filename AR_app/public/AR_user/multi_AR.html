@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Multi Marker AR</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://ar-js-org.github.io/AR.js/aframe/build/aframe-ar.js"></script>
@@ -19,8 +19,8 @@
       <!-- 動的に読み込むコンテンツ -->
     </a-assets>
 
-    <!-- 最初から最小ズームに設定 -->
-    <a-camera position="0 1.6 2" zoom-controls></a-camera>
+    <!-- カメラのスケールを変更してズームする -->
+    <a-camera position="0 1.6 0" scale="2 2 2" zoom-controls></a-camera>
 
   </a-scene>
 
@@ -32,12 +32,13 @@
       },
       init: function () {
         this.camera = this.el;
-        this.zoomLevel = this.data.minZoom;  // 最初から最小ズームに設定
+        this.zoomLevel = this.data.minZoom;  // 初期ズームを最小に設定
+        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
         this.startDistance = 0;
 
         // マウスホイールでズーム
         window.addEventListener('wheel', (event) => {
-          this.adjustZoom(event.deltaY * -0.01);
+          this.adjustZoom(event.deltaY * -0.05);
         });
 
         // タッチ開始時の処理
@@ -51,7 +52,7 @@
         window.addEventListener('touchmove', (event) => {
           if (event.touches.length === 2) {
             const newDistance = this.getTouchDistance(event.touches);
-            const zoomChange = (newDistance - this.startDistance) * 0.05;
+            const zoomChange = (newDistance - this.startDistance) * 0.1;
             this.adjustZoom(zoomChange);
             this.startDistance = newDistance;
           }
@@ -59,7 +60,7 @@
       },
       adjustZoom: function (delta) {
         this.zoomLevel = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoomLevel + delta));
-        this.camera.setAttribute('position', `0 1.6 ${this.zoomLevel}`);
+        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
       },
       getTouchDistance: function (touches) {
         const dx = touches[0].clientX - touches[1].clientX;
