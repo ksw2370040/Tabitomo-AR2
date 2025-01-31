@@ -23,7 +23,16 @@
 
   </a-scene>
 
-  <div id="subtitles-container" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 20px;"></div>
+  <!-- UIコントロールボタン -->
+  <div id="ui-container" style="position: absolute; top: 10px; left: 10px; color: white;">
+    <button id="toggle-subtitles" style="margin-bottom: 10px;">字幕オン/オフ</button>
+    <button id="toggle-audio" style="margin-bottom: 10px;">音声オン/オフ</button>
+    <button id="zoom-in" style="margin-bottom: 10px;">ズームイン</button>
+    <button id="zoom-out" style="margin-bottom: 10px;">ズームアウト</button>
+    <button id="back" style="margin-bottom: 10px;">戻る</button>
+  </div>
+
+  <div id="subtitles-container" style="position: absolute; top: 100px; left: 10px; color: white; font-size: 20px;"></div>
 
   <script>
     // ズームコントロールのコンポーネントを定義
@@ -73,6 +82,10 @@
     // URLパラメータから言語設定を取得
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
+
+    let subtitlesVisible = true;
+    let audioEnabled = true;
+    let zoomLevel = 2;
 
     // マーカー情報を動的に読み込む
     async function loadMarkersData() {
@@ -129,13 +142,13 @@
 
         // マーカーが検出された時のイベントリスナー
         markerElement.addEventListener('markerFound', () => {
-          if (marker.audio) {
+          if (audioEnabled && marker.audio) {
             const audio = document.getElementById(marker.audioId);
             if (audio) {
               audio.play();
             }
           }
-          if (marker.subtitle) {
+          if (subtitlesVisible && marker.subtitle) {
             const subtitle = document.getElementById(marker.subtitleId);
             if (subtitle) {
               subtitle.style.display = 'block';
@@ -162,9 +175,47 @@
       });
     }
 
+    // ボタンのイベント設定
+    document.getElementById('toggle-subtitles').addEventListener('click', () => {
+      subtitlesVisible = !subtitlesVisible;
+      const subtitles = document.querySelectorAll('#subtitles-container > div');
+      subtitles.forEach(subtitle => {
+        subtitle.style.display = subtitlesVisible ? 'block' : 'none';
+      });
+    });
+
+    document.getElementById('toggle-audio').addEventListener('click', () => {
+      audioEnabled = !audioEnabled;
+      const audioElements = document.querySelectorAll('audio');
+      audioElements.forEach(audio => {
+        if (audioEnabled) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      });
+    });
+
+    document.getElementById('zoom-in').addEventListener('click', () => {
+      if (zoomLevel < 10) {
+        zoomLevel += 0.5;
+        document.querySelector('a-camera').setAttribute('scale', `${zoomLevel} ${zoomLevel} ${zoomLevel}`);
+      }
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', () => {
+      if (zoomLevel > 2) {
+        zoomLevel -= 0.5;
+        document.querySelector('a-camera').setAttribute('scale', `${zoomLevel} ${zoomLevel} ${zoomLevel}`);
+      }
+    });
+
+    document.getElementById('back').addEventListener('click', () => {
+      window.history.back();
+    });
+
     // マーカー情報の読み込み
     loadMarkersData();
   </script>
-
 </body>
 </html>
