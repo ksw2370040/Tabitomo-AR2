@@ -19,73 +19,26 @@
       <!-- 動的に読み込むコンテンツ -->
     </a-assets>
 
-    <a-camera position="0 0 0" scale="2 2 2" zoom-controls></a-camera>
+    <a-camera position="0 0 0" scale="2 2 2"></a-camera>
 
   </a-scene>
 
   <!-- UIコントロールボタン -->
   <div id="ui-container" style="position: absolute; top: 10px; left: 10px; color: white;">
-    <button id="toggle-subtitles" style="margin-bottom: 10px;">字幕オン/オフ</button>
-    <button id="toggle-audio" style="margin-bottom: 10px;">音声オン/オフ</button>
-    <button id="zoom-in" style="margin-bottom: 10px;">ズームイン</button>
-    <button id="zoom-out" style="margin-bottom: 10px;">ズームアウト</button>
+    <button id="toggle-subtitles" style="margin-bottom: 10px;">字幕オフ</button>
+    <button id="toggle-audio" style="margin-bottom: 10px;">音声オフ</button>
     <button id="back" style="margin-bottom: 10px;">戻る</button>
   </div>
 
   <div id="subtitles-container" style="position: absolute; top: 100px; left: 10px; color: white; font-size: 20px;"></div>
 
   <script>
-    // ズームコントロールのコンポーネントを定義
-    AFRAME.registerComponent('zoom-controls', {
-      schema: {
-        minZoom: { type: 'number', default: 2 },   
-        maxZoom: { type: 'number', default: 10 }   
-      },
-      init: function () {
-        this.camera = this.el;
-        this.zoomLevel = this.data.minZoom;
-        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
-        this.startDistance = 0;
-
-        // ホイールでズーム調整
-        window.addEventListener('wheel', (event) => {
-          this.adjustZoom(event.deltaY * -0.05);
-        });
-
-        // タッチイベントでズーム調整
-        window.addEventListener('touchstart', (event) => {
-          if (event.touches.length === 2) {
-            this.startDistance = this.getTouchDistance(event.touches);
-          }
-        });
-
-        window.addEventListener('touchmove', (event) => {
-          if (event.touches.length === 2) {
-            const newDistance = this.getTouchDistance(event.touches);
-            const zoomChange = (newDistance - this.startDistance) * 0.1;
-            this.adjustZoom(zoomChange);
-            this.startDistance = newDistance;
-          }
-        });
-      },
-      adjustZoom: function (delta) {
-        this.zoomLevel = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoomLevel + delta));
-        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
-      },
-      getTouchDistance: function (touches) {
-        const dx = touches[0].clientX - touches[1].clientX;
-        const dy = touches[0].clientY - touches[1].clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-      }
-    });
-
     // URLパラメータから言語設定を取得
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
 
     let subtitlesVisible = true;
     let audioEnabled = true;
-    let zoomLevel = 2;
 
     // マーカー情報を動的に読み込む
     async function loadMarkersData() {
@@ -182,6 +135,8 @@
       subtitles.forEach(subtitle => {
         subtitle.style.display = subtitlesVisible ? 'block' : 'none';
       });
+      // ボタンテキストの変更
+      document.getElementById('toggle-subtitles').textContent = subtitlesVisible ? '字幕オフ' : '字幕オン';
     });
 
     document.getElementById('toggle-audio').addEventListener('click', () => {
@@ -194,20 +149,8 @@
           audio.pause();
         }
       });
-    });
-
-    document.getElementById('zoom-in').addEventListener('click', () => {
-      if (zoomLevel < 10) {
-        zoomLevel += 0.5;
-        document.querySelector('a-camera').setAttribute('scale', `${zoomLevel} ${zoomLevel} ${zoomLevel}`);
-      }
-    });
-
-    document.getElementById('zoom-out').addEventListener('click', () => {
-      if (zoomLevel > 2) {
-        zoomLevel -= 0.5;
-        document.querySelector('a-camera').setAttribute('scale', `${zoomLevel} ${zoomLevel} ${zoomLevel}`);
-      }
+      // ボタンテキストの変更
+      document.getElementById('toggle-audio').textContent = audioEnabled ? '音声オフ' : '音声オン';
     });
 
     document.getElementById('back').addEventListener('click', () => {
