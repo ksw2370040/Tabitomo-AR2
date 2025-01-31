@@ -19,140 +19,148 @@
       <!-- 動的に読み込むコンテンツ -->
     </a-assets>
 
-    <a-camera position="0 0 0"></a-camera>
+    <a-camera position="0 0 0" scale="2 2 2" zoom-controls></a-camera>
 
   </a-scene>
 
   <script>
+    // ズームコントロールのコンポーネントを定義
+    AFRAME.registerComponent('zoom-controls', {
+      schema: {
+        minZoom: { type: 'number', default: 2 },   
+        maxZoom: { type: 'number', default: 10 }   
+      },
+      init: function () {
+        this.camera = this.el;
+        this.zoomLevel = this.data.minZoom;
+        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
+        this.startDistance = 0;
+
+        // ホイールでズーム調整
+        window.addEventListener('wheel', (event) => {
+          this.adjustZoom(event.deltaY * -0.05);
+        });
+
+        // タッチイベントでズーム調整
+        window.addEventListener('touchstart', (event) => {
+          if (event.touches.length === 2) {
+            this.startDistance = this.getTouchDistance(event.touches);
+          }
+        });
+
+        window.addEventListener('touchmove', (event) => {
+          if (event.touches.length === 2) {
+            const newDistance = this.getTouchDistance(event.touches);
+            const zoomChange = (newDistance - this.startDistance) * 0.1;
+            this.adjustZoom(zoomChange);
+            this.startDistance = newDistance;
+          }
+        });
+      },
+      adjustZoom: function (delta) {
+        this.zoomLevel = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoomLevel + delta));
+        this.camera.setAttribute('scale', `${this.zoomLevel} ${this.zoomLevel} ${this.zoomLevel}`);
+      },
+      getTouchDistance: function (touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+    });
+
+    // URLパラメータから言語設定を取得
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
 
+    // マーカー情報を動的に読み込む
     async function loadMarkersData() {
-      try {
-        const response = await fetch(`/multiAR?languagename=${languagename}`);
-        if (!response.ok) {
-          throw new Error('ネットワークエラーが発生しました。');
+      const response = await fetch(`/multiAR?languagename=${languagename}`);
+      const markers = await response.json();
+
+      markers.forEach(marker => {
+        // モデルデータを読み込み
+        const assetItem = document.createElement('a-asset-item');
+        assetItem.setAttribute('id', `model-${marker.id}`);
+        assetItem.setAttribute('src', marker.model);
+        assetItem.setAttribute('crossorigin', 'anonymous');
+        document.querySelector('a-assets').appendChild(assetItem);
+
+        // マーカーの設定
+        const markerElement = document.createElement('a-marker');
+        markerElement.setAttribute('id', marker.id);
+        markerElement.setAttribute('type', 'pattern');
+        markerElement.setAttribute('preset', 'custom');
+        markerElement.setAttribute('url', marker.patt);
+        
+        // モデルエンティティをマーカーに追加
+        const modelEntity = document.createElement('a-entity');
+        modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
+        modelEntity.setAttribute('scale', '0.25 0.25 0.25'); 
+        modelEntity.setAttribute('position', 'auto'); 
+        markerElement.appendChild(modelEntity);
+
+        // 音声と字幕の設定
+        if (marker.audio) {
+          const audioElement = document.createElement('audio');
+          audioElement.setAttribute('src', marker.audio);
+          audioElement.setAttribute('id', marker.audioId);
+          audioElement.setAttribute('preload', 'auto');
+          audioElement.setAttribute('loop', 'true');
+          audioElement.setAttribute('style', 'display: none;');
+          document.body.appendChild(audioElement);
         }
-        const markers = await response.json();
-        markers.forEach(marker => {
-          loadMarker(marker);
+
+        if (marker.subtitle) {
+          fetch(marker.subtitle)
+            .then(response => response.text())
+            .then(text => {
+              const subtitleDiv = document.createElement('div');
+              subtitleDiv.textContent = text;
+              subtitleDiv.setAttribute('id', marker.subtitleId);
+              subtitleDiv.setAttribute('style', 'position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; display: none;');
+              document.body.appendChild(subtitleDiv);
+            });
+        }
+
+        // マーカーをシーンに追加
+        document.querySelector('a-scene').appendChild(markerElement);
+
+        // マーカーが検出された時のイベントリスナー
+        markerElement.addEventListener('markerFound', () => {
+          if (marker.audio) {
+            const audio = document.getElementById(marker.audioId);
+            if (audio) {
+              audio.play();
+            }
+          }
+          if (marker.subtitle) {
+            const subtitle = document.getElementById(marker.subtitleId);
+            if (subtitle) {
+              subtitle.style.display = 'block';
+            }
+          }
         });
 
-      } catch (error) {
-        console.error('マーカーの読み込みに失敗しました:', error);
-        alert('データの読み込みに失敗しました。再試行してください。');
-      }
-    }
-
-    function loadMarker(marker) {
-      const assetItem = document.createElement('a-asset-item');
-      assetItem.setAttribute('id', `model-${marker.id}`);
-      assetItem.setAttribute('src', marker.model);
-      assetItem.setAttribute('crossorigin', 'anonymous');
-      document.querySelector('a-assets').appendChild(assetItem);
-
-      const markerElement = document.createElement('a-marker');
-      markerElement.setAttribute('id', marker.id);
-      markerElement.setAttribute('type', 'pattern');
-      markerElement.setAttribute('preset', 'custom');
-      markerElement.setAttribute('url', marker.patt);
-      
-      const modelEntity = document.createElement('a-entity');
-      modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-      modelEntity.setAttribute('scale', '0.5 0.5 0.5');  // 初期スケールを指定
-      modelEntity.setAttribute('position', '0 0 0'); // 初期位置を中央に設定
-
-      markerElement.appendChild(modelEntity);
-
-      handleAudioAndSubtitles(marker);
-
-      document.querySelector('a-scene').appendChild(markerElement);
-
-      modelEntity.addEventListener('model-loaded', function () {
-        scaleAndPositionModel(modelEntity);
-      });
-
-      handleMarkerEvents(markerElement, marker);
-    }
-
-    function handleAudioAndSubtitles(marker) {
-      if (marker.audio) {
-        const audioElement = document.createElement('audio');
-        audioElement.setAttribute('src', marker.audio);
-        audioElement.setAttribute('id', marker.audioId);
-        audioElement.setAttribute('preload', 'auto');
-        audioElement.setAttribute('loop', 'true');
-        audioElement.setAttribute('style', 'display: none;');
-        document.body.appendChild(audioElement);
-      }
-
-      if (marker.subtitle) {
-        fetch(marker.subtitle)
-          .then(response => response.text())
-          .then(text => {
-            const subtitleDiv = document.createElement('div');
-            subtitleDiv.textContent = text;
-            subtitleDiv.setAttribute('id', marker.subtitleId);
-            subtitleDiv.setAttribute('style', 'position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; display: none;');
-            document.body.appendChild(subtitleDiv);
-          });
-      }
-    }
-
-    function handleMarkerEvents(markerElement, marker) {
-      markerElement.addEventListener('markerFound', () => {
-        playAudioAndShowSubtitles(marker);
-      });
-
-      markerElement.addEventListener('markerLost', () => {
-        stopAudioAndHideSubtitles(marker);
+        // マーカーが失われた時のイベントリスナー
+        markerElement.addEventListener('markerLost', () => {
+          if (marker.audio) {
+            const audio = document.getElementById(marker.audioId);
+            if (audio) {
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          }
+          if (marker.subtitle) {
+            const subtitle = document.getElementById(marker.subtitleId);
+            if (subtitle) {
+              subtitle.style.display = 'none';
+            }
+          }
+        });
       });
     }
 
-    function playAudioAndShowSubtitles(marker) {
-      if (marker.audio) {
-        const audio = document.getElementById(marker.audioId);
-        if (audio) {
-          audio.play();
-        }
-      }
-      if (marker.subtitle) {
-        const subtitle = document.getElementById(marker.subtitleId);
-        if (subtitle) {
-          subtitle.style.display = 'block';
-        }
-      }
-    }
-
-    function stopAudioAndHideSubtitles(marker) {
-      if (marker.audio) {
-        const audio = document.getElementById(marker.audioId);
-        if (audio) {
-          audio.pause();
-          audio.currentTime = 0;
-        }
-      }
-      if (marker.subtitle) {
-        const subtitle = document.getElementById(marker.subtitleId);
-        if (subtitle) {
-          subtitle.style.display = 'none';
-        }
-      }
-    }
-
-    function scaleAndPositionModel(modelEntity) {
-      const model = modelEntity.getObject3D('mesh');
-      const bbox = new THREE.Box3().setFromObject(model);
-      const size = bbox.getSize(new THREE.Vector3());
-
-      // モデルのスケーリング（最大辺が1になるように調整）
-      const scaleFactor = 1 / Math.max(size.x, size.y, size.z);
-      modelEntity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
-
-      // モデルの位置調整（カメラから見やすい位置に）
-      modelEntity.setAttribute('position', '0 0 -2'); // Z軸を少し後ろに移動させる
-    }
-
+    // マーカー情報の読み込み
     loadMarkersData();
   </script>
 
