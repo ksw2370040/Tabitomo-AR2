@@ -70,87 +70,109 @@
     const languagename = urlParams.get('languagename') || '日本語';
 
     async function loadMarkersData() {
-      const response = await fetch(`/multiAR?languagename=${languagename}`);
-      const markers = await response.json();
+      try {
+        const response = await fetch(`/multiAR?languagename=${languagename}`);
+        if (!response.ok) {
+          throw new Error('ネットワークエラーが発生しました。');
+        }
+        const markers = await response.json();
 
-      markers.forEach(marker => {
-        const assetItem = document.createElement('a-asset-item');
-        assetItem.setAttribute('id', `model-${marker.id}`);
-        assetItem.setAttribute('src', marker.model);
-        assetItem.setAttribute('crossorigin', 'anonymous');
-        document.querySelector('a-assets').appendChild(assetItem);
+        markers.forEach(marker => {
+          const assetItem = document.createElement('a-asset-item');
+          assetItem.setAttribute('id', `model-${marker.id}`);
+          assetItem.setAttribute('src', marker.model);
+          assetItem.setAttribute('crossorigin', 'anonymous');
+          document.querySelector('a-assets').appendChild(assetItem);
 
-        const markerElement = document.createElement('a-marker');
-        markerElement.setAttribute('id', marker.id);
-        markerElement.setAttribute('type', 'pattern');
-        markerElement.setAttribute('preset', 'custom');
-        markerElement.setAttribute('url', marker.patt);
+          const markerElement = document.createElement('a-marker');
+          markerElement.setAttribute('id', marker.id);
+          markerElement.setAttribute('type', 'pattern');
+          markerElement.setAttribute('preset', 'custom');
+          markerElement.setAttribute('url', marker.patt);
+          
+          const modelEntity = document.createElement('a-entity');
+          modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
+          modelEntity.setAttribute('scale', 'auto'); 
+          modelEntity.setAttribute('position', 'auto'); 
+          
+          markerElement.appendChild(modelEntity);
 
-        const modelEntity = document.createElement('a-entity');
-        modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-        
-        // スケールの自動調整
-        modelEntity.setAttribute('scale', 'auto auto auto'); // ここはモデルに応じてスケールを調整
+          handleAudioAndSubtitles(marker); // 音声と字幕の処理を関数化
 
-        // 位置の自動調整 (位置はマーカーの位置に基づく)
-        modelEntity.setAttribute('position', '0 0 0'); // 必要に応じて位置調整
+          document.querySelector('a-scene').appendChild(markerElement);
 
-        markerElement.appendChild(modelEntity);
+          handleMarkerEvents(markerElement, marker); // イベント処理を関数化
 
+          // モデルがロードされた後にスケール調整
+          modelEntity.addEventListener('model-loaded', function () {
+            const model = modelEntity.getObject3D('mesh');
+            const bbox = new THREE.Box3().setFromObject(model);
+            const size = bbox.getSize(new THREE.Vector3());
+            const scaleFactor = 1 / Math.max(size.x, size.y, size.z);  // 最大の辺を基準にスケーリング
+            modelEntity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
+          });
+        });
+
+      } catch (error) {
+        console.error('マーカーの読み込みに失敗しました:', error);
+        alert('データの読み込みに失敗しました。再試行してください。');
+      }
+    }
+
+    function handleAudioAndSubtitles(marker) {
+      if (marker.audio) {
+        const audioElement = document.createElement('audio');
+        audioElement.setAttribute('src', marker.audio);
+        audioElement.setAttribute('id', marker.audioId);
+        audioElement.setAttribute('preload', 'auto');
+        audioElement.setAttribute('loop', 'true');
+        audioElement.setAttribute('style', 'display: none;');
+        document.body.appendChild(audioElement);
+      }
+
+      if (marker.subtitle) {
+        fetch(marker.subtitle)
+          .then(response => response.text())
+          .then(text => {
+            const subtitleDiv = document.createElement('div');
+            subtitleDiv.textContent = text;
+            subtitleDiv.setAttribute('id', marker.subtitleId);
+            subtitleDiv.setAttribute('style', 'position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; display: none;');
+            document.body.appendChild(subtitleDiv);
+          });
+      }
+    }
+
+    function handleMarkerEvents(markerElement, marker) {
+      markerElement.addEventListener('markerFound', () => {
         if (marker.audio) {
-          const audioElement = document.createElement('audio');
-          audioElement.setAttribute('src', marker.audio);
-          audioElement.setAttribute('id', marker.audioId);
-          audioElement.setAttribute('preload', 'auto');
-          audioElement.setAttribute('loop', 'true');
-          audioElement.setAttribute('style', 'display: none;');
-          document.body.appendChild(audioElement);
+          const audio = document.getElementById(marker.audioId);
+          if (audio) {
+            audio.play();
+          }
         }
-
         if (marker.subtitle) {
-          fetch(marker.subtitle)
-            .then(response => response.text())
-            .then(text => {
-              const subtitleDiv = document.createElement('div');
-              subtitleDiv.textContent = text;
-              subtitleDiv.setAttribute('id', marker.subtitleId);
-              subtitleDiv.setAttribute('style', 'position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; display: none;');
-              document.body.appendChild(subtitleDiv);
-            });
+          const subtitle = document.getElementById(marker.subtitleId);
+          if (subtitle) {
+            subtitle.style.display = 'block';
+          }
         }
+      });
 
-        document.querySelector('a-scene').appendChild(markerElement);
-
-        markerElement.addEventListener('markerFound', () => {
-          if (marker.audio) {
-            const audio = document.getElementById(marker.audioId);
-            if (audio) {
-              audio.play();
-            }
+      markerElement.addEventListener('markerLost', () => {
+        if (marker.audio) {
+          const audio = document.getElementById(marker.audioId);
+          if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
           }
-          if (marker.subtitle) {
-            const subtitle = document.getElementById(marker.subtitleId);
-            if (subtitle) {
-              subtitle.style.display = 'block';
-            }
+        }
+        if (marker.subtitle) {
+          const subtitle = document.getElementById(marker.subtitleId);
+          if (subtitle) {
+            subtitle.style.display = 'none';
           }
-        });
-
-        markerElement.addEventListener('markerLost', () => {
-          if (marker.audio) {
-            const audio = document.getElementById(marker.audioId);
-            if (audio) {
-              audio.pause();
-              audio.currentTime = 0;
-            }
-          }
-          if (marker.subtitle) {
-            const subtitle = document.getElementById(marker.subtitleId);
-            if (subtitle) {
-              subtitle.style.display = 'none';
-            }
-          }
-        });
+        }
       });
     }
 
