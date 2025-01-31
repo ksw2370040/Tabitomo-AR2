@@ -11,14 +11,17 @@
 
 <body style="margin: 0; overflow: hidden;">
   <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
-           renderer="logarithmicDepthBuffer: true;" arjs="trackingMethod: best; sourceType: webcam;" embedded>
+           renderer="logarithmicDepthBuffer: true;" 
+           arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
+           embedded>
     
     <a-assets>
       <!-- 動的に読み込むコンテンツをここに設定 -->
     </a-assets>
 
-    <!-- カメラを追加 -->
-    <a-camera position="0 0 500"></a-camera>
+    <!-- カメラの位置を調整 -->
+    <a-camera position="0 1.6 5"></a-camera>
+
   </a-scene>
 
   <script>
@@ -30,12 +33,11 @@
       const response = await fetch(`/multiAR?languagename=${languagename}`);
       const markers = await response.json();
 
-      // 各マーカーに対して動的に追加する処理
       markers.forEach(marker => {
         // a-asset-itemを動的に作成
         const assetItem = document.createElement('a-asset-item');
         assetItem.setAttribute('id', `model-${marker.id}`);
-        assetItem.setAttribute('src', marker.model);  // 3DモデルのURL
+        assetItem.setAttribute('src', marker.model);
         assetItem.setAttribute('crossorigin', 'anonymous');
         document.querySelector('a-assets').appendChild(assetItem);
 
@@ -44,27 +46,27 @@
         markerElement.setAttribute('id', marker.id);
         markerElement.setAttribute('type', 'pattern');
         markerElement.setAttribute('preset', 'custom');
-        markerElement.setAttribute('url', marker.patt);  // マーカーのパターンURL
+        markerElement.setAttribute('url', marker.patt);
         
-        // モデルをマーカー内に追加
+        // モデルを追加
         const modelEntity = document.createElement('a-entity');
         modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
         modelEntity.setAttribute('scale', '0.5 0.5 0.5');
-        modelEntity.setAttribute('position', '0 0.5 0');  // 位置をマーカーの真上に調整
+        modelEntity.setAttribute('position', '0 0.5 0');
         markerElement.appendChild(modelEntity);
 
-        // 音声を設定（音声ファイルが存在する場合）
+        // 音声設定
         if (marker.audio) {
           const audioElement = document.createElement('audio');
           audioElement.setAttribute('src', marker.audio);
           audioElement.setAttribute('id', marker.audioId);
           audioElement.setAttribute('preload', 'auto');
-          audioElement.setAttribute('loop', 'true');  // 必要に応じて音声をループ設定
+          audioElement.setAttribute('loop', 'true');
           audioElement.setAttribute('style', 'display: none;');
           document.body.appendChild(audioElement);
         }
 
-        // 字幕を設定（字幕ファイルが存在する場合）
+        // 字幕設定
         if (marker.subtitle) {
           fetch(marker.subtitle)
             .then(response => response.text())
@@ -80,17 +82,14 @@
         // シーンにマーカーを追加
         document.querySelector('a-scene').appendChild(markerElement);
 
-        // マーカーが読み取られたときの処理
+        // マーカーが読み取られた時の処理
         markerElement.addEventListener('markerFound', () => {
-          // 音声を再生
           if (marker.audio) {
             const audio = document.getElementById(marker.audioId);
             if (audio) {
               audio.play();
             }
           }
-
-          // 字幕を表示
           if (marker.subtitle) {
             const subtitle = document.getElementById(marker.subtitleId);
             if (subtitle) {
@@ -99,18 +98,15 @@
           }
         });
 
-        // マーカーが失われたときの処理
+        // マーカーが失われた時の処理
         markerElement.addEventListener('markerLost', () => {
-          // 音声を停止
           if (marker.audio) {
             const audio = document.getElementById(marker.audioId);
             if (audio) {
               audio.pause();
-              audio.currentTime = 0;  // 音声を最初に戻す
+              audio.currentTime = 0;
             }
           }
-
-          // 字幕を非表示にする
           if (marker.subtitle) {
             const subtitle = document.getElementById(marker.subtitleId);
             if (subtitle) {
