@@ -16,10 +16,6 @@ body {
     background-color: #ffffff;
 }
 
-main {
-    padding-bottom: 50px;
-}
-
 /* Header styling */
 header {
     display: flex;
@@ -35,10 +31,6 @@ header {
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 70px;
-}
-
-#logout {
-    font-size: 0.5em;
 }
 
 header h1 {
@@ -59,8 +51,6 @@ header p {
 
 li {
     list-style: none;
-    margin-left: 220px;
-    margin-bottom: 50px;
 }
 
 ul {
@@ -70,9 +60,37 @@ ul {
 /* メイン */
 
 main {
-    /* flex-grow: 1; */
+    flex-grow: 1;
     margin-top: 70px;
+}
+
+.napisyaddlist {
+    margin-left: 250px;
+    width: 80%;
+    max-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    margin-top: 30px;
+}
+
+.napisyaddlist label {
     display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 15px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.napisyaddlist div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 /* サイドバー */
@@ -81,10 +99,10 @@ main {
     left: 0;
     width: 200px;
     height: calc(100vh - 70px);
-    /* ヘッダーの高さを引いた高さ */
     background-color: #ffffff;
     padding: 20px 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #333;
 }
 
 /* サイドバー内のコンテンツ */
@@ -92,88 +110,55 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* 垂直方向の中央揃え */
     align-items: center;
     height: 100%;
-    /* サイドバーの高さを使う */
     gap: 15px;
 }
 
 /* その他のスタイル */
+/* サイドバー内のリンクの基本スタイル */
 .sideber-container a {
     width: 80%;
-    text-align: center;
-    border: 1px solid;
-    border-color: #333;
+    /* text-align: center; */
+    overflow: hidden;
+    background-color: #ffffff;
+    position: relative;
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
 }
 
 .sideber-container button {
-    width: 80%;
+    width: 100%;
     padding: 10px;
     font-size: 16px;
-    background-color: #ffffff;
+    background-color: transparent;
     color: #333;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.sideber-container button:hover {
+.sideber-container a:hover {
     background-color: #ededed;
+    border-color: transparent;
 }
 
-/* メインコンテンツ */
-.container {
-    margin-top: 50px;
-    /* ヘッダーの高さを考慮 */
-    margin-left: 220px;
-    /* サイドバーの幅を考慮 */
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* 2列 */
-    gap: 15px;
-}
-
-.container a {
-    padding: 20px 20px 20px 20px;
-    border: 1px solid;
-    border-color: #333;
-}
-
-/* フッター */
-footer {
-    position: fixed;
+.sideber-container a:hover::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
+    transition: all 0.3s ease-in-out;
+    position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
-    background-color: #f0f0f0;
-    padding: 0 -100px;
-    text-align: center;
-    font-size: 0.9em;
-    color: #333;
-    border-top: 1px solid #ccc;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.sideber-container a:hover button {
+    color: #000;
 }
 
 /* ボタン */
-.container button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1em;
-    color: #333;
-    background-color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.container button:hover {
-    background-color: #ededed;
-}
-
 .add-btn {
     margin-left: 20px;
     margin-top: 30px;
@@ -181,4 +166,62 @@ footer {
 
 #add-form {
     margin-left: 220px;
+}
+
+/* ファイルを選択 */
+input[type='file'] {
+    width: 24rem;
+}
+
+::file-selector-button,
+::-webkit-file-upload-button {
+    border: none;
+    padding: 0.25rem 1rem;
+    margin-right: 1rem;
+    background-color: transparent;
+    border-bottom: 1px solid #333;
+}
+
+::file-selector-button:hover,
+::-webkit-file-upload-button:hover {
+    /* border-bottom: 2px solid transparent; */
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+}
+
+/* 送信 */
+.submit {
+    float: right;
+    position: relative;
+    writing-mode: horizontal-tb;
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    text-decoration: none;
+    border-bottom: 1px solid #333;
+}
+
+.submit:hover {
+    background-color: #ededed;
+    border-color: transparent;
+}
+
+.submit::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    background: transparent;
+}
+
+.submit:hover::after {
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
 }

@@ -11,10 +11,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // モデルテキストにリンクを追加
                 listItem.innerHTML = `
-                    モデルID: ${model.mdlid}<br>
-                    音声テキスト: <a href="soundlist.html?mdlsound=${model.mdlsound}" class="soundtext">
-                        ${model.mdlsound}
-                    </a>
+                    <div class="item">
+                        ${model.mdlid}<br>
+                    </div>
+                    <div class="item">                    
+                        <a href="soundlist.html?mdlsound=${model.mdlsound}" class="soundtext">
+                            <button>${model.mdlsound}</button>
+                        </a>
+                    </div>
                 `;
 
                 sound.appendChild(listItem); // リストに追加

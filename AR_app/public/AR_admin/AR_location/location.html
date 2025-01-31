@@ -11,14 +11,14 @@
 
 <body>
     <header>
-        <h1><a href="menu.html">管理者システム - 場所情報 -</a></h1>
+        <h1><a href="../menu.html">管理者システム　　- 場所情報 -</a></h1>
         <ul>
             <li>
                 <p>ユーザー名: </p>
             </li>
-            <li id="logout">
-                <a href="">ログアウト</a>
-            </li>
+            <li>
+                <p><a href="AR_login/logout.html">ログアウト</a></p>
+            <li>
         </ul>
     </header>
 
@@ -28,18 +28,15 @@
             <div class="sideber-container">
                 <a href="../menu.html"><button>メニュー</button></a>
                 <a href="../AR_user/user.html"><button>管理者情報</button></a>
-                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
-                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
                 <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
                 <a href="../AR_sound/sound.html"><button>音声管理</button></a>
-                <a href="../AR_map/map.html"><button>マップ管理</button></a>
-                <!-- <a href="AR_language/language.html"><button>言語管理</button></a> -->
+                <a href="../AR_map/location.html"><button>マップ管理</button></a>
+                <a href="../AR_location/location.html"><button>場所 3Dモデル<br>管理</button></a>
             </div>
         </div>
-    <!-- 新規登録ボタンをヘッダー直下に配置 -->
-    <div id="new-register-container">
-        <a href="locationadd.html"><button id="new-register-btn">新規登録</button></a>
-    </div>
+        <div id="new-register-container">
+            <a href="locationadd.html"><button id="new-register-btn">新規登録</button></a>
+        </div>
         <div class="location">
             <ul>
                 <!-- マーカー情報はJavaScriptで動的に追加される -->
@@ -47,5 +44,24 @@
         </div>
     </main>
 </body>
+
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams = new URLSearchParams(window.location.search);
+    let adminname = urlParams.get('adminname');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
+    if (adminname) {
+        localStorage.setItem('adminname', adminname);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        adminname = localStorage.getItem('adminname');
+    }
+
+    // adminnameが存在する場合にページに表示
+    if (adminname) {
+        document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+    }
+</script>
 
 </html>

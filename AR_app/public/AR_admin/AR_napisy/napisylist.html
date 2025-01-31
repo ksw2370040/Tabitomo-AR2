@@ -10,14 +10,14 @@
 
 <body>
     <header>
-        <h1><a href="menu.html">管理者システム　　-字幕情報-</a></h1>
+        <h1><a href="../menu.html">管理者システム　　-字幕情報-</a></h1>
         <ul>
             <li>
                 <p>ユーザー名: </p>
             </li>
-            <li id="logout">
-                <a href="">ログアウト</a>
-            </li>
+            <li>
+                <p><a href="../AR_login/logout.html">ログアウト</a></p>
+            <li>
         </ul>
     </header>
 
@@ -26,95 +26,104 @@
             <div class="sideber-container">
                 <a href="../menu.html"><button>メニュー</button></a>
                 <a href="../AR_user/user.html"><button>管理者情報</button></a>
-                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
-                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
                 <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
                 <a href="../AR_sound/sound.html"><button>音声管理</button></a>
-                <a href="../AR_map/map.html"><button>マップ管理</button></a>
-                <!-- <a href="AR_language/language.html"><button>言語管理</button></a> -->
+                <a href="../AR_map/location.html"><button>マップ管理</button></a>
+                <a href="../AR_location/location.html"><button>場所 3Dモデル<br>管理</button></a>
             </div>
         </div>
 
-        <div id="napisy-details"></div>
+        <div class="napisylist">
+            <div id="napisy-details"></div>
+            <script>
+                // URLのパラメータからmdltextを取得
+                const urlParams = new URLSearchParams(window.location.search);
+                const mdltext = urlParams.get('mdltext');
 
-        <script>
-            // URLのパラメータからmdltextを取得
-            const urlParams = new URLSearchParams(window.location.search);
-            const mdltext = urlParams.get('mdltext');
+                // mdltextが取得できたら、その字幕テキストに関連する情報を表示
+                if (mdltext) {
+                    // サーバーからその字幕テキストに関連するデータを取得
+                    fetch(`/napisylist?mdltext=${mdltext}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const napisyDetails = document.getElementById('napisy-details');
+                            let detailsHtml = `<h2>字幕テキスト: ${mdltext}</h2>
+                            `;
 
-            // mdltextが取得できたら、その字幕テキストに関連する情報を表示
-            if (mdltext) {
-                // サーバーからその字幕テキストに関連するデータを取得
-                fetch(`/napisylist?mdltext=${mdltext}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const napisyDetails = document.getElementById('napisy-details');
-                        let detailsHtml = `<h2>字幕テキスト: ${mdltext}</h2>`;
-
-                        // 各言語の情報を表示
-                        data.forEach(model => {
                             detailsHtml += `
-                            <p><strong>言語名:</strong> ${model.languagename} <br>
-                            <strong>字幕ファイル:</strong> ${model.napisyfile}</p>
-                            <button class="edit-btn" data-napisyfile="${model.napisyfile}" data-mdltext="${model.mdltext}" data-languagename="${model.languagename}">編集</button>
-                            <button class="delete-btn" data-mdltext="${model.mdltext}" data-languagename="${model.languagename}">削除</button>
-                            
+                                <div class="napisylist-tab">
+                                    <li>言語名</li>
+                                    <li>字幕ファイル</li>
+                                </div>
+                            `;
+                            // 各言語の情報を表示
+                            data.forEach(model => {
+                                detailsHtml += `
+                            <div class="napisy-container">
+                                <div class="napisy">
+                                    <div class="languagename">${model.languagename}</div>
+                                    <div class="napisyfile">${model.napisyfile}</div>
+                                </div>
+                                <div class="buttons">
+                                    <button class="edit-btn" data-napisyfile="${model.napisyfile}" data-mdltext="${model.mdltext}" data-languagename="${model.languagename}">編集</button>
+                                    <button class="delete-btn" data-mdltext="${model.mdltext}" data-languagename="${model.languagename}">削除</button>
+                                </div>
+                            </div>
                         `;
 
-                        });
-
-                        napisyDetails.innerHTML = detailsHtml;
-                    // 編集ボタンがクリックされた場合に遷移
-                    const editButtons = document.querySelectorAll('.edit-btn');
-                    editButtons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            const napisyfile = button.dataset.napisyfile;
-                            const mdltext = button.dataset.mdltext;
-                            const languagename = button.dataset.languagename;
-
-                            // 編集ページに遷移
-                            window.location.href = `/AR_admin/AR_napisy/napisyedit.html?mdltext=${encodeURIComponent(mdltext)}&languagename=${encodeURIComponent(languagename)}&napisyfile=${encodeURIComponent(napisyfile)}`;
-                        });
-                    });
-                    })
-                    .catch(error => {
-                        console.error('字幕情報の取得中にエラーが発生しました:', error);
-                        alert('字幕情報の取得に失敗しました。');
-                    });
-            } else {
-                alert('字幕テキストが指定されていません。');
-            }
-
-            document.addEventListener('click', function (event) {
-                if (event.target.classList.contains('delete-btn')) {
-                    const mdltext = event.target.dataset.mdltext;
-                    const languagename = event.target.dataset.languagename;
-
-                    if (confirm(` '${mdltext}' : '${languagename}' の字幕情報を削除してよろしいですか？`)) {
-                        fetch(`/napisy/${mdltext}/${languagename}`, {
-                            method: 'DELETE',
-                        })
-                            .then(response => response.json())
-                            .then(result => {
-                                if (result.error) {
-                                    alert(result.error);
-                                } else {
-                                    alert(result.message);
-                                    location.reload(); // ページをリロードして削除結果を反映
-                                }
-                            })
-                            .catch(error => {
-                                console.error('削除中にエラーが発生しました:', error);
-                                alert('削除に失敗しました。');
                             });
-                    }
+
+                            napisyDetails.innerHTML = detailsHtml;
+                            // 編集ボタンがクリックされた場合に遷移
+                            const editButtons = document.querySelectorAll('.edit-btn');
+                            editButtons.forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const napisyfile = button.dataset.napisyfile;
+                                    const mdltext = button.dataset.mdltext;
+                                    const languagename = button.dataset.languagename;
+
+                                    // 編集ページに遷移
+                                    window.location.href = `/AR_admin/AR_napisy/napisyedit.html?mdltext=${encodeURIComponent(mdltext)}&languagename=${encodeURIComponent(languagename)}&napisyfile=${encodeURIComponent(napisyfile)}`;
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.error('字幕情報の取得中にエラーが発生しました:', error);
+                            alert('字幕情報の取得に失敗しました。');
+                        });
+                } else {
+                    alert('字幕テキストが指定されていません。');
                 }
-            });
 
-        </script>
-        <br>
-        <button class="add-btn">新規字幕追加</button>
+                document.addEventListener('click', function (event) {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const mdltext = event.target.dataset.mdltext;
+                        const languagename = event.target.dataset.languagename;
 
+                        if (confirm(` '${mdltext}' : '${languagename}' の字幕情報を削除してよろしいですか？`)) {
+                            fetch(`/napisy/${mdltext}/${languagename}`, {
+                                method: 'DELETE',
+                            })
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.error) {
+                                        alert(result.error);
+                                    } else {
+                                        alert(result.message);
+                                        location.reload(); // ページをリロードして削除結果を反映
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('削除中にエラーが発生しました:', error);
+                                    alert('削除に失敗しました。');
+                                });
+                        }
+                    }
+                });
+
+            </script>
+            <button class="add-btn">新規字幕追加</button>
+        </div>
     </main>
 </body>
 
@@ -123,6 +132,7 @@
         // URLのパラメータからmdltextを取得
         const urlParams = new URLSearchParams(window.location.search);
         const mdltext = urlParams.get('mdltext');
+        let adminname = urlParams.get('adminname');
 
         // 新規字幕追加ボタンがクリックされた場合に遷移する
         const addBtn = document.querySelector('.add-btn');
@@ -134,6 +144,19 @@
                 alert('mdltext パラメータが見つかりません。');
             }
         });
+
+        // adminnameがURLパラメータにある場合はローカルストレージに保存
+        if (adminname) {
+            localStorage.setItem('adminname', adminname);
+        } else {
+            // URLパラメータがない場合はローカルストレージから取得
+            adminname = localStorage.getItem('adminname');
+        }
+
+        // adminnameが存在する場合にページに表示
+        if (adminname) {
+            document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+        }
     });
 </script>
 

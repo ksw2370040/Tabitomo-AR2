@@ -8,13 +8,18 @@
     <script src="../js/user.js" defer></script>
     <title>マイページ</title>
 </head>
+
 <body>
 
     <header>
-        <h1>マイページ</h1>
+        <h1>言語変更</h1>
         <ul>
-            <li><p id="username-display"></p> <!-- ユーザー名表示用のIDを追加 --></li>
-            <li><a href="../logout.html">ログアウト</a></li>
+            <li>
+                <p>name: </p>
+            </li>
+            <li>
+                <p><a href="logout.html">ログアウト</a></p>
+            <li>
         </ul>
     </header>
 
@@ -31,26 +36,28 @@
     </footer>
 
 </body>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    let username = urlParams.get('username');
 
-    // usernameがURLパラメータにある場合、ローカルストレージに保存
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams2 = new URLSearchParams(window.location.search);
+    let username = urlParams2.get('username');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
     if (username) {
         localStorage.setItem('username', username);
     } else {
-        // ローカルストレージから取得
+        // URLパラメータがない場合はローカルストレージから取得
         username = localStorage.getItem('username');
     }
 
-    // ユーザー名が存在する場合、ヘッダーに表示
+    // adminnameが存在する場合にページに表示
     if (username) {
-        document.getElementById('username-display').textContent = `名前: ${username}`;
+        document.querySelector('header p').textContent = `name: ${username}`;
     }
 </script>
 <script>
     // URLパラメータまたはローカルストレージからlanguagenameを取得
-    let languagename = urlParams.get('languagename');
+    let languagename = urlParams2.get('languagename');
 
     // languagenameがURLパラメータにある場合はローカルストレージに保存
     if (languagename) {
@@ -62,7 +69,7 @@
 
     // 言語変更後のメッセージにlanguagenameを反映
     if (languagename) {
-        document.querySelector('.change-success h2').textContent = `言語変更完了！（言語: ${languagename}）`;
+        document.querySelector('.change-success h2').innerHTML = `言語変更完了！<br>（言語: ${languagename}）`;
     }
 </script>
 

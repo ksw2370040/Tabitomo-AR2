@@ -16,10 +16,6 @@ body {
     background-color: #ffffff;
 }
 
-main {
-    padding-bottom: 50px;
-}
-
 /* Header styling */
 header {
     display: flex;
@@ -35,10 +31,6 @@ header {
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 70px;
-}
-
-#logout {
-    font-size: 0.5em;
 }
 
 header h1 {
@@ -59,8 +51,6 @@ header p {
 
 li {
     list-style: none;
-    margin-left: 220px;
-    margin-bottom: 50px;
 }
 
 ul {
@@ -74,16 +64,87 @@ main {
     margin-top: 70px;
 }
 
+.soundlist {
+    margin-left: 250px;
+    margin-top: 30px;
+    width: 80%;
+    max-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+}
+
+.soundlist-tab {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.soundlist-tab li {
+    flex: 1;
+    text-align: center;
+}
+
+.sound {
+    list-style: none;
+    padding: 0;
+}
+
+.sound li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.item {
+    flex: 1;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: normal;
+    padding: 10px;
+    border-right: 1px solid #eee;
+}
+
+
+.item:last-child {
+    border-right: none;
+}
+
+.soundtext button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: transparent;
+    color: #333;
+    border: none;
+    cursor: pointer;
+}
+
+.soundtext button:hover {
+    background-color: #ededed;
+    border-color: transparent;
+    color: rgb(32, 203, 143);
+}
+
 /* サイドバー */
 .sideber {
     position: fixed;
     left: 0;
     width: 200px;
     height: calc(100vh - 70px);
-    /* ヘッダーの高さを引いた高さ */
     background-color: #ffffff;
     padding: 20px 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #333;
 }
 
 /* サイドバー内のコンテンツ */
@@ -91,47 +152,60 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* 垂直方向の中央揃え */
     align-items: center;
     height: 100%;
-    /* サイドバーの高さを使う */
     gap: 15px;
 }
 
 /* その他のスタイル */
+/* サイドバー内のリンクの基本スタイル */
 .sideber-container a {
     width: 80%;
-    text-align: center;
-    border: 1px solid;
-    border-color: #333;
+    /* text-align: center; */
+    overflow: hidden;
+    background-color: #ffffff;
+    position: relative;
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
 }
 
 .sideber-container button {
-    width: 80%;
+    width: 100%;
     padding: 10px;
     font-size: 16px;
-    background-color: #ffffff;
+    background-color: transparent;
     color: #333;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.sideber-container button:hover {
+.sideber-container a:hover {
     background-color: #ededed;
+    border-color: transparent;
 }
 
-/* メインコンテンツ */
+.sideber-container a:hover::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
+    transition: all 0.3s ease-in-out;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.sideber-container a:hover button {
+    color: #000;
+}
+
 .container {
     margin-top: 50px;
-    /* ヘッダーの高さを考慮 */
     margin-left: 220px;
-    /* サイドバーの幅を考慮 */
     padding: 20px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    /* 2列 */
     gap: 15px;
 }
 

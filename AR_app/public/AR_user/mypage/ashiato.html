@@ -12,10 +12,14 @@
 <body>
 
     <header>
-        <h1>マイページ</h1>
+        <h1>あしあと</h1>
         <ul>
-            <li><p id="username-display"></p> <!-- ユーザー名表示 --></li>
-            <li><a href="../js/user.js">ログアウト</a></li>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li>
+                <p><a href="../logout.html">ログアウト</a></p>
+            <li>
         </ul>
     </header>
 
@@ -24,11 +28,31 @@
          <a href="../home.html" class="back-button">戻る</a>
     </div>
 
-
-</body>
-
 <footer>
     <p>© 2024 たびとも</p>
 </footer>
+
+</body>
+
+<script src="../js/user.js"></script>
+
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams2 = new URLSearchParams(window.location.search);
+    let username = urlParams2.get('username');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
+    if (username) {
+        localStorage.setItem('username', username);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        username = localStorage.getItem('username');
+    }
+
+    // adminnameが存在する場合にページに表示
+    if (username) {
+        document.querySelector('header p').textContent = `name: ${username}`;
+    }
+</script>
 
 </html>

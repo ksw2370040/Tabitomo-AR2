@@ -1,0 +1,126 @@
+/* 共通スタイル */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    flex-direction: column;
+}
+
+/* 右上ボタン */
+.top-right-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    /* 縦に並べる */
+    gap: 10px;
+    /* ボタン間の間隔 */
+    z-index: 1;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+
+/* 音量スライダー */
+.volume-slider {
+    position: absolute;
+    top: 10px;
+    right: 120px;
+    z-index: 1;
+}
+
+/* 字幕 */
+#subtitle {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 24px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+/* 写真ボタン */
+#take-photo {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1;
+    font-size: 16px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+}
+
+#take-photo:hover {
+    background-color: #0056b3;
+}
+
+/* スマホ用スタイル */
+@media only screen and (max-width: 600px) {
+    #take-photo {
+        width: 120px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    /* ログインフォーム調整 */
+    form {
+        padding: 15px;
+        width: 90%;
+        max-width: 300px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        font-size: 14px;
+    }
+
+    button[type="submit"] {
+        font-size: 14px;
+    }
+
+    a.btn {
+        font-size: 14px;
+    }
+}
+
+/* スマホ用スタイル */
+@media only screen and (max-width: 600px) {
+    .login-screen {
+        padding: 20px;
+        width: 90%;
+    }
+
+    .login-field {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 12px;
+    }
+}

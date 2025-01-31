@@ -39,6 +39,10 @@
 
     let subtitlesVisible = true;
     let audioEnabled = true;
+    let subtitles = [];  // 字幕の内容を格納する配列
+    let currentSubtitleIndex = 0;  // 現在表示中の字幕のインデックス
+    const displayDuration = 3000;  // 字幕を表示する時間（ミリ秒）
+    let subtitleTimeout;  // タイムアウトのID
 
     // マーカー情報を動的に読み込む
     async function loadMarkersData() {
@@ -82,11 +86,7 @@
           fetch(marker.subtitle)
             .then(response => response.text())
             .then(text => {
-              const subtitleDiv = document.createElement('div');
-              subtitleDiv.textContent = text;
-              subtitleDiv.setAttribute('id', marker.subtitleId);
-              subtitleDiv.setAttribute('style', 'display: none;');
-              document.querySelector('#subtitles-container').appendChild(subtitleDiv);
+              subtitles = text.split('\n');  // 改行で字幕を分割して配列に格納
             });
         }
 
@@ -101,11 +101,8 @@
               audio.play();
             }
           }
-          if (subtitlesVisible && marker.subtitle) {
-            const subtitle = document.getElementById(marker.subtitleId);
-            if (subtitle) {
-              subtitle.style.display = 'block';
-            }
+          if (subtitlesVisible && subtitles.length > 0) {
+            showSubtitle();  // 字幕を表示
           }
         });
 
@@ -118,14 +115,30 @@
               audio.currentTime = 0;
             }
           }
-          if (marker.subtitle) {
-            const subtitle = document.getElementById(marker.subtitleId);
-            if (subtitle) {
-              subtitle.style.display = 'none';
-            }
-          }
+          clearTimeout(subtitleTimeout);  // タイムアウトをクリア
+          currentSubtitleIndex = 0;  // 字幕のインデックスをリセット
         });
       });
+    }
+
+    // 字幕を表示する関数
+    function showSubtitle() {
+      if (currentSubtitleIndex < subtitles.length) {
+        const subtitle = subtitles[currentSubtitleIndex];
+        const subtitleElement = document.createElement('div');
+        subtitleElement.textContent = subtitle;
+        subtitleElement.setAttribute('style', 'color: white; font-size: 20px;');
+
+        // 字幕を表示
+        document.querySelector('#subtitles-container').appendChild(subtitleElement);
+
+        // 次の字幕を表示するためのタイムアウト設定
+        currentSubtitleIndex++;
+        subtitleTimeout = setTimeout(() => {
+          subtitleElement.style.display = 'none';  // 前の字幕を非表示
+          showSubtitle();  // 次の字幕を表示
+        }, displayDuration);
+      }
     }
 
     // ボタンのイベント設定

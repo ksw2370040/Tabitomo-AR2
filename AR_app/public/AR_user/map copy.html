@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../AR_user/mypage/static/mypage.css">
+    <script src="../js/user.js"></script>
+    <title>マイページ</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>マップ</h1>
+        <ul>
+            <li>
+                <p>ユーザー名: </p>
+            </li>
+            <li>
+                <p><a href="../logout.html">ログアウト</a></p>
+            <li>
+        </ul>
+    </header>
+
+    <div class="content">
+       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3233.506164592513!2d139.97366239999997!3d35.8611109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60189de4a072c079%3A0x3ea34b0dadcd6b02!2z5p-P44Gu6aas6IKJ5bGLIOmmrOWWsOOCjeOBhg!5e0!3m2!1sja!2sjp!4v1732586728185!5m2!1sja!2sjp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+         <a href="japanese.html" class="back-button">戻る</a>
+    </div>
+
+<footer>
+    <p>© 2024 たびとも</p>
+</footer>
+
+</body>
+
+<script src="../js/user.js"></script>
+
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams2 = new URLSearchParams(window.location.search);
+    let username = urlParams2.get('username');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
+    if (username) {
+        localStorage.setItem('username', username);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        username = localStorage.getItem('username');
+    }
+
+    // adminnameが存在する場合にページに表示
+    if (username) {
+        document.querySelector('header p').textContent = `name: ${username}`;
+    }
+</script>
+
+</html>

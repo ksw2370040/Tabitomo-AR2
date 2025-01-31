@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>字幕追加</title>
-    <link rel="stylesheet" href="../static/napisyadd.css">
+    <link rel="stylesheet" href="static/napisyadd.css">
 </head>
 
 <body>
     <header>
-        <h1><a href="menu.html">管理者システム - 字幕情報</a></h1>
+        <h1><a href="../menu.html">管理者システム　　-字幕情報-　　新規字幕追加</a></h1>
         <ul>
             <li>
                 <p>ユーザー名: </p>
             </li>
-            <li id="logout">
-                <a href="">ログアウト</a>
-            </li>
+            <li>
+                <p><a href="../AR_login/logout.html">ログアウト</a></p>
+            <li>
         </ul>
     </header>
 
@@ -26,91 +26,115 @@
             <div class="sideber-container">
                 <a href="../menu.html"><button>メニュー</button></a>
                 <a href="../AR_user/user.html"><button>管理者情報</button></a>
-                <a href="../AR_marker/marker.html"><button>マーカー管理</button></a>
-                <a href="../AR_model/modellist.html"><button>3Dモデル</button></a>
-                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
                 <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
-                <a href="../AR_map/map.html"><button>マップ管理</button></a>
+                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="../AR_map/location.html"><button>マップ管理</button></a>
+                <a href="../AR_location/location.html"><button>場所 3Dモデル<br>管理</button></a>
             </div>
         </div>
 
-        <form id="napisy-form" enctype="multipart/form-data">
-            <label for="napisy-file">字幕ファイルを選択 (txt, srt):</label>
-            <input type="file" id="napisy-file" name="napisyFile" accept=".txt, .srt" required>
-            <br><br>
+        <div class="napisyaddlist">
+            <form id="napisy-form" enctype="multipart/form-data">
+                <div class="napisyfile">
+                    <label for="napisy-file">字幕ファイルを選択 (txt, srt)</label>
+                    <input type="file" id="napisy-file" name="napisyFile" accept=".txt, .srt" required>
+                </div>
+                <br><br>
 
-            <label for="language-select">言語選択:</label>
-            <select id="language-select" name="languagename" required>
-                <option value="">言語を選択</option>
-            </select>
-            <br><br>
+                <div class="language">
+                    <label for="language-select">言語選択</label>
+                    <select id="language-select" name="languagename" required>
+                        <option value="">言語を選択</option>
+                    </select>
+                </div>
+                <br><br>
 
-            <input type="hidden" id="mdltext" name="mdltext">
-            <button type="submit">送信</button>
-        </form>
+                <input type="hidden" id="mdltext" name="mdltext">
+                <button class="submit" type="submit">送信</button>
+            </form>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', async function () {
-                const urlParams = new URLSearchParams(window.location.search);
-                const mdltext = urlParams.get('mdltext');
-                const languageSelect = document.getElementById('language-select');
+            <script>
+                document.addEventListener('DOMContentLoaded', async function () {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const mdltext = urlParams.get('mdltext');
+                    const languageSelect = document.getElementById('language-select');
 
-                if (!mdltext) {
-                    alert('字幕テキストが指定されていません。');
-                    return;
-                }
-
-                document.getElementById('mdltext').value = mdltext;
-
-                // 言語リストを取得して選択肢に追加
-                try {
-                    const response = await fetch(`/napisylist/languages?mdltext=${mdltext}`);
-                    const availableLanguages = await response.json();
-
-                    if (!response.ok) throw new Error(availableLanguages.error || '言語情報の取得に失敗しました');
-
-                    if (availableLanguages.length === 0) {
-                        alert('追加可能な言語がありません。前の画面に戻ります。');
-                        window.location.href = document.referrer || '/napisy'; // 前のページに戻る
+                    if (!mdltext) {
+                        alert('字幕テキストが指定されていません。');
                         return;
                     }
 
-                    availableLanguages.forEach(language => {
-                        const option = document.createElement('option');
-                        option.value = language;
-                        option.textContent = language;
-                        languageSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error(error);
-                    window.location.href = document.referrer || '/napisy';
-                }
+                    document.getElementById('mdltext').value = mdltext;
 
-                // フォーム送信処理
-                document.getElementById('napisy-form').addEventListener('submit', async (event) => {
-                    event.preventDefault();
-                    const formData = new FormData(event.target);
-
+                    // 言語リストを取得して選択肢に追加
                     try {
-                        const response = await fetch('/napisylist/add', {
-                            method: 'POST',
-                            body: formData,
-                        });
-                        const result = await response.json();
+                        const response = await fetch(`/napisylist/languages?mdltext=${mdltext}`);
+                        const availableLanguages = await response.json();
 
-                        if (result.success) {
-                            alert('字幕が追加されました！');
-                            window.location.href = document.referrer; // 前のページにリダイレクト
-                        } else {
-                            throw new Error(result.error || 'エラーが発生しました');
+                        if (!response.ok) throw new Error(availableLanguages.error || '言語情報の取得に失敗しました');
+
+                        if (availableLanguages.length === 0) {
+                            alert('追加可能な言語がありません。前の画面に戻ります。');
+                            window.location.href = document.referrer || '/napisy'; // 前のページに戻る
+                            return;
                         }
+
+                        availableLanguages.forEach(language => {
+                            const option = document.createElement('option');
+                            option.value = language;
+                            option.textContent = language;
+                            languageSelect.appendChild(option);
+                        });
                     } catch (error) {
                         console.error(error);
+                        window.location.href = document.referrer || '/napisy';
                     }
+
+                    // フォーム送信処理
+                    document.getElementById('napisy-form').addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                        const formData = new FormData(event.target);
+
+                        try {
+                            const response = await fetch('/napisylist/add', {
+                                method: 'POST',
+                                body: formData,
+                            });
+                            const result = await response.json();
+
+                            if (result.success) {
+                                alert('字幕が追加されました！');
+                                window.location.href = document.referrer; // 前のページにリダイレクト
+                            } else {
+                                throw new Error(result.error || 'エラーが発生しました');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    });
                 });
-            });
-        </script>
+            </script>
+        </div>
     </main>
 </body>
+
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams = new URLSearchParams(window.location.search);
+    let adminname = urlParams.get('adminname');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
+    if (adminname) {
+        localStorage.setItem('adminname', adminname);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        adminname = localStorage.getItem('adminname');
+    }
+
+    // adminnameが存在する場合にページに表示
+    if (adminname) {
+        document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+    }
+</script>
 
 </html>

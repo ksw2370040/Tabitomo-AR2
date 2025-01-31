@@ -16,6 +16,13 @@
             background-color: #f0f0f0;
         }
 
+        /* ラッパー要素の設定 */
+        .wrapper {
+            display: flex;
+            flex-direction: column; /* 縦方向に要素を並べる */
+            align-items: center; /* 中央揃え */
+        }
+
         /* グリッドの設定 */
         .grid-container {
             display: grid;
@@ -47,27 +54,46 @@
             object-fit: cover;
             /* 画像をセル内でカバー */
         }
+
+        /* 戻るボタンのスタイル */
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #a1a1a1;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
 <body>
-    <div class="grid-container">
-        <div class="grid-item"><a href="figure/image1.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 1.html"><img src="image/araiguma.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 2.html"><img src="image/koumori.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 3.html"><img src="image/kuso.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 4.html"><img src="image/panda.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 5.html"><img src="image/kuma.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 6.html"><img src="image/tintira.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 7.html"><img src="image/tonakai.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 8.html"><img src="image/uma.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 9.html"><img src="image/usagi.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 10.html"><img src="image/warabi.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 11.html"><img src="image/yagi.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 12.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 13.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 14.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
-        <div class="grid-item"><a href="figure/image1 copy 15.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
+    <div class="wrapper">
+        <div class="grid-container">
+            <div class="grid-item"><a href="figure/image1.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 1.html"><img src="image/araiguma.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 2.html"><img src="image/koumori.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 3.html"><img src="image/kuso.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 4.html"><img src="image/panda.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 5.html"><img src="image/kuma.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 6.html"><img src="image/tintira.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 7.html"><img src="image/tonakai.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 8.html"><img src="image/uma.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 9.html"><img src="image/usagi.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 10.html"><img src="image/warabi.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 11.html"><img src="image/yagi.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 12.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 13.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 14.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
+            <div class="grid-item"><a href="figure/image1 copy 15.html"><img src="image/saru.png" alt="フィギュア1"></a></div>
+        </div>
+        <button class="back-button" onclick="history.back()">戻る</button>
     </div>
 </body>
 

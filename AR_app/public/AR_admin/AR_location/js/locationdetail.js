@@ -40,19 +40,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         <p>
                             <strong>モデル名:</strong> ${model.mdlname}<br>
                             <strong>モデルID:</strong> ${model.mdlid}<br>
-                            <strong>3Dモデル:</strong>${model.mdlimage}<br>
+                            <strong>3Dモデル:</strong>${model.mdlname}<br>
                             <button class="viewer-btn" data-mdlimage="${model.mdlimage}">3Dモデル表示</button><br>
                             <strong>マーカー名:</strong> ${model.mkname}<br>
                             <strong>パターン:</strong> ${model.patt}<br>
-                            <strong>マーカー画像:</strong> 
-                            <img src="/Content/markerimage/${model.mkimage}" alt="${model.mkimage}" width="200">
-                            <a href="../../Content/markerimage/${model.mkimage}" download="${model.mkimage}" class="download-btn">
-                                <button>ダウンロード</button>
-                            </a><br>
-                            <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">テキストファイル</a></strong><br>
-                            ${model.textfiles.length > 0 ? model.textfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}<br>
-                            <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdlsound=${model.mdlsound}">音声ファイル</a></strong><br>
-                            ${model.soundfiles.length > 0 ? model.soundfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}
+                            <strong>マーカー画像:</strong> <img src="/Content/markerimage/${model.mkimage}" alt="${model.mkimage}" width="200"><br>
+                            <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">音声ファイル</a></strong><br>
+                            ${model.soundfiles.length > 0 ? model.soundfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}<br>
+                            <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdlsound=${model.mdlsound}">テキストファイル</a></strong><br>
+                            ${model.textfiles.length > 0 ? model.textfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}
                         </p>
                         <button class="edit-btn" data-mdlid="${mdlid}">編集</button>
                         <button class="delete-btn" data-mdlid="${mdlid}">削除</button>

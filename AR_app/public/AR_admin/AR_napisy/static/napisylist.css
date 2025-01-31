@@ -16,10 +16,6 @@ body {
     background-color: #ffffff;
 }
 
-main {
-    padding-bottom: 50px;
-}
-
 /* Header styling */
 header {
     display: flex;
@@ -35,10 +31,6 @@ header {
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 70px;
-}
-
-#logout {
-    font-size: 0.5em;
 }
 
 header h1 {
@@ -59,8 +51,6 @@ header p {
 
 li {
     list-style: none;
-    margin-left: 220px;
-    margin-bottom: 50px;
 }
 
 ul {
@@ -68,12 +58,80 @@ ul {
 }
 
 /* メイン */
-
 main {
-    /* flex-grow: 1; */
+    flex-grow: 1;
     margin-top: 70px;
-    display: flex;
 }
+
+.napisylist {
+    margin-left: 250px;
+    width: 80%;
+    max-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+}
+
+.napisylist-tab {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    margin-right: 11.5%;
+}
+
+.napisylist-tab li {
+    flex: 1;
+    text-align: center;
+}
+
+.napisy-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.napisy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+.languagename {
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid #ccc;
+}
+
+.napisyfile {
+    flex: 1;
+    text-align: center;
+    padding-left: 10px;
+}
+
+#napisy-details h2 {
+    margin-bottom: 5px;
+}
+
+#napisy-details li:last-child {
+    border-right: none;
+}
+
+#napisy-details {
+    max-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+}
+
 
 /* サイドバー */
 .sideber {
@@ -81,10 +139,10 @@ main {
     left: 0;
     width: 200px;
     height: calc(100vh - 70px);
-    /* ヘッダーの高さを引いた高さ */
     background-color: #ffffff;
     padding: 20px 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #333;
 }
 
 /* サイドバー内のコンテンツ */
@@ -92,103 +150,126 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* 垂直方向の中央揃え */
     align-items: center;
     height: 100%;
-    /* サイドバーの高さを使う */
     gap: 15px;
 }
 
 /* その他のスタイル */
+/* サイドバー内のリンクの基本スタイル */
 .sideber-container a {
     width: 80%;
-    text-align: center;
-    border: 1px solid;
-    border-color: #333;
+    /* text-align: center; */
+    overflow: hidden;
+    background-color: #ffffff;
+    position: relative;
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
 }
 
 .sideber-container button {
-    width: 80%;
+    width: 100%;
     padding: 10px;
     font-size: 16px;
-    background-color: #ffffff;
+    background-color: transparent;
     color: #333;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.sideber-container button:hover {
+.sideber-container a:hover {
     background-color: #ededed;
+    border-color: transparent;
 }
 
-/* メインコンテンツ */
-.container {
-    margin-top: 50px;
-    /* ヘッダーの高さを考慮 */
-    margin-left: 220px;
-    /* サイドバーの幅を考慮 */
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* 2列 */
-    gap: 15px;
-}
-
-.container a {
-    padding: 20px 20px 20px 20px;
-    border: 1px solid;
-    border-color: #333;
-}
-
-/* フッター */
-footer {
-    position: fixed;
+.sideber-container a:hover::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
+    transition: all 0.3s ease-in-out;
+    position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
-    background-color: #f0f0f0;
-    padding: 0 -100px;
-    text-align: center;
-    font-size: 0.9em;
-    color: #333;
-    border-top: 1px solid #ccc;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.sideber-container a:hover button {
+    color: #000;
 }
 
 /* ボタン */
-.container button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1em;
-    color: #333;
-    background-color: #ffffff;
-    border: none;
-    border-radius: 5px;
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-left: 15px;
+    width: 10%;
+}
+
+.buttons button {
+    position: relative;
+    writing-mode: horizontal-tb;
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 12px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    background-color: transparent;
+    border: none;
+    text-decoration: none;
+    border-bottom: 1px solid #333;
 }
 
-.container button:hover {
+.buttons button:hover {
     background-color: #ededed;
+    border-color: transparent;
 }
 
-#napisy-details {
-    margin-left: 220px;
+.buttons button::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    background: transparent;
+}
+
+
+.buttons button:hover::after {
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
 }
 
 .add-btn {
-    margin-left: 20px;
-    margin-top: 30px;
+    position: relative;
+    writing-mode: horizontal-tb;
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    text-decoration: none;
+    border-bottom: 1px solid #333;
 }
 
-.napisy-details li{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 4列に設定 */
-    gap: 20px; /* 列間の隙間 */
-    list-style-type: none; /* デフォルトのリストスタイルを削除 */
-    padding-right: 100; /* パディングを削除 */
-    padding-top: 50px;
-    padding-bottom: 50px;
+.add-btn:hover {
+    background-color: #ededed;
+    border-color: transparent;
+}
+
+.add-btn::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    background: transparent;
+}
+
+.add-btn:hover::after {
+    background: linear-gradient(82.3deg, rgb(110, 255, 183) 10.8%, rgb(0, 80, 172) 94.3%);
 }

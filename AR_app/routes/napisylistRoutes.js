@@ -9,7 +9,7 @@ const fs = require('fs');  // fs モジュールをインポート
 // ファイルアップロード設定
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy');
+        cb(null, 'C:/Tabitomo-AR/AR_app/public/Content/napisy');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now();
@@ -90,7 +90,7 @@ router.get('/edit', async (req, res) => {
     }
 
     try {
-        const filePath = path.join('/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy', napisyfile);
+        const filePath = path.join('C:/Tabitomo-AR/AR_app/public/Content/napisy', napisyfile);
         if (fs.existsSync(filePath)) {
             const content = fs.readFileSync(filePath, 'utf-8');
             res.json({ content });
@@ -114,13 +114,13 @@ router.post('/edit', upload.single('napisyFile'), async (req, res) => {
 
     try {
         // 古いファイルを削除
-        const oldFilePath = path.join('/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy', oldnapisyfile);
+        const oldFilePath = path.join('C:/Tabitomo-AR/AR_app/public/Content/napisy', oldnapisyfile);
         if (fs.existsSync(oldFilePath)) {
             fs.unlinkSync(oldFilePath);
         }
 
         // 新しいファイルに内容を保存
-        const newFilePath = path.join('/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy', napisyFile);
+        const newFilePath = path.join('C:/Tabitomo-AR/AR_app/public/Content/napisy', napisyFile);
         fs.writeFileSync(newFilePath, napisycontent, 'utf-8');
 
         // DB更新

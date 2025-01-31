@@ -16,14 +16,14 @@
         <h1>マイページ</h1>
         <ul>
             <li><p id="username-display"></p></li> <!-- ユーザー名表示用 -->
-            <li><a href="../logout.html">ログアウト</a></li>
+            <li><p><a href="../logout.html">ログアウト</a></p></li>
         </ul>
     </header>
 
     <div class="content">
         <div class="name-change-section">
             <h2>名前の変更</h2>
-            <p>現在の名前: <span id="current-name"></span></p>
+            <p>現在の名前: <span id="current-name"></span></p> <!-- ここに現在の名前を表示 -->
             <label for="new-name">新しい名前:</label>
             <input type="text" id="new-name" placeholder="新しい名前を入力" required>
 
@@ -39,6 +39,33 @@
 
 </body>
 
-<script src="../js/user.js" defer></script>
+<script>
+    // URLパラメータまたはローカルストレージからadminnameを取得
+    const urlParams2 = new URLSearchParams(window.location.search);
+    let username = urlParams2.get('username');
+
+    // adminnameがURLパラメータにある場合はローカルストレージに保存
+    if (username) {
+        localStorage.setItem('username', username);
+    } else {
+        // URLパラメータがない場合はローカルストレージから取得
+        username = localStorage.getItem('username');
+    }
+
+    // adminnameが存在する場合にページに表示
+    if (username) {
+        // ヘッダー内に表示
+        document.getElementById('username-display').textContent = `name: ${username}`;
+        
+        // 現在の名前に表示
+        document.getElementById('current-name').textContent = username;
+    } else {
+        // ユーザー名が取得できなかった場合の処理（必要に応じて追加）
+        document.getElementById('username-display').textContent = 'name: 未設定';
+        document.getElementById('current-name').textContent = '未設定';
+    }
+</script>
+
+<script src="../js/rename.js" defer></script>
 
 </html>
