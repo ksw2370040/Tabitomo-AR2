@@ -14,17 +14,60 @@
            renderer="logarithmicDepthBuffer: true;" 
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
-    
+
     <a-assets>
-      <!-- 動的に読み込むコンテンツをここに設定 -->
+      <!-- 動的に読み込むコンテンツ -->
     </a-assets>
 
-    <!-- カメラの位置を調整 -->
-    <a-camera position="0 160 500"></a-camera>
+    <!-- ズームコントロールを持つカメラ -->
+    <a-camera position="0 1.6 5" zoom-controls></a-camera>
 
   </a-scene>
 
   <script>
+    AFRAME.registerComponent('zoom-controls', {
+      schema: {
+        minZoom: { type: 'number', default: 2 },   // 最小ズーム
+        maxZoom: { type: 'number', default: 10 }   // 最大ズーム
+      },
+      init: function () {
+        this.camera = this.el;
+        this.zoomLevel = 5;  // 初期ズーム値
+        this.startDistance = 0;
+
+        // マウスホイールでズーム
+        window.addEventListener('wheel', (event) => {
+          this.adjustZoom(event.deltaY * -0.01);
+        });
+
+        // タッチ開始時の処理
+        window.addEventListener('touchstart', (event) => {
+          if (event.touches.length === 2) {
+            this.startDistance = this.getTouchDistance(event.touches);
+          }
+        });
+
+        // ピンチイン・ピンチアウトでズーム
+        window.addEventListener('touchmove', (event) => {
+          if (event.touches.length === 2) {
+            const newDistance = this.getTouchDistance(event.touches);
+            const zoomChange = (newDistance - this.startDistance) * 0.05;
+            this.adjustZoom(zoomChange);
+            this.startDistance = newDistance;
+          }
+        });
+      },
+      adjustZoom: function (delta) {
+        this.zoomLevel = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoomLevel + delta));
+        this.camera.setAttribute('position', `0 1.6 ${this.zoomLevel}`);
+      },
+      getTouchDistance: function (touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
 
@@ -120,39 +163,6 @@
     // マーカーのデータを読み込む
     loadMarkersData();
   </script>
-
-  <!-- スマートフォン用のスタイル調整 -->
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-    }
-
-    a-scene {
-      width: 100%;
-      height: 100%;
-    }
-
-    #controls {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      padding: 10px;
-    }
-
-    #subtitle {
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: white;
-      font-size: 20px;
-      display: none;
-    }
-  </style>
 
 </body>
 </html>
