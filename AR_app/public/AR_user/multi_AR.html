@@ -23,9 +23,7 @@
 
   </a-scene>
 
-  <div id="subtitle" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; display: none;"></div>
-  <button id="toggle-volume" class="top-right-button" style="position: fixed; top: 10px; right: 10px;">音量ON</button>
-  <button id="toggle-subtitle" class="top-right-button" style="position: fixed; top: 50px; right: 10px;">字幕OFF</button>
+  <div id="subtitles-container" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 20px;"></div>
 
   <script>
     // ズームコントロールのコンポーネントを定義
@@ -76,24 +74,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const languagename = urlParams.get('languagename') || '日本語';
 
-    let audioMuted = false;
-    let subtitlesVisible = false;
-
-    const toggleVolumeButton = document.querySelector('#toggle-volume');
-    const toggleSubtitleButton = document.querySelector('#toggle-subtitle');
-    const subtitleDiv = document.querySelector('#subtitle');
-
-    toggleVolumeButton.addEventListener('click', function () {
-      audioMuted = !audioMuted;
-      toggleVolumeButton.textContent = audioMuted ? '音量OFF' : '音量ON';
-    });
-
-    toggleSubtitleButton.addEventListener('click', function () {
-      subtitlesVisible = !subtitlesVisible;
-      toggleSubtitleButton.textContent = subtitlesVisible ? '字幕ON' : '字幕OFF';
-      subtitleDiv.style.display = subtitlesVisible ? 'block' : 'none';
-    });
-
     // マーカー情報を動的に読み込む
     async function loadMarkersData() {
       const response = await fetch(`/multiAR?languagename=${languagename}`);
@@ -136,8 +116,11 @@
           fetch(marker.subtitle)
             .then(response => response.text())
             .then(text => {
-              const subtitleText = text.split('\n');  // 改行で分割
-              marker.subtitleText = subtitleText;
+              const subtitleDiv = document.createElement('div');
+              subtitleDiv.textContent = text;
+              subtitleDiv.setAttribute('id', marker.subtitleId);
+              subtitleDiv.setAttribute('style', 'display: none;');
+              document.querySelector('#subtitles-container').appendChild(subtitleDiv);
             });
         }
 
@@ -148,22 +131,15 @@
         markerElement.addEventListener('markerFound', () => {
           if (marker.audio) {
             const audio = document.getElementById(marker.audioId);
-            if (audio && !audioMuted) {
+            if (audio) {
               audio.play();
             }
           }
-          if (marker.subtitleText && subtitlesVisible) {
-            let subtitleIndex = 0;
-            const showSubtitle = () => {
-              if (subtitleIndex < marker.subtitleText.length) {
-                subtitleDiv.textContent = marker.subtitleText[subtitleIndex];
-                subtitleIndex++;
-                setTimeout(showSubtitle, 2000);  // 2秒ごとに更新
-              } else {
-                subtitleDiv.style.display = 'none';
-              }
-            };
-            showSubtitle();
+          if (marker.subtitle) {
+            const subtitle = document.getElementById(marker.subtitleId);
+            if (subtitle) {
+              subtitle.style.display = 'block';
+            }
           }
         });
 
@@ -176,7 +152,12 @@
               audio.currentTime = 0;
             }
           }
-          subtitleDiv.style.display = 'none';
+          if (marker.subtitle) {
+            const subtitle = document.getElementById(marker.subtitleId);
+            if (subtitle) {
+              subtitle.style.display = 'none';
+            }
+          }
         });
       });
     }
