@@ -59,9 +59,9 @@
       
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-      modelEntity.setAttribute('scale', 'auto'); 
-      modelEntity.setAttribute('position', 'auto'); 
-      
+      modelEntity.setAttribute('scale', '0.5 0.5 0.5');  // 初期スケールを指定
+      modelEntity.setAttribute('position', '0 0 0'); // 初期位置を中央に設定
+
       markerElement.appendChild(modelEntity);
 
       handleAudioAndSubtitles(marker);
@@ -69,7 +69,7 @@
       document.querySelector('a-scene').appendChild(markerElement);
 
       modelEntity.addEventListener('model-loaded', function () {
-        scaleModel(modelEntity);
+        scaleAndPositionModel(modelEntity);
       });
 
       handleMarkerEvents(markerElement, marker);
@@ -140,12 +140,17 @@
       }
     }
 
-    function scaleModel(modelEntity) {
+    function scaleAndPositionModel(modelEntity) {
       const model = modelEntity.getObject3D('mesh');
       const bbox = new THREE.Box3().setFromObject(model);
       const size = bbox.getSize(new THREE.Vector3());
+
+      // モデルのスケーリング（最大辺が1になるように調整）
       const scaleFactor = 1 / Math.max(size.x, size.y, size.z);
       modelEntity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
+
+      // モデルの位置調整（カメラから見やすい位置に）
+      modelEntity.setAttribute('position', '0 0 -2'); // Z軸を少し後ろに移動させる
     }
 
     loadMarkersData();
