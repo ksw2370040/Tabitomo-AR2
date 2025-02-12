@@ -17,6 +17,7 @@
       top: 10px;
       left: 10px;
       color: white;
+      z-index: 10;
     }
 
     #subtitles-container {
@@ -31,6 +32,21 @@
       border-radius: 5px;
       text-align: center;
       display: none;
+    }
+
+    #error-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: red;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+      display: none;
+      font-size: 18px;
+      z-index: 100;
     }
 
     @media (max-width: 768px) {
@@ -49,7 +65,7 @@
   <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
            renderer="logarithmicDepthBuffer: true;" 
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
-           >
+           embedded>
 
     <a-assets></a-assets>
     <a-camera position="0 1.6 5" scale="1 1 1"></a-camera>
@@ -63,6 +79,7 @@
   </div>
 
   <div id="subtitles-container"></div>
+  <div id="error-container"></div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -86,32 +103,36 @@
         }
       } catch (error) {
         console.error(error);
-        alert('マーカー情報の読み込みに失敗しました。');
+        showError('マーカー情報の読み込みに失敗しました。');
       }
+    }
+
+    // エラーメッセージ表示
+    function showError(message) {
+      const errorContainer = document.getElementById('error-container');
+      errorContainer.textContent = message;
+      errorContainer.style.display = 'block';
+      setTimeout(() => {
+        errorContainer.style.display = 'none';
+      }, 3000);
     }
 
     // 個々のマーカー情報を読み込む
     async function loadMarker(marker) {
       try {
-        // モデルの読み込み
         const assetItem = document.createElement('a-asset-item');
         assetItem.setAttribute('id', `model-${marker.id}`);
         assetItem.setAttribute('src', marker.model);
         document.querySelector('a-assets').appendChild(assetItem);
 
-        // マーカーの作成
         const markerElement = createMarkerElement(marker);
-
-        // 3Dモデルの作成
         const modelEntity = createModelEntity(marker);
         markerElement.appendChild(modelEntity);
 
-        // 音声ファイルの読み込み
         if (marker.audio) {
           createAudioElement(marker);
         }
 
-        // 字幕ファイルの読み込み
         if (marker.subtitle) {
           const subtitleText = await fetchSubtitle(marker.subtitle);
           subtitles = parseSubtitles(subtitleText);
@@ -124,7 +145,6 @@
       }
     }
 
-    // マーカーのDOM要素を作成
     function createMarkerElement(marker) {
       const markerElement = document.createElement('a-marker');
       markerElement.setAttribute('id', marker.id);
@@ -133,7 +153,6 @@
       return markerElement;
     }
 
-    // 3DモデルのDOM要素を作成
     function createModelEntity(marker) {
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
@@ -142,7 +161,6 @@
       return modelEntity;
     }
 
-    // 音声のDOM要素を作成
     function createAudioElement(marker) {
       const audioElement = document.createElement('audio');
       audioElement.setAttribute('src', marker.audio);
@@ -150,7 +168,6 @@
       document.body.appendChild(audioElement);
     }
 
-    // 字幕を分割してパース
     function parseSubtitles(subtitleText) {
       return subtitleText.split('\n').map(line => ({
         text: line.trim(),
@@ -158,7 +175,6 @@
       }));
     }
 
-    // 字幕のテキストファイルを非同期で取得
     async function fetchSubtitle(url) {
       try {
         const response = await fetch(url);
@@ -169,7 +185,6 @@
       }
     }
 
-    // マーカーのイベントリスナーを追加
     function addMarkerEvents(markerElement, marker) {
       markerElement.addEventListener('markerFound', () => {
         if (audioEnabled && marker.audio) {
@@ -195,7 +210,6 @@
       });
     }
 
-    // 字幕の表示
     function showSubtitle() {
       if (currentSubtitleIndex < subtitles.length) {
         const subtitleData = subtitles[currentSubtitleIndex];
@@ -211,20 +225,17 @@
       }
     }
 
-    // 状態切り替え関数
     function toggleState(elementId, state, onText, offText) {
       state = !state;
       document.getElementById(elementId).textContent = state ? onText : offText;
       return state;
     }
 
-    // 字幕の表示/非表示切り替え
     document.getElementById('toggle-subtitles').addEventListener('click', () => {
       subtitlesVisible = toggleState('toggle-subtitles', subtitlesVisible, '字幕オフ', '字幕オン');
       document.querySelector('#subtitles-container').style.display = subtitlesVisible ? 'block' : 'none';
     });
 
-    // 音声のオン/オフ切り替え
     document.getElementById('toggle-audio').addEventListener('click', () => {
       audioEnabled = toggleState('toggle-audio', audioEnabled, '音声オフ', '音声オン');
       const audioElements = document.querySelectorAll('audio');
@@ -237,12 +248,10 @@
       });
     });
 
-    // 戻るボタン
     document.getElementById('back').addEventListener('click', () => {
       window.history.back();
     });
 
-    // 初期データの読み込み
     loadMarkersData();
   </script>
 </body>
