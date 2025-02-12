@@ -9,7 +9,7 @@ const fs = require('fs');  // fs モジュールをインポート
 // ファイルアップロード設定
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'C:/Tabitomo-AR/AR_app/public/Content/napisy');
+        cb(null, '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now();

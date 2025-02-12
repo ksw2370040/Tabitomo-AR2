@@ -10,7 +10,7 @@ const fs = require('fs');  // fs モジュールをインポート
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // サウンドファイルの保存先ディレクトリ
-    cb(null, 'C:/Tabitomo-AR/AR_app/public/Content/sound');
+    cb(null, '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/sound');
   },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now();
