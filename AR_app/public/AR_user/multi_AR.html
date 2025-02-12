@@ -66,7 +66,7 @@
            renderer="logarithmicDepthBuffer: true;" 
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
-
+    
     <a-assets></a-assets>
     <a-camera position="0 0 0" scale="1 1 1"></a-camera>
 
@@ -90,6 +90,18 @@
     let subtitles = [];
     let currentSubtitleIndex = 0;
     let subtitleTimeout;
+
+    // ビューのサイズを動的に取得し、ARコンテンツのスケーリングと位置調整を行う
+    function adjustViewport() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      // カメラの視野に合わせてARコンテンツの位置を調整
+      const camera = document.querySelector('a-camera');
+      camera.setAttribute('position', `0 0 ${Math.max(width, height) / 3}`);
+    }
+
+    window.addEventListener('resize', adjustViewport);
 
     // マーカー情報を非同期で取得
     async function loadMarkersData() {
