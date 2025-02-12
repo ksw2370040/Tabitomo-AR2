@@ -98,11 +98,16 @@
 
       // カメラの視野に合わせてARコンテンツの位置を調整
       const camera = document.querySelector('a-camera');
-      // PCの場合は遠く、モバイルの場合は近くに設定
-      camera.setAttribute('position', `0 0 ${Math.max(width, height) / 5}`);
+      
+      // スマホの画面に合わせてカメラを近くに設定
+      if (width <= 768) { // スマホの場合
+        camera.setAttribute('position', `0 0 ${Math.max(width, height) / 3}`);
+      } else { // PCの場合
+        camera.setAttribute('position', `0 0 ${Math.max(width, height) / 5}`);
+      }
     }
 
-    window.addEventListener('resize', adjustViewport);
+    window.addEventListener('resize', adjustViewport);  // 画面サイズ変更時に再調整
 
     // マーカー情報を非同期で取得
     async function loadMarkersData() {
