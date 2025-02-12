@@ -11,10 +11,8 @@ const storage = multer.diskStorage({
         const directoryMap = {
             'mdlimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/.glb',
             'patt': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/.patt',
-            'mkimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/markerimage',
-            'sound': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/sound',
-            'subtitles': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/napisy'
-              };
+            'mkimage': '/home/ec2-user/Tabitomo-AR2/AR_app/public/Content/markerimage'
+            };
         cb(null, directoryMap[file.fieldname] || 'default/path');
     },
     filename: (req, file, cb) => {
