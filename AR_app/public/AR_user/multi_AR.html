@@ -68,7 +68,7 @@
            embedded>
 
     <a-assets></a-assets>
-    <a-camera position="0 1.6 5" scale="1 1 1"></a-camera>
+    <a-camera position="0 0 0" scale="1 1 1"></a-camera>
 
   </a-scene>
 
@@ -157,7 +157,7 @@
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
       modelEntity.setAttribute('scale', '0.5 0.5 0.5');
-      modelEntity.setAttribute('position', '0 0.1 0');
+      modelEntity.setAttribute('position', '0 0 0');
       return modelEntity;
     }
 
