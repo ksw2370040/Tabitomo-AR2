@@ -114,7 +114,7 @@
       errorContainer.style.display = 'block';
       setTimeout(() => {
         errorContainer.style.display = 'none';
-      }, 3000);
+      }, 5000);
     }
 
     // 個々のマーカー情報を読み込む
@@ -142,6 +142,7 @@
         addMarkerEvents(markerElement, marker);
       } catch (error) {
         console.error(`マーカー読み込みエラー: ${marker.id}`, error);
+        showError(`マーカー読み込みエラー: ${marker.id}`);
       }
     }
 
@@ -178,9 +179,11 @@
     async function fetchSubtitle(url) {
       try {
         const response = await fetch(url);
+        if (!response.ok) throw new Error('字幕ファイルの読み込みに失敗しました');
         return await response.text();
       } catch (error) {
         console.error('字幕ファイルの読み込みに失敗しました', error);
+        showError('字幕ファイルの読み込みに失敗しました');
         return '';
       }
     }
