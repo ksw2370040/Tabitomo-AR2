@@ -47,6 +47,16 @@
             </div>
         </div>
     </div>
+    <!-- login.html -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // localStorageにユーザー情報が保存されていたら、ホーム画面へリダイレクト
+        if (localStorage.getItem('username') && localStorage.getItem('userid') && localStorage.getItem('languagename')) {
+            window.location.href = 'home.html';  // ホーム画面へリダイレクト
+        }
+    });
+</script>
+
 </body>
 
 </html>

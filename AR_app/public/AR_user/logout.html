@@ -1,3 +1,4 @@
+<!-- logout.html -->
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/logout.css">
-    <title>ホーム</title>
+    <title>ログアウト完了</title>
 </head>
 
 <body>
@@ -14,14 +15,25 @@
         <h1>ホーム</h1>
     </header>
 
-    <div class="content">
-        <h3>ログアウトが完了しました</h3>
-        <a class="login-url" href="login.html"><button>ログイン画面に戻る</button></a>
-    </div>
+    <main>
+        <div class="logout-container">
+            <h2>ログアウトしました。</h2>
+            <div class="logout-info">
+                <a href="login.html" class="btn btn--orange">ログイン画面へ</a>
+            </div>
+        </div>
+    </main>
 
     <footer>
         <p>© 2024 たびとも</p>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // ローカルストレージをクリア
+            localStorage.clear();
+        });
+    </script>
 
 </body>
 

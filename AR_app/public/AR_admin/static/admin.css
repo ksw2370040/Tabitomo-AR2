@@ -101,8 +101,8 @@ main {
 .sideber-container button {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
-    background-color: transparent;
+    font-size: 14px;
+    background-color: #ffffff;
     color: #333;
     border: none;
     cursor: pointer;
@@ -207,4 +207,64 @@ footer {
             rgb(110, 255, 183) 10.8%,
             rgb(0, 80, 172) 94.3%);
     transition: all 0.45s;
+}
+
+/* レスポンシブデザイン（画面サイズに応じた調整） */
+
+/* 768px以下の画面 */
+@media screen and (max-width: 768px) {
+    header h1 {
+        font-size: 1.2em;
+    }
+
+    .sideber {
+        width: 150px;
+    }
+
+    .container {
+        margin-left: 170px;
+        /* サイドバーが縮小した分だけ調整 */
+        grid-template-columns: 1fr;
+        /* 1列にする */
+    }
+
+    .container a {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .container a.btn_18 {
+        width: 300px;
+    }
+}
+
+/* 480px以下の画面 */
+@media screen and (max-width: 480px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .sideber {
+        width: 120px;
+        height: auto;
+        /* 高さを調整 */
+    }
+
+    .container {
+        margin-left: 140px;
+        /* サイドバーが縮小した分だけ調整 */
+        grid-template-columns: 1fr;
+        /* 1列にする */
+        padding: 10px;
+    }
+
+    .container a {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .container a.btn_18 {
+        width: 250px;
+    }
 }

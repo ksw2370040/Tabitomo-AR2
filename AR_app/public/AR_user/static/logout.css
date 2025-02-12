@@ -1,4 +1,26 @@
-/* Header styling */
+/* 基本設定 */
+* {
+    box-sizing: border-box;
+}
+
+*:focus {
+    outline: none;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+/* main {
+    padding-bottom: 50px;
+} */
+
+/* ヘッダー */
 header {
     display: flex;
     justify-content: space-between;
@@ -9,27 +31,15 @@ header {
     width: 100%;
     background-color: #ededed;
     padding: 10px 20px;
-    border-bottom: 0.5px solid #ccc;
+    border-bottom: 2px solid #ffffff;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 70px;
 }
 
-/* Reset for iframe */
-/* iframe {
-    margin: 0;
-    margin-top: 80px;
-    padding: 0;
-    display: block;
-    width: 100%;
-    height: 450px;
-    border: none;
-} */
-
 header h1 {
     margin: 0;
     font-size: 1.5em;
-    margin-left: 2%;
 }
 
 header a {
@@ -43,74 +53,253 @@ header p {
     margin-right: 50px;
 }
 
-header li {
+li {
     list-style: none;
 }
 
-header ul {
-    margin-right: 2%;
+ul {
+    padding-left: 0;
 }
 
-.headerinfo {
-    margin-right: 100px;
+/* メイン */
+
+main {
+    flex-grow: 1;
 }
 
-.username {
-    font-size: 1em;
-    color: #000000;
+/* 新規登録フォーム */
+.newadmin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
 }
 
-.content {
-    padding-bottom: 100px;
+registration-container-box {
+    border: 1px solid #333;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ボタンコンテナ */
-.button-container {
+.registration-container {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 15px;
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.registration-container h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.registration-container form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    padding: 20px;
-    padding-top: 100px;
+    gap: 10px;
+    width: 250px;
 }
 
-/* ボタンスタイル */
-.button-container a {
+.registration-container input {
     width: 100%;
-    max-width: 400px;
-    /* ボタンの最大幅を設定 */
-}
-
-.button-container button {
-    width: 100%;
-    padding: 15px;
+    padding: 10px;
     font-size: 1em;
-    background-color: #ffffff;
-    color: #10153d;
-    border-radius: 4px;
-    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.confirmation-url {
+    padding: 10px;
+    font-size: 1em;
+    background-color: #d0e2ff;
+    color: #333;
+    border: 1px solid #a0b6d0;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    border: 1px solid;
-    border-color: #10153d;
-}
-
-.button-container button:hover {
-    background-color: #0056b3;
-}
-
-body {
-    background-color: rgb(255, 255, 255);
-}
-
-map {
+    transition: background-color 0.3s ease;
     width: 100%;
 }
 
-h1 {
-    color: #000000;
+.confirmation-url:hover {
+    background-color: #a0c0ff;
 }
 
+#checkboxlabel {
+    margin: 0;
+    white-space: nowrap;
+    /* テキストを折り返さない */
+}
+
+.back-button {
+    margin-top: 1em;
+    text-align: center;
+    /* ボタンを中央揃え */
+}
+
+
+/* ログインフォーム */
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+}
+
+.login-screen {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 15px;
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.app-title h1 {
+    font-size: 1.5em;
+    margin: 0 0 20px;
+    color: #333;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.control-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.new {
+    padding-top: 20px;
+}
+
+
+.login-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+.login-field::placeholder {
+    color: #666;
+}
+
+#login-form label {
+    display: block;
+    text-align: left;
+    font-size: 0.9em;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.btn {
+    padding: 10px;
+    font-size: 1em;
+    background-color: #d0e2ff;
+    color: #333;
+    border: 1px solid #a0b6d0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #a0c0ff;
+}
+
+#show-password {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    color: #333;
+    margin-bottom: 20px;
+    margin-bottom: 0px;
+}
+
+#error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+/* 登録確認 */
+.confirmation-container {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 15px;
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+}
+
+.confirmation h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+#confirm-register:hover {
+    background-color: #a0c0ff;
+}
+
+#confirm-register {
+    padding: 10px;
+    font-size: 1em;
+    background-color: #d0e2ff;
+    color: #333;
+    border: 1px solid #a0b6d0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 200px;
+}
+
+/* ログイン完了 */
+.complete-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+}
+
+/* ログアウト */
+.logout-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0px;
+}
+
+.logout-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+}
 
 /* Footer styling */
 footer {
@@ -126,185 +315,14 @@ footer {
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
-
-/* Back button styling */
-.back-button {
-    display: block;
-    width: 80%;
-    /* ボタンの幅を統一 */
-    max-width: 300px;
-    /* 最大幅を設定 */
-    margin: 10px auto 0 auto;
-    /* 中央揃え */
-    font-size: 1em;
-    color: #ffffff;
-    text-decoration: none;
-    padding: 10px 20px;
-    background-color: #4a6999;
-    border-radius: 4px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.btn--orange,
+.logout-container a.btn--orange {
+    color: #fff;
+    background-color: #74ccff;
 }
 
-/* 名前変更セクション: 基本スタイル */
-.name-change-section {
-    width: 90%;
-    /* 幅を柔軟に調整 */
-    max-width: 400px;
-    /* 上下の余白と中央配置 */
-    margin: auto;
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
-.name-change-section h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    color: #333;
-}
-
-.name-change-section p {
-    margin: 10px 0;
-    font-size: 1em;
-}
-
-.name-change-section label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-.name-change-section input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-/* 名前変更ボタン */
-.change-name-button {
-    display: block;
-    text-align: center;
-    padding: 10px 20px;
-    background-color: #4a6999;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-.change-name-button:hover {
-    background-color: #3a5577;
-}
-
-.password-change-section {
-    width: 90%;
-    /* 幅を柔軟に調整 */
-    max-width: 400px;
-    /* 上下の余白と中央配置 */
-    margin: auto;
-    margin-top: 100px;
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.password-change-section h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    color: #333;
-    text-align: center;
-}
-
-.password-group {
-    margin-top: 15px;
-}
-
-.password-group label {
-    display: block;
-    font-weight: bold;
-    font-size: 0.9em;
-}
-
-.password-group input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-.password-group input:focus {
-    outline: none;
-    border-color: #4a6999;
-    box-shadow: 0 0 5px rgba(74, 105, 153, 0.3);
-}
-
-.change-password-button {
-    width: 100%;
-    padding: 10px 15px;
-    margin-top: 20px;
-    background-color: #4a6999;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.3s ease;
-}
-
-.change-password-button:hover {
-    background-color: #3a5577;
-}
-
-.change-password-button {
-    display: block;
-    text-align: center;
-    padding: 10px 20px;
-    background-color: #4a6999;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-/* 全体のレイアウトを中央に整列 */
-.content {
-    margin-top: 120px;
-    margin-right: 150px;
-}
-
-.change-success {
-    margin-top: 100px;
-}
-
-li {
-    list-style: none;
-}
-
-/* スマホ表示向けの設定 */
-@media (max-width: 768px) {
-    .name-change-section {
-        margin-top: 100px;
-        /* 上部の余白を調整 */
-        padding: 15px;
-        /* スペースを少し減らす */
-    }
+.logout-container.btn--orange:hover,
+a.btn--orange:hover {
+    color: #fff;
+    background: #74ccff;
 }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録情報の更新</title>
+    <link rel="stylesheet" href="static/user.css">
+</head>
+
+<body>
+
+    <header>
+        <h1><a href="../menu.html">管理者システム　　-登録情報の更新-</a></h1>
+        <ul>
+            <li><p>ユーザー名: </p></li>
+            <li><p><a href="/AR_admin/AR_login/logout.html">ログアウト</a></p></li>
+        </ul>
+    </header>
+
+    <main>
+        <div class="sideber">
+            <div class="sideber-container">
+                <a href="../menu.html"><button>メニュー</button></a>
+                <a href="user.html"><button>管理者情報</button></a>
+                <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
+                <a href="../AR_sound/sound.html"><button>音声管理</button></a>
+                <a href="../AR_map/map.html"><button>マップ管理</button></a>
+                <a href="../AR_location/location.html"><button>場所 3Dモデル<br>管理</button></a>
+            </div>
+        </div>
+
+        <div class="userinfo">
+            <form id="update-form">
+                <label for="current-password">現在のパスワード:</label>
+                <input type="password" id="current-password" name="currentPassword" required>
+                <br><br>
+
+                <label for="admin-name">名前:</label>
+                <input type="text" id="admin-name" name="newName" required>
+                <br><br>
+
+                <label for="admin-password">新しいパスワード:</label>
+                <input type="password" id="admin-password" name="password" placeholder="新しいパスワード">
+                <br><br>
+
+                <button type="submit">更新</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 管理者システム</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let adminname = urlParams.get('adminname');
+    
+            if (adminname) {
+                localStorage.setItem('adminname', adminname);
+            } else {
+                adminname = localStorage.getItem('adminname');
+            }
+    
+            if (adminname) {
+                document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+            } else {
+                alert('ユーザー名が指定されていません。');
+                window.location.href = '../menu.html';
+            }
+    
+            // 管理者情報取得
+            let currentPassword = "";
+            if (adminname) {
+                fetch(`/api/admins?adminname=${adminname}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            document.querySelector('#admin-name').value = data.name;
+                            currentname = data.name;
+                            currentPassword = data.password; // 現在のパスワードを保持
+                            document.querySelector('#admin-password').value = ""; // 初期状態でパスワードは空
+                        }
+                    })
+                    .catch(error => console.error('管理者情報の取得に失敗しました:', error));
+            }
+    
+            // 更新フォーム送信処理
+            const updateForm = document.getElementById('update-form');
+            updateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+    
+                const currentPasswordInput = document.getElementById('current-password').value;
+                const name = document.getElementById('admin-name').value;
+                let password = document.getElementById('admin-password').value;
+    
+                // 現在のパスワードが正しいか確認
+                if (currentPassword !== currentPasswordInput) {
+                    alert('現在のパスワードが間違っています');
+                    return;
+                }
+    
+                // 新しいパスワードが空なら既存のパスワードを使用
+                if (password === "") {
+                    password = currentPassword;
+                }
+    
+                const requestBody = { name, password ,currentname};
+    
+                fetch('/api/admins/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (name !== adminname) {
+                            localStorage.setItem('adminname', name); // 名前が変更された場合、新しい名前を保存
+                        }
+                        alert('情報が更新されました');
+                        window.location.href = '/AR_admin/AR_user/user.html';
+                    } else {
+                        alert('更新に失敗しました');
+                    }
+                })
+                .catch(error => console.error('更新エラー:', error));
+            });
+        });
+    </script>
+    
+</body>
+
+</html>

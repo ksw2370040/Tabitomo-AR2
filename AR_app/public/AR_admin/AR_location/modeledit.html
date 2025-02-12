@@ -11,20 +11,20 @@
     <h1>モデル編集</h1>
     <form id="edit-form" enctype="multipart/form-data">
         <label for="locationname">場所名:</label>
-        <input type="text" id="locationname" name="locationname"><br>
+        <input type="text" id="locationname" name="locationname" required><br>
 
         <label for="address">住所:</label>
-        <input type="text" id="address" name="address"><br>
+        <input type="text" id="address" name="address" required><br>
 
         <label for="mdlname">モデル名:</label>
-        <input type="text" id="mdlname" name="mdlname"><br>
+        <input type="text" id="mdlname" name="mdlname" required><br>
 
         <label for="mdlimage">モデル画像:</label>
         <input type="file" id="mdlimage" name="mdlimage" accept=".glb"><br>
         <span id="mdlimage-name"></span><br>
 
         <label for="mkname">マーカー名:</label>
-        <input type="text" id="mkname" name="mkname"><br>
+        <input type="text" id="mkname" name="mkname" required><br>
 
         <label for="patt">パターンファイル:</label>
         <input type="file" id="patt" name="patt" accept=".patt"><br>

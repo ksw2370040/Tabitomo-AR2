@@ -1,77 +1,116 @@
-<!DOCTYPE html><!-- menu.html -->
+<!DOCTYPE html>
 <html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ホーム</title>
+    <title>管理者情報</title>
     <link rel="stylesheet" href="static/user.css">
 </head>
 
 <body>
 
     <header>
-        <h1><a href="../menu.html">管理者システム　　-管理者情報-</a></h1>
+        <h1><a href="../menu.html">管理者システム　-管理者情報-</a></h1>
         <ul>
             <li>
                 <p>ユーザー名: </p>
             </li>
             <li>
-                <p><a href="AR_login/logout.html">ログアウト</a></p>
-            <li>
+                <p><a href="/AR_admin/AR_login/logout.html">ログアウト</a></p>
+            </li>
         </ul>
-
     </header>
 
     <main>
-
         <div class="sideber">
             <div class="sideber-container">
                 <a href="../menu.html"><button>メニュー</button></a>
                 <a href="user.html"><button>管理者情報</button></a>
                 <a href="../AR_napisy/napisy.html"><button>字幕管理</button></a>
                 <a href="../AR_sound/sound.html"><button>音声管理</button></a>
-                <a href="../AR_map/location.html"><button>マップ管理</button></a>
+                <a href="../AR_map/map.html"><button>マップ管理</button></a>
                 <a href="../AR_location/location.html"><button>場所 3Dモデル<br>管理</button></a>
-                <!-- <a href="AR_language/language.html"><button>言語管理</button></a> -->
             </div>
         </div>
 
-        <!-- <div class="userinfo">
-
+        <div class="userinfo">
             <ul>
+                <li class="id">
+                    <p>ID: <span id="user-id"></span></p>
+                </li>
                 <li class="name">
-                    <p>名前: </p>
+                    <p>名前: <span id="user-name"></span></p>
                 </li>
                 <li class="password">
-                    <p>パスワード: </p>
+                    <p>パスワード: <span id="user-password">******</span></p>
                 </li>
             </ul>
-
-        </div> -->
-        <div class="container">
-            <a href="update.html" class="btn_18"><span>登録情報の更新</span></a>
-            <!-- <a href="delete.html" class="btn_18"><span>ユーザー情報の削除</span></a> -->
+            <div class="container">
+                <a id="update-link" href="update.html" class="btn_18"><span>登録情報の更新</span></a><br>
+                <a class="btn_18" id="delete-button"><span>削除</span></a>
+            </div>
         </div>
+
     </main>
+
+    <footer>
+        <p>© 2025 管理者システム</p>
+    </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let adminname = urlParams.get('adminname');
+
+        if (adminname) {
+            localStorage.setItem('adminname', adminname);
+        } else {
+            adminname = localStorage.getItem('adminname');
+        }
+
+        if (adminname) {
+            document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
+            document.querySelector('.name p').textContent = `ユーザー名: ${adminname}`;
+        } else {
+            alert('ユーザー名が指定されていません。');
+            window.location.href = '../menu.html';
+        }
+
+        if (adminname) {
+            fetch(`/api/admins?adminname=${adminname}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        document.querySelector('#user-id').textContent = data.id;
+                        document.querySelector('#user-name').textContent = data.name;
+                        document.querySelector('#user-password').textContent = "******";
+
+                        const updateLink = document.querySelector('#update-link');
+                        updateLink.href = `update.html?adminname=${data.name}`;
+                    }
+                })
+                .catch(error => console.error('Error fetching admin info:', error));
+        }
+
+        document.querySelector('#delete-button').addEventListener('click', () => {
+            if (confirm('本当に削除しますか？')) {
+                fetch(`/api/admins/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: adminname })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('削除しました。');
+                        window.location.href = '/AR_admin/AR_login/login.html'; // ログイン画面にリダイレクト
+                    })
+                    .catch(error => console.error('Error setting delete flag:', error));
+            }
+        });
+    </script>
+
 </body>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    let adminname = urlParams.get('adminname');
-
-    // adminnameがURLパラメータにある場合、ローカルストレージに保存
-    if (adminname) {
-        localStorage.setItem('adminname', adminname);
-    } else {
-        // ローカルストレージから取得
-        adminname = localStorage.getItem('adminname');
-    }
-
-    // adminnameが存在する場合に表示
-    if (adminname) {
-        document.querySelector('header p').textContent = `ユーザー名: ${adminname}`;
-        document.querySelector('.name p').textContent = `ユーザー名: ${adminname}`;
-    }
-</script>
 
 </html>

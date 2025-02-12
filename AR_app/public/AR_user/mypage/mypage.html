@@ -1,3 +1,4 @@
+<!-- // C:\\Tabitomo-AR\\AR_app\\public\\AR_user\\mypage\\mypage.html -->
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -10,7 +11,6 @@
 </head>
 
 <body>
-
     <header>
         <h1>マイページ</h1>
         <ul>
@@ -19,45 +19,65 @@
             </li>
             <li>
                 <p><a href="../logout.html">ログアウト</a></p>
-            <li>
+            </li>
         </ul>
     </header>
-
     <div class="content">
         <div class="button-container">
-            <a href="language.html"><button>言語変更</button></a>
-            <a href="rename.html"><button>名前変更</button></a>
-            <a href="changepassword.html"><button>パスワード変更</button></a>
-            <a href="ashiato.html"><button>※作成中-あしあと-</button></a>
-            <a href="collection.html"><button>コレクション</button></a>
+            <a href="language.html" class="btn-square-toy">言語変更</a>
+            <a href="rename.html" class="btn-square-toy">名前変更</a>
+            <a href="changepassword.html" class="btn-square-toy">パスワード変更</a>
+            <a href="" class="btn-square-toy" id="delete-account">アカウント削除</a>
+            <a href="collection.html" class="btn-square-toy">コレクション</a>
         </div>
         <a href="../home.html" class="back-button">戻る</a>
     </div>
-
     <footer>
         <p>© 2024 たびとも</p>
     </footer>
-
 </body>
-
 <script>
-    // URLパラメータまたはローカルストレージからadminnameを取得
+    // URLパラメータまたはローカルストレージからusernameを取得
     const urlParams2 = new URLSearchParams(window.location.search);
     let username = urlParams2.get('username');
 
-    // adminnameがURLパラメータにある場合はローカルストレージに保存
     if (username) {
         localStorage.setItem('username', username);
     } else {
-        // URLパラメータがない場合はローカルストレージから取得
         username = localStorage.getItem('username');
     }
 
-    // adminnameが存在する場合にページに表示
     if (username) {
-        document.querySelector('header p').textContent = `name: ${username}`;
+        document.querySelector('header p').textContent = `ユーザー名: ${username}`;
     }
-</script>
+        // ログインしていない場合、ログイン画面へリダイレクト
+        if (!username || !userid || !languagename) {
+            window.location.href = '../login.html';  // ログイン画面にリダイレクト
+        }
+    // アカウント削除ボタン処理
+    document.getElementById('delete-account').addEventListener('click', async () => {
+        if (confirm('本当にアカウントを削除しますか？')) {
+            try {
+                const response = await fetch('/api/deleteaccount', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
 
+                const data = await response.json();
+                if (data.status === 'success') {
+                    alert('アカウントが削除されました');
+                    localStorage.removeItem('username');
+                    window.location.href = '../login.html';
+                } else {
+                    alert('削除に失敗しました: ' + data.message);
+                }
+            } catch (err) {
+                console.error('エラー:', err);
+                alert('サーバーエラーが発生しました');
+            }
+        }
+    });
+</script>
 
 </html>
