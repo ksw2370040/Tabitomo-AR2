@@ -18,31 +18,25 @@
       color: white;
       z-index: 10;
     }
-    #subtitles-container {
+    #subtitles-container, #error-container {
       position: absolute;
-      bottom: 50px;
       left: 50%;
       transform: translateX(-50%);
       color: white;
-      font-size: 24px;
       background: rgba(0, 0, 0, 0.7);
       padding: 10px;
       border-radius: 5px;
       text-align: center;
       display: none;
     }
+    #subtitles-container {
+      bottom: 50px;
+      font-size: 24px;
+    }
     #error-container {
-      position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: red;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 20px;
-      border-radius: 5px;
-      text-align: center;
-      display: none;
       font-size: 18px;
+      color: red;
       z-index: 100;
     }
   </style>
@@ -53,7 +47,7 @@
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
     <a-assets></a-assets>
-    <a-camera id="main-camera" position="0 0 20"></a-camera> <!-- 手動カメラ位置 -->
+    <a-camera id="main-camera" position="0 0 5"></a-camera>
   </a-scene>
 
   <div id="ui-container">
@@ -66,24 +60,13 @@
   <div id="error-container"></div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const languagename = urlParams.get('languagename') || '日本語';
-
-    let subtitlesVisible = true;
-    let audioEnabled = true;
-    let subtitles = [];
-    let currentSubtitleIndex = 0;
-    let subtitleTimeout;
-
     async function loadMarkersData() {
       try {
-        const response = await fetch(`/multiAR?languagename=${languagename}`);
+        const response = await fetch(`/multiAR?languagename=日本語`);
         if (!response.ok) throw new Error('マーカー情報の読み込みに失敗しました');
         const markers = await response.json();
-
-        await Promise.all(markers.map(loadMarker));
+        markers.forEach(loadMarker);
       } catch (error) {
-        console.error(error);
         showError('マーカー情報の読み込みに失敗しました。');
       }
     }
@@ -95,99 +78,34 @@
       setTimeout(() => errorContainer.style.display = 'none', 5000);
     }
 
-    async function loadMarker(marker) {
-      try {
-        const assetItem = document.createElement('a-asset-item');
-        assetItem.setAttribute('id', `model-${marker.id}`);
-        assetItem.setAttribute('src', marker.model);
-        document.querySelector('a-assets').appendChild(assetItem);
+    function loadMarker(marker) {
+      const assetItem = document.createElement('a-asset-item');
+      assetItem.setAttribute('id', `model-${marker.id}`);
+      assetItem.setAttribute('src', marker.model);
+      document.querySelector('a-assets').appendChild(assetItem);
 
-        const markerElement = createMarkerElement(marker);
-        const modelEntity = createModelEntity(marker);
-        markerElement.appendChild(modelEntity);
-
-        if (marker.audio) createAudioElement(marker);
-        if (marker.subtitle) subtitles = parseSubtitles(await fetchSubtitle(marker.subtitle));
-
-        document.querySelector('a-scene').appendChild(markerElement);
-        addMarkerEvents(markerElement, marker);
-      } catch (error) {
-        console.error(`マーカー読み込みエラー: ${marker.id}`, error);
-        showError(`マーカー読み込みエラー: ${marker.id}`);
-      }
-    }
-
-    function createMarkerElement(marker) {
       const markerElement = document.createElement('a-marker');
       markerElement.setAttribute('id', marker.id);
       markerElement.setAttribute('type', 'pattern');
       markerElement.setAttribute('url', marker.patt);
-      return markerElement;
-    }
 
-    function createModelEntity(marker) {
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-      modelEntity.setAttribute('scale', '1 1 1'); // 手動スケール設定
-      modelEntity.setAttribute('position', '0 0 0'); // 手動位置設定
+      modelEntity.setAttribute('scale', '0.5 0.5 0.5'); // 調整
+      modelEntity.setAttribute('position', '0 0 0'); // マーカーの中心
 
-      return modelEntity;
-    }
+      // デバッグ用の目印
+      const debugSphere = document.createElement('a-sphere');
+      debugSphere.setAttribute('radius', '0.05');
+      debugSphere.setAttribute('color', 'red');
+      debugSphere.setAttribute('position', '0 0 0');
+      markerElement.appendChild(debugSphere);
 
-    function createAudioElement(marker) {
-      const audioElement = document.createElement('audio');
-      audioElement.setAttribute('src', marker.audio);
-      audioElement.setAttribute('id', marker.audioId);
-      document.body.appendChild(audioElement);
-    }
-
-    async function fetchSubtitle(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error();
-        return await response.text();
-      } catch {
-        showError('字幕ファイルの読み込みに失敗しました');
-        return '';
-      }
-    }
-
-    function parseSubtitles(text) {
-      return text.split('\n').map(line => ({
-        text: line.trim(),
-        duration: Math.max(line.length * 100, 2000)
-      }));
-    }
-
-    function addMarkerEvents(markerElement, marker) {
-      markerElement.addEventListener('markerFound', () => {
-        if (audioEnabled && marker.audio) document.getElementById(marker.audioId)?.play();
-        if (subtitlesVisible && subtitles.length > 0) showSubtitle();
-      });
-
-      markerElement.addEventListener('markerLost', () => {
-        document.getElementById(marker.audioId)?.pause();
-        clearTimeout(subtitleTimeout);
-        document.querySelector('#subtitles-container').style.display = 'none';
-        currentSubtitleIndex = 0;
-      });
-    }
-
-    function showSubtitle() {
-      if (currentSubtitleIndex >= subtitles.length) return;
-      const subtitleElement = document.querySelector('#subtitles-container');
-      subtitleElement.textContent = subtitles[currentSubtitleIndex].text;
-      subtitleElement.style.display = 'block';
-
-      subtitleTimeout = setTimeout(() => {
-        subtitleElement.style.display = 'none';
-        currentSubtitleIndex++;
-        showSubtitle();
-      }, subtitles[currentSubtitleIndex].duration);
+      markerElement.appendChild(modelEntity);
+      document.querySelector('a-scene').appendChild(markerElement);
     }
 
     document.getElementById('back').addEventListener('click', () => window.history.back());
-
     loadMarkersData();
   </script>
 </body>
