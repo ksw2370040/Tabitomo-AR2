@@ -53,7 +53,7 @@
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
     <a-assets></a-assets>
-    <a-camera id="main-camera" position="0 0 0"></a-camera>
+    <a-camera id="main-camera" position="0 0 2"></a-camera> <!-- カメラ位置調整 -->
   </a-scene>
 
   <div id="ui-container">
@@ -131,14 +131,16 @@
       modelEntity.setAttribute('scale', '1 1 1'); // 初期スケール設定
       modelEntity.setAttribute('position', '0 0 0'); // 初期位置設定
 
-      // 自動スケーリングの処理
+      // 自動スケーリングと位置調整
       modelEntity.addEventListener('loaded', () => {
-        // モデルのバウンディングボックスを取得
         const boundingBox = modelEntity.getAttribute('geometry')?.boundingBox;
         if (boundingBox) {
           const scale = Math.max(boundingBox.max.x - boundingBox.min.x, boundingBox.max.y - boundingBox.min.y, boundingBox.max.z - boundingBox.min.z);
           modelEntity.setAttribute('scale', `${1/scale} ${1/scale} ${1/scale}`);
         }
+        
+        // モデルの適切な位置調整
+        modelEntity.setAttribute('position', '0 0 -2'); // モデルがカメラから見える距離に配置
       });
 
       return modelEntity;
