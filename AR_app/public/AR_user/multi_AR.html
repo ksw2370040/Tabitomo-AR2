@@ -213,6 +213,12 @@
         } else {
           camera.setAttribute('position', '0 0 2'); // タブレットやPC向け
         }
+
+        // モデルの位置調整
+        const modelEntity = document.querySelector('a-entity');
+        if (modelEntity) {
+          modelEntity.setAttribute('position', '0 0 -2'); // モデルが視界に収まるように位置調整
+        }
       };
 
       updateCameraPosition();
