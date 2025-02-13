@@ -53,7 +53,7 @@
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
     <a-assets></a-assets>
-    <a-camera id="main-camera" position="0 0 3"></a-camera> <!-- 手動カメラ位置 -->
+    <a-camera id="main-camera" position="0 0 5"></a-camera> <!-- 手動カメラ位置 -->
   </a-scene>
 
   <div id="ui-container">
@@ -129,7 +129,7 @@
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
       modelEntity.setAttribute('scale', '0.5 0.5 0.5'); // 手動スケール設定
-      modelEntity.setAttribute('position', '0 0 -0.5'); // 手動位置設定
+      modelEntity.setAttribute('position', '0 0 0'); // 手動位置設定
 
       return modelEntity;
     }
