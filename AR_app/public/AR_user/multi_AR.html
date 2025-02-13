@@ -209,7 +209,7 @@
     }
 
     // ボタン操作
-    document.getElementById('back').addEventListener('click', () => window.location.href = 'home.html');
+    document.getElementById('back').addEventListener('click', () => window.location.href = document.referrer);
     document.getElementById('toggle-subtitles').addEventListener('click', () => {
       subtitlesVisible = !subtitlesVisible;
       document.getElementById('toggle-subtitles').textContent = subtitlesVisible ? '字幕オフ' : '字幕オン';
