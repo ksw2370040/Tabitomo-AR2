@@ -61,13 +61,15 @@
   </style>
 </head>
 <body>
-  <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
-           renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;"
-           arjs="trackingMethod: artoolkit; sourceType: webcam; debugUIEnabled: false;" 
-           embedded gesture-detector>
+  <a-scene 
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono and multi;" 
+    renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;" 
+    embedded gesture-detector>
     <a-assets></a-assets>
-    <a-entity id="main-camera" camera position="0 0 10"></a-entity>
-
+    <a-camera id="main-camera" position="0 0 10" 
+              camera="fov: 80; near: 0.1; far: 1000" 
+              look-controls="enabled: true; pointerLockEnabled: false;">
+    </a-camera>
   </a-scene>
 
   <div id="ui-container">
