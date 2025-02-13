@@ -11,7 +11,6 @@
       margin: 0;
       overflow: hidden;
     }
-
     #ui-container {
       position: absolute;
       top: 10px;
@@ -19,7 +18,6 @@
       color: white;
       z-index: 10;
     }
-
     #subtitles-container {
       position: absolute;
       bottom: 50px;
@@ -33,7 +31,6 @@
       text-align: center;
       display: none;
     }
-
     #error-container {
       position: absolute;
       top: 50%;
@@ -48,28 +45,15 @@
       font-size: 18px;
       z-index: 100;
     }
-
-    @media (max-width: 768px) {
-      #subtitles-container {
-        font-size: 18px;
-      }
-      #ui-container {
-        top: 20px;
-        left: 20px;
-      }
-    }
   </style>
 </head>
-
 <body>
   <a-scene vr-mode-ui="enabled: false;" loading-screen="enabled: false;" 
            renderer="logarithmicDepthBuffer: true;" 
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
-    
     <a-assets></a-assets>
-    <a-camera position="0 0 0" scale="1 1 1"></a-camera>
-
+    <a-camera id="main-camera" position="0 0 0"></a-camera>
   </a-scene>
 
   <div id="ui-container">
@@ -91,51 +75,26 @@
     let currentSubtitleIndex = 0;
     let subtitleTimeout;
 
-    // ビューのサイズを動的に取得し、ARコンテンツのスケーリングと位置調整を行う
-    function adjustViewport() {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      // カメラの視野に合わせてARコンテンツの位置を調整
-      const camera = document.querySelector('a-camera');
-      
-      // スマホの画面に合わせてカメラを近くに設定
-      if (width <= 768) { // スマホの場合
-        camera.setAttribute('position', `0 0 ${Math.max(width, height) / 3}`);
-      } else { // PCの場合
-        camera.setAttribute('position', `0 0 ${Math.max(width, height) / 5}`);
-      }
-    }
-
-    window.addEventListener('resize', adjustViewport);  // 画面サイズ変更時に再調整
-
-    // マーカー情報を非同期で取得
     async function loadMarkersData() {
       try {
         const response = await fetch(`/multiAR?languagename=${languagename}`);
         if (!response.ok) throw new Error('マーカー情報の読み込みに失敗しました');
         const markers = await response.json();
 
-        for (const marker of markers) {
-          await loadMarker(marker);
-        }
+        await Promise.all(markers.map(loadMarker));
       } catch (error) {
         console.error(error);
         showError('マーカー情報の読み込みに失敗しました。');
       }
     }
 
-    // エラーメッセージ表示
     function showError(message) {
       const errorContainer = document.getElementById('error-container');
       errorContainer.textContent = message;
       errorContainer.style.display = 'block';
-      setTimeout(() => {
-        errorContainer.style.display = 'none';
-      }, 5000);
+      setTimeout(() => errorContainer.style.display = 'none', 5000);
     }
 
-    // 個々のマーカー情報を読み込む
     async function loadMarker(marker) {
       try {
         const assetItem = document.createElement('a-asset-item');
@@ -147,14 +106,8 @@
         const modelEntity = createModelEntity(marker);
         markerElement.appendChild(modelEntity);
 
-        if (marker.audio) {
-          createAudioElement(marker);
-        }
-
-        if (marker.subtitle) {
-          const subtitleText = await fetchSubtitle(marker.subtitle);
-          subtitles = parseSubtitles(subtitleText);
-        }
+        if (marker.audio) createAudioElement(marker);
+        if (marker.subtitle) subtitles = parseSubtitles(await fetchSubtitle(marker.subtitle));
 
         document.querySelector('a-scene').appendChild(markerElement);
         addMarkerEvents(markerElement, marker);
@@ -175,9 +128,19 @@
     function createModelEntity(marker) {
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-      modelEntity.setAttribute('scale', '0.5 0.5 0.5'); // 初期スケーリングを調整
-      modelEntity.setAttribute('position', '0 0 0');
-      modelEntity.setAttribute('rotation', '0 0 0');
+      modelEntity.setAttribute('scale', '1 1 1'); // 初期スケール設定
+      modelEntity.setAttribute('position', '0 0 0'); // 初期位置設定
+
+      // 自動スケーリングの処理
+      modelEntity.addEventListener('loaded', () => {
+        // モデルのバウンディングボックスを取得
+        const boundingBox = modelEntity.getAttribute('geometry')?.boundingBox;
+        if (boundingBox) {
+          const scale = Math.max(boundingBox.max.x - boundingBox.min.x, boundingBox.max.y - boundingBox.min.y, boundingBox.max.z - boundingBox.min.z);
+          modelEntity.setAttribute('scale', `${1/scale} ${1/scale} ${1/scale}`);
+        }
+      });
+
       return modelEntity;
     }
 
@@ -188,44 +151,32 @@
       document.body.appendChild(audioElement);
     }
 
-    function parseSubtitles(subtitleText) {
-      return subtitleText.split('\n').map(line => ({
-        text: line.trim(),
-        duration: Math.max(line.length * 100, 2000)
-      }));
-    }
-
     async function fetchSubtitle(url) {
       try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error('字幕ファイルの読み込みに失敗しました');
+        if (!response.ok) throw new Error();
         return await response.text();
-      } catch (error) {
-        console.error('字幕ファイルの読み込みに失敗しました', error);
+      } catch {
         showError('字幕ファイルの読み込みに失敗しました');
         return '';
       }
     }
 
+    function parseSubtitles(text) {
+      return text.split('\n').map(line => ({
+        text: line.trim(),
+        duration: Math.max(line.length * 100, 2000)
+      }));
+    }
+
     function addMarkerEvents(markerElement, marker) {
       markerElement.addEventListener('markerFound', () => {
-        if (audioEnabled && marker.audio) {
-          const audio = document.getElementById(marker.audioId);
-          if (audio) audio.play();
-        }
-        if (subtitlesVisible && subtitles.length > 0) {
-          showSubtitle();
-        }
+        if (audioEnabled && marker.audio) document.getElementById(marker.audioId)?.play();
+        if (subtitlesVisible && subtitles.length > 0) showSubtitle();
       });
 
       markerElement.addEventListener('markerLost', () => {
-        if (marker.audio) {
-          const audio = document.getElementById(marker.audioId);
-          if (audio) {
-            audio.pause();
-            audio.currentTime = 0;
-          }
-        }
+        document.getElementById(marker.audioId)?.pause();
         clearTimeout(subtitleTimeout);
         document.querySelector('#subtitles-container').style.display = 'none';
         currentSubtitleIndex = 0;
@@ -233,46 +184,19 @@
     }
 
     function showSubtitle() {
-      if (currentSubtitleIndex < subtitles.length) {
-        const subtitleData = subtitles[currentSubtitleIndex];
-        const subtitleElement = document.querySelector('#subtitles-container');
-        subtitleElement.textContent = subtitleData.text;
-        subtitleElement.style.display = 'block';
+      if (currentSubtitleIndex >= subtitles.length) return;
+      const subtitleElement = document.querySelector('#subtitles-container');
+      subtitleElement.textContent = subtitles[currentSubtitleIndex].text;
+      subtitleElement.style.display = 'block';
 
+      subtitleTimeout = setTimeout(() => {
+        subtitleElement.style.display = 'none';
         currentSubtitleIndex++;
-        subtitleTimeout = setTimeout(() => {
-          subtitleElement.style.display = 'none';
-          showSubtitle();
-        }, subtitleData.duration);
-      }
+        showSubtitle();
+      }, subtitles[currentSubtitleIndex].duration);
     }
 
-    function toggleState(elementId, state, onText, offText) {
-      state = !state;
-      document.getElementById(elementId).textContent = state ? onText : offText;
-      return state;
-    }
-
-    document.getElementById('toggle-subtitles').addEventListener('click', () => {
-      subtitlesVisible = toggleState('toggle-subtitles', subtitlesVisible, '字幕オフ', '字幕オン');
-      document.querySelector('#subtitles-container').style.display = subtitlesVisible ? 'block' : 'none';
-    });
-
-    document.getElementById('toggle-audio').addEventListener('click', () => {
-      audioEnabled = toggleState('toggle-audio', audioEnabled, '音声オフ', '音声オン');
-      const audioElements = document.querySelectorAll('audio');
-      audioElements.forEach(audio => {
-        if (audioEnabled) {
-          audio.play();
-        } else {
-          audio.pause();
-        }
-      });
-    });
-
-    document.getElementById('back').addEventListener('click', () => {
-      window.history.back();
-    });
+    document.getElementById('back').addEventListener('click', () => window.history.back());
 
     loadMarkersData();
   </script>
