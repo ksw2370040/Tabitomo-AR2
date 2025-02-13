@@ -8,7 +8,7 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #ededed;
+    background-color: rgba(237, 237, 237, 0.7);
     padding: 10px 20px;
     border-bottom: 0.5px solid #ccc;
     z-index: 1000;
@@ -16,16 +16,19 @@ header {
     height: 70px;
 }
 
-/* Reset for iframe */
-/* iframe {
-    margin: 0;
-    margin-top: 80px;
-    padding: 0;
-    display: block;
-    width: 100%;
-    height: 450px;
-    border: none;
-} */
+#header-video {
+    width: 90px;
+    /* 動画の幅（調整可） */
+    height: 90px;
+    /* 動画の高さ（調整可） */
+    object-fit: cover;
+    /* アスペクト比を維持 */
+    border-radius: 50%;
+    /* 丸くする場合 */
+    margin-right: 15px;
+    /* タイトルとの間隔 */
+}
+
 
 header h1 {
     margin: 0;
@@ -72,7 +75,7 @@ header ul {
     align-items: center;
     gap: 15px;
     padding: 20px;
-    padding-top: 100px;
+    padding-top: 250px;
 }
 
 /* ボタンスタイル */
@@ -98,7 +101,7 @@ header ul {
     display: inline-block;
     padding: 0.8em 3em;
     text-decoration: none;
-    background: #00BCD4;
+    background: #0063d4;
     /*背景色*/
     color: #ffffff;
     /*=背景色*/
@@ -109,217 +112,43 @@ header ul {
     text-shadow: -1px -1px rgba(249, 1, 1, 0.44), 1px 1px rgba(0, 0, 0, 0.38);
 }
 
-.button-container .btn-square-toy:active {
-    /*押したとき*/
-    border-bottom: solid 2px #42e913;
-    box-shadow: none;
-    text-shadow: -1px -1px rgba(255, 255, 255, 0.3), 1px 1px rgba(0, 0, 0, 0.3);
-}
 
 
-/* Footer styling */
+
 footer {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #ededed;
     text-align: center;
-    font-size: 0.9em;
-    color: #333;
-    border-top: 1px solid #ccc;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 20px;
+    color: #000000;
+
+
 }
 
 
-
-/* Back button styling */
-.back-button {
-    display: block;
-    width: 80%;
-    /* ボタンの幅を統一 */
-    max-width: 300px;
-    /* 最大幅を設定 */
-    margin: 10px auto 0 auto;
-    /* 中央揃え */
-    font-size: 1em;
-    color: #ffffff;
-    text-decoration: none;
-    padding: 10px 20px;
-    background-color: #4a6999;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 名前変更セクション: 基本スタイル */
-.name-change-section {
-    width: 90%;
-    /* 幅を柔軟に調整 */
-    max-width: 400px;
-    /* 上下の余白と中央配置 */
-    margin: auto;
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
-.name-change-section h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    color: #333;
-}
-
-.name-change-section p {
-    margin: 10px 0;
-    font-size: 1em;
-}
-
-.name-change-section label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-.name-change-section input {
+#background {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-/* 名前変更ボタン */
-.change-name-button {
-    display: block;
-    text-align: center;
-    padding: 10px 20px;
-    background-color: #4a6999;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-.change-name-button:hover {
-    background-color: #3a5577;
-}
-
-.password-change-section {
-    width: 90%;
-    /* 幅を柔軟に調整 */
-    max-width: 400px;
-    /* 上下の余白と中央配置 */
-    margin: auto;
-    margin-top: 100px;
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.password-change-section h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    color: #333;
-    text-align: center;
-}
-
-.password-group {
-    margin-top: 15px;
-}
-
-.password-group label {
-    display: block;
-    font-weight: bold;
-    font-size: 0.9em;
-}
-
-.password-group input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-.password-group input:focus {
-    outline: none;
-    border-color: #4a6999;
-    box-shadow: 0 0 5px rgba(74, 105, 153, 0.3);
-}
-
-.change-password-button {
-    width: 100%;
-    padding: 10px 15px;
-    margin-top: 20px;
-    background-color: #4a6999;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.3s ease;
-}
-
-.change-password-button:hover {
-    background-color: #3a5577;
-}
-
-.change-password-button {
-    display: block;
-    text-align: center;
-    padding: 10px 20px;
-    background-color: #4a6999;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-/* 全体のレイアウトを中央に整列 */
-.content {
-    margin-top: 150px;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-    /* header & footerの高さを除いたスペースを考慮 */
-    padding: 10px;
-}
-
-.content h3 {
-    margin-top: 100px;
+    height: 100%;
+    background-image: url("../backgroundimage/siro.jpg");
+    /* 背景画像を設定 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -1;
+    /* 他のコンテンツの後ろに配置 */
+    opacity: 1;
+    /* 透明度を1にして表示 */
 }
 
 
-.change-success {
-    margin-top: 100px;
+/* ボディのスタイルは変更しない */
+body {
+    height: 100vh;
+    margin: 0;
 }
-
-li {
-    list-style: none;
-}
-
-/* スマホ表示向けの設定 */
-@media (max-width: 768px) {
-    .name-change-section {
-        margin-top: 100px;
-        /* 上部の余白を調整 */
-        padding: 15px;
-        /* スペースを少し減らす */
-    }
-}
-

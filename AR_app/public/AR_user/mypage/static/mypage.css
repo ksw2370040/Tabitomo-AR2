@@ -7,12 +7,25 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #ededed;
+    background-color: rgba(237, 237, 237, 0.7);
     padding: 10px 20px;
     border-bottom: 0.5px solid #ccc;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 70px;
+}
+
+#header-video {
+    width: 90px;
+    /* 動画の幅（調整可） */
+    height: 90px;
+    /* 動画の高さ（調整可） */
+    object-fit: cover;
+    /* アスペクト比を維持 */
+    border-radius: 50%;
+    /* 丸くする場合 */
+    margin-right: 15px;
+    /* タイトルとの間隔 */
 }
 
 /* Reset for iframe */

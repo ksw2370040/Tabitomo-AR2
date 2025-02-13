@@ -16,9 +16,7 @@ body {
     background-color: #ffffff;
 }
 
-/* main {
-    padding-bottom: 50px;
-} */
+
 
 /* ヘッダー */
 header {
@@ -29,17 +27,32 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #ededed;
+    background-color: rgba(237, 237, 237, 0.7);
     padding: 10px 20px;
-    border-bottom: 2px solid #ffffff;
+    border-bottom: 0.5px solid #ccc;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 70px;
+    height: 90px;
 }
+
+#header-video {
+    width: 90px;
+    /* 動画の幅（調整可） */
+    height: 90px;
+    /* 動画の高さ（調整可） */
+    object-fit: cover;
+    /* アスペクト比を維持 */
+    border-radius: 50%;
+    /* 丸くする場合 */
+    margin-right: 15px;
+    /* タイトルとの間隔 */
+}
+
 
 header h1 {
     margin: 0;
     font-size: 1.5em;
+    margin-left: 2%;
 }
 
 header a {
@@ -49,16 +62,29 @@ header a {
 }
 
 header p {
-    font-size: 0.5em;
+    font-size: 0.9em;
     margin-right: 50px;
 }
 
-li {
+header li {
     list-style: none;
 }
 
-ul {
-    padding-left: 0;
+header ul {
+    margin-right: 2%;
+}
+
+.headerinfo {
+    margin-right: 100px;
+}
+
+.username {
+    font-size: 1em;
+    color: #000000;
+}
+
+.content {
+    padding-bottom: 100px;
 }
 
 /* メイン */
@@ -67,14 +93,6 @@ main {
     flex-grow: 1;
 }
 
-/* 新規登録フォーム */
-.newadmin {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #ffffff;
-}
 
 registration-container-box {
     border: 1px solid #333;
@@ -82,15 +100,7 @@ registration-container-box {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.registration-container {
-    width: 300px;
-    padding: 20px;
-    border: 1px solid #333;
-    border-radius: 15px;
-    background-color: #ffffff;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+
 
 .registration-container h2 {
     font-size: 1.5em;
@@ -163,11 +173,7 @@ registration-container-box {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.app-title h1 {
-    font-size: 1.5em;
-    margin: 0 0 20px;
-    color: #333;
-}
+
 
 .login-form {
     display: flex;
@@ -185,13 +191,6 @@ registration-container-box {
 }
 
 
-.login-field {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #333;
-    border-radius: 5px;
-}
 
 .login-field::placeholder {
     color: #666;

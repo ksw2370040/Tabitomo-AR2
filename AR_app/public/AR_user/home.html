@@ -6,34 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/home.css">
     <title>ホーム</title>
-    <style>
-        /* 背景画像専用の要素 */
-        #background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            z-index: -1; /* 他のコンテンツの後ろに配置 */
-            transition: opacity 1s ease-in-out; /* フェードイン/フェードアウト */
-            opacity: 0; /* 初期状態では非表示 */
-        }
 
-        /* ボディのスタイルは変更しない */
-        body {
-            height: 100vh;
-            margin: 0;
-        }
-    </style>
 </head>
 
 <body>
 
     <header>
+        <video id="header-video" autoplay loop muted>
+            <source src="rogo/op-4.mp4" type="video/mp4">
+        </video>
         <h1>ホーム</h1>
         <ul>
             <li>
@@ -52,95 +33,45 @@
             <a href="mypage/mypage.html" class="btn-square-toy">マイページ</a>
         </div>
     </div>
-
     <footer>
         <p>© 2024 たびとも</p>
     </footer>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // 背景画像を表示するための要素を作成
-        const backgroundElement = document.createElement('div');
-        backgroundElement.id = 'background';
-        document.body.appendChild(backgroundElement);
+        document.addEventListener("DOMContentLoaded", function () {
+            // 背景画像を表示するための要素を作成
+            const backgroundElement = document.createElement('div');
+            backgroundElement.id = 'background';
+            document.body.appendChild(backgroundElement);
 
-        // ローカルストレージからユーザー情報を取得
-        const username = localStorage.getItem('username');
-        const userid = localStorage.getItem('userid');
-        const languagename = localStorage.getItem('languagename');
+            // ローカルストレージからユーザー情報を取得
+            const username = localStorage.getItem('username');
+            const userid = localStorage.getItem('userid');
+            const languagename = localStorage.getItem('languagename');
 
-        // ユーザー名を表示
-        const headerP = document.getElementById("username-display");
-        if (username && headerP) {
-            headerP.textContent = `ユーザー名: ${username}`;
-        }
-
-        // ログインしていない場合、ログイン画面へリダイレクト
-        if (!username || !userid || !languagename) {
-            window.location.href = 'login.html';  // ログイン画面にリダイレクト
-        }
-
-        // ARボタンのURLに userid と languagename を追加
-        if (languagename && userid) {
-            const arButton = document.getElementById('ar-button');
-            if (arButton) {
-                arButton.href = `multi_AR.html?userid=${encodeURIComponent(userid)}&languagename=${encodeURIComponent(languagename)}`;
+            // ユーザー名を表示
+            const headerP = document.getElementById("username-display");
+            if (username && headerP) {
+                headerP.textContent = `ユーザー名: ${username}`;
             }
-        }
 
-        // 背景画像のリスト
-        const images = [
-            "/AR_user/backgroundimage/451_成田山新勝寺仁王門.jpg",
-            "/AR_user/backgroundimage/681_佐原街並み.jpg",
-            "/AR_user/backgroundimage/1713_白井市・清戸の泉.jpg",
-            "/AR_user/backgroundimage/2139_海雄寺の釈迦涅槃像.jpg",
-            "/AR_user/backgroundimage/2190_勝浦大漁まつり・船渡し.jpg",
-            "/AR_user/backgroundimage/2479_亀山湖の紅葉.jpg",
-            "/AR_user/backgroundimage/2537_稲毛浅間神社.jpg",
-            "/AR_user/backgroundimage/2582_とみやま水仙遊歩道.jpg",
-            "/AR_user/backgroundimage/2612_岩井水仙街道.jpg",
-            "/AR_user/backgroundimage/2719_成田山新勝寺・節分会.jpg",
-            "/AR_user/backgroundimage/2770_南房総市・和田浦お花畑.jpg",
-            "/AR_user/backgroundimage/2771_南房総市・平磯の花畑.jpg",
-            "/AR_user/backgroundimage/2899_花畑.jpg",
-            "/AR_user/backgroundimage/2923_千葉城.jpg",
-            "/AR_user/backgroundimage/3208_鋸山・山頂付近眺望.jpg",
-            "/AR_user/backgroundimage/4668_中山法華経寺・節分会.jpg",
-            "/AR_user/backgroundimage/4832_習志野市・梅林園.jpg",
-            "/AR_user/backgroundimage/4970_戸定が丘歴史公園 公園入口.jpg",
-            "/AR_user/backgroundimage/4982_戸定が丘歴史公園 梅園.jpg"
-        ];
+            // ログインしていない場合、ログイン画面へリダイレクト
+            if (!username || !userid || !languagename) {
+                window.location.href = 'login.html';  // ログイン画面にリダイレクト
+            }
 
-        let currentIndex = 0;
+            // ARボタンのURLに userid と languagename を追加
+            if (languagename && userid) {
+                const arButton = document.getElementById('ar-button');
+                if (arButton) {
+                    arButton.href = `multi_AR.html?userid=${encodeURIComponent(userid)}&languagename=${encodeURIComponent(languagename)}`;
+                }
+            }
 
-        // 背景画像を切り替える関数
-        function changeBackgroundImage() {
-            // 次の画像を事前に読み込む
-            const nextImage = new Image();
-            nextImage.src = images[currentIndex];
 
-            // 画像が完全に読み込まれたら背景画像を変更
-            nextImage.onload = () => {
-                // 画像が読み込まれるまで背景を非表示
-                backgroundElement.style.opacity = 0;
 
-                // 1秒後に背景を変更し、次の画像をフェードイン
-                setTimeout(() => {
-                    backgroundElement.style.backgroundImage = `url(${nextImage.src})`;
-                    backgroundElement.style.opacity = 1;
-                }, 1000); // 1秒後に画像を切り替え
-            };
 
-            // 画像インデックスを更新
-            currentIndex = (currentIndex + 1) % images.length; // 画像リストが終了したら最初に戻る
-        }
-
-        // 5秒ごとに画像を切り替える
-        setInterval(changeBackgroundImage, 5000);
-
-        // 最初の背景画像を設定
-        changeBackgroundImage();
-    });
+        });
     </script>
 
 </body>
