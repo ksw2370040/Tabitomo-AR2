@@ -53,7 +53,7 @@
            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;" 
            embedded>
     <a-assets></a-assets>
-    <a-camera id="main-camera" position="0 0 2"></a-camera> <!-- 初期カメラ位置 -->
+    <a-camera id="main-camera" position="0 0 0"></a-camera> <!-- 手動カメラ位置 -->
   </a-scene>
 
   <div id="ui-container">
@@ -128,20 +128,8 @@
     function createModelEntity(marker) {
       const modelEntity = document.createElement('a-entity');
       modelEntity.setAttribute('gltf-model', `#model-${marker.id}`);
-      modelEntity.setAttribute('scale', '1 1 1'); // 初期スケール設定
-      modelEntity.setAttribute('position', '0 0 0'); // 初期位置設定
-
-      // 自動スケーリングと位置調整
-      modelEntity.addEventListener('loaded', () => {
-        const boundingBox = modelEntity.getAttribute('geometry')?.boundingBox;
-        if (boundingBox) {
-          const scale = Math.max(boundingBox.max.x - boundingBox.min.x, boundingBox.max.y - boundingBox.min.y, boundingBox.max.z - boundingBox.min.z);
-          modelEntity.setAttribute('scale', `${1/scale} ${1/scale} ${1/scale}`);
-        }
-
-        // モデルの適切な位置調整
-        modelEntity.setAttribute('position', '0 0 -2'); // モデルがカメラから見える距離に配置
-      });
+      modelEntity.setAttribute('scale', '1 1 1'); // 手動スケール設定
+      modelEntity.setAttribute('position', '0 0 0'); // 手動位置設定
 
       return modelEntity;
     }
@@ -199,31 +187,6 @@
     }
 
     document.getElementById('back').addEventListener('click', () => window.history.back());
-
-    // カメラ位置調整
-    document.addEventListener('DOMContentLoaded', () => {
-      const camera = document.querySelector('#main-camera');
-      const updateCameraPosition = () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        // モバイルデバイスにおけるカメラの位置調整
-        if (width < 500) {
-          camera.setAttribute('position', '0 0 1.5'); // スマホ向けにカメラを少し後ろに配置
-        } else {
-          camera.setAttribute('position', '0 0 2'); // タブレットやPC向け
-        }
-
-        // モデルの位置調整
-        const modelEntity = document.querySelector('a-entity');
-        if (modelEntity) {
-          modelEntity.setAttribute('position', '0 0 -2'); // モデルが視界に収まるように位置調整
-        }
-      };
-
-      updateCameraPosition();
-      window.addEventListener('resize', updateCameraPosition); // 画面リサイズ時に位置調整
-    });
 
     loadMarkersData();
   </script>
