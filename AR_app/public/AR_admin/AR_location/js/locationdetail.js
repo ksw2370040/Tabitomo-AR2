@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             <strong>マーカー名:</strong> ${model.mkname}<br>
                             <strong>パターン:</strong> ${model.patt}<br>
                             <strong>マーカー画像:</strong> <img src="/Content/markerimage/${model.mkimage}" alt="${model.mkimage}" width="200"><br>
-                            <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdltext=${model.mdlsound}">音声ファイル</a></strong><br>
+                            <strong><a href="../../AR_admin/AR_sound/soundlist.html?mdlsound=${model.mdlsound}">音声ファイル</a></strong><br>
                             ${model.soundfiles.length > 0 ? model.soundfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}<br>
-                            <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdlsound=${model.mdltext}">テキストファイル</a></strong><br>
+                            <strong><a href="../../AR_admin/AR_napisy/napisylist.html?mdltext=${model.mdltext}">テキストファイル</a></strong><br>
                             ${model.textfiles.length > 0 ? model.textfiles.map(file => `<span>${file}</span><br>`).join('') : 'なし'}
                         </p>
                         <button class="edit-btn" data-mdlid="${mdlid}">編集</button>
